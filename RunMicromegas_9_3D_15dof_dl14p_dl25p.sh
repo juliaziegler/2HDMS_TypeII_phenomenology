@@ -26,17 +26,17 @@ alignm=0.9998691018476971 #0.9999986246982658 #1       # {0.98, 1}
 dl14p=-6.174630009389221 #0              # l4p = l1p + dl14p
 dl25p=0.259395110330231 #0              # l5p = l2p + dl25p
 ##### change these params ##############################
-PARAM=mAS
-mAS=i
-START_VAL=48
-STOP_VAL=900
-STEP_SIZE=4
+PARAM=ch1tt
+ch1tt=i
+START_VAL=0.21
+STOP_VAL=0.7
+STEP_SIZE=0.007
 
-PARAM2=tanbeta
-tanbeta=j
-START_VAL2=1
-STOP_VAL2=20
-STEP_SIZE2=1
+PARAM2=ch1bb
+ch1bb=j
+START_VAL2=0
+STOP_VAL2=0.7
+STEP_SIZE2=0.007
 
 F=results_3D_$PARAM-$PARAM2.csv
 M=results_3D_$PARAM-$PARAM2-masses.csv
@@ -264,6 +264,7 @@ do
  # run micrOMEGAs
  cd $MICROMEGAS_OUT_DIR
  rm out.dat
+ rm channels2.out
  rm SPheno.spc.complexZ2b
  cp $SPHENO_OUT_DIR/SPheno.spc.complexZ2b .
  $MICROMEGAS_DIR/./$MICROMEGAS_EXE > out.dat

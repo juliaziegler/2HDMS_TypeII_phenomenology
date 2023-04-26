@@ -1,0 +1,9 @@
+*.out
+*.csv
+*.dat
+*.pdf
+SPheno.spc*
+LesHouches.in.complexZ2b_low
+/output
+/output_spheno
+/output_micromegas
