@@ -7,7 +7,7 @@ from scipy import interpolate
 def read_csv(FILE):
     data = pd.read_csv(FILE, sep=",", header=None,
                        names=["HB_DIR", "HS_DIR", "HT_INP","BR_h1bb",
-                              "BR_h1yy","c_h1VV","c_h1tt","mAS","RelDen",
+                              "BR_h1yy","ch1VV","ch1tt","mAS","RelDen",
                               "PCS","NCS","bfb","unitarity",
                               "PARAM","i","PARAM2","j"])
     return data
@@ -95,8 +95,8 @@ def calc_chisq_cms_lep(data):
     # predicted 2HDSM BR and reduced couplings
     BR_h1bb = data["BR_h1bb"][0]
     BR_h1yy = data["BR_h1yy"][0]
-    c_h1VV_sq = (data["c_h1VV"][0])**2
-    c_h1tt_sq = (data["c_h1tt"][0])**2
+    c_h1VV_sq = (data["ch1VV"][0])**2
+    c_h1tt_sq = (data["ch1tt"][0])**2
 
     # measured signal strenghts and uncertainties taken from arxiv: .......................
     # TODO: need to update these
