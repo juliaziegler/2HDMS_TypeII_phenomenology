@@ -9,7 +9,8 @@ def read_csv(FILE):
                        names=["HB_DIR", "HS_DIR", "HT_INP","BR_h1bb",
                               "BR_h1yy","ch1VV","ch1tt","mAS","RelDen",
                               "PCS","NCS","bfb","unitarity",
-                              "PARAM","i","PARAM2","j"])
+                              "PARAM","i","PARAM2","j",
+                              "INDDCS","INDDCS_bb","INDDCS_tautau","INDDCS_WW"])
     return data
 def prep_csv_3D(data):
     if data["PARAM"][0] in data.columns:
@@ -21,7 +22,7 @@ def save_csv(FILE, data):
     dataframe = pd.DataFrame(data)
     dataframe.to_csv(FILE)
     return
-def get_results(data, FILE_LZ):
+def get_results(data, FILE_LZ, FILE_FERMI_BB, FILE_FERMI_TAUTAU, FILE_FERMI_WW):
     """main function to caclulate results from HiggsBounds and HiggsSignals
     and check other experimental constraints (from Planck and LZ)
     Args:
@@ -35,19 +36,32 @@ def get_results(data, FILE_LZ):
     hbResult, hsChisq, hsChisq_red = get_higgstools(data)
     # calculate Chi_sq for signal from CMS and LEP
     Chisq_CMS_LEP, mu_the_LEP, mu_the_CMS = calc_chisq_cms_lep(data)
-    # check other experimental constraints (from Planck and LZ)
-    PLallowed = check_Planck(data,  0.1202)
-    LZallowed, LZconstr = check_LZ(data, FILE_LZ)
+    # check other experimental constraints (from Planck, LZ, Fermi, ...)
+    LZconstr = get_interp_constr(data["mAS"][0], FILE_LZ) * 1e+36
+    FERMIconstr_bb = get_interp_constr(data["mAS"][0], FILE_FERMI_BB)
+    FERMIconstr_tautau = get_interp_constr(data["mAS"][0], FILE_FERMI_TAUTAU)
+    FERMIconstr_WW = get_interp_constr(data["mAS"][0], FILE_FERMI_WW)
+    PLconstr = 0.1202
+
+    LZallowed = (data["PCS"][0] <= LZconstr) and (data["NCS"][0] <= LZconstr)
+    FERMIallowed_bb = (data["INDDCS"][0]*data["INDDCS_bb"] <= FERMIconstr_bb)
+    FERMIallowed_tautau = (data["INDDCS"][0]*data["INDDCS_tautau"] <= FERMIconstr_tautau)
+    FERMIallowed_WW = (data["INDDCS"][0]*data["INDDCS_WW"] <= FERMIconstr_WW)
+    PLallowed = (data["RelDen"][0] <= PLconstr)
     # check if allowed by all constraints
-    all_allowed = check_all(data, int(hbResult.allowed), int(PLallowed),
-                            int(LZallowed))
+    all_allowed = (data["bfb"][0] and data["unitarity"][0] and int(hbResult.allowed) \
+              and int(LZallowed) and int(FERMIallowed_bb) and int(FERMIallowed_tautau) \
+              and int(FERMIallowed_WW) and int(PLallowed))
     # put results into one dictionary
     results = {'HBallowed': [int(hbResult.allowed)], 'Chisq': [hsChisq],
                'Chisq_red': [hsChisq_red], 'Chisq_CMS-LEP': [Chisq_CMS_LEP],
                'mu_the_LEP': [mu_the_LEP], 'mu_the_CMS': [mu_the_CMS],
-               'Planckallowed': [int(PLallowed)],
-               'LZallowed': [int(LZallowed)],
-               'LZconstr': [LZconstr], 'allallowed': [int(all_allowed)]}
+               'Planckallowed': [int(PLallowed)], 'Planckconstr': PLconstr,
+               'LZallowed': [int(LZallowed)], 'LZconstr': [LZconstr],
+               'FERMIallowed_bb': [int(FERMIallowed_bb)], 'FERMIconstr_bb': [FERMIconstr_bb],
+               'FERMIallowed_tautau': [int(FERMIallowed_tautau)], 'FERMIconstr_tautau': [FERMIconstr_tautau],
+               'FERMIallowed_WW': [int(FERMIallowed_WW)], 'FERMIconstr_WW': [FERMIconstr_WW],
+               'allallowed': [int(all_allowed)]}
     return results
 def get_higgstools(data):
     """function to caclulate results from HiggsBounds and HiggsSignals
@@ -113,64 +127,33 @@ def calc_chisq_cms_lep(data):
     chisq = ((mu_the_LEP - mu_exp_LEP)/sigma_mu_exp_LEP)**2 + \
             ((mu_the_CMS - mu_exp_CMS)/sigma_mu_exp_LEP)**2
     return chisq, mu_the_LEP, mu_the_CMS
-
-def check_all(data, HBallowed, PLallowed, LZallowed):
-    """combines all constraints and checks if the data point is allowed
-    Args:
-        data (pd.dataframe): input containing results from bfb and unitarity
-            checks in int form
-        HBallowed (int): allowed by HB or not
-        PLallowed (int): allowed by PLanck or not
-        LZallowed (int): allowed by LZ or not
-    Returns:
-        allowed (bool): allowed by all constraints or not
-    """
-    bfballowed = data["bfb"][0]
-    uniallowed = data["unitarity"][0]
-    allowed = (bfballowed==1) and (uniallowed==1) and (HBallowed==1) \
-              and (PLallowed==1) and (LZallowed==1)
-    return allowed
-def check_Planck(data,  Planck_upper_limit):
-    RelDen = data["RelDen"][0]
-    # check if this data point is below upper bounds from Planck
-    allowed = (RelDen <= Planck_upper_limit)
-    return allowed
-def check_LZ(data, FILE_LZ):
-    DM_mass = data["mAS"][0]
-    PCS = data["PCS"][0]
-    NCS = data["NCS"][0]
-    # get the respective constraint from LZ for one value of DM mass
-    ddCS_constr_pb = get_ddCS_constr(DM_mass, FILE_LZ)
-    # check if this data point is below upper bounds from LZ
-    allowed = (PCS <= ddCS_constr_pb) and (NCS <= ddCS_constr_pb)
-    return allowed, ddCS_constr_pb
-def get_ddCS_constr(DM_mass, FILE_LZ):
-    """get the correct constraint on direct detection CS from LZ
-    (the constraints depend on the DM mass)
+def get_interp_constr(DM_mass, FILE):
+    """interpolate to get correct constraint (dependend on DM mass)
     Args:
         DM_mass (float): DM mass
-        FILE_LZ (string): name of the file containing the constraints from LZ
-            (the file must be txt and without header)
+        FILE (string): name of the file containing the constraints
+            (the file must be .txt or .dat and without header)
     Returns:
-        ddCS_constr_pb (float): the respective direct detection CS constraint
-            in pb
+        constr (float): the respective constraint for one DM mass value
     """
     # extract the constraints from FILE and interpolate them
-    CONSTR=pd.read_csv(FILE_LZ, sep=' ', header=None)
+    CONSTR=pd.read_csv(FILE, sep=' ', header=None)
     x_vals = CONSTR.values[:,0]
     y_vals = CONSTR.values[:,1]
     interpolated_constr = interpolate.interp1d(x_vals, y_vals)
     # insert DM mass to interpolation function to get respective constraint
-    ddCS_constr = interpolated_constr(DM_mass)
-    ddCS_constr_pb = ddCS_constr * 1e+36
-    return ddCS_constr_pb
+    constr = interpolated_constr(DM_mass)
+    return constr
 
 
 if __name__=='__main__':
     FILE_IN = "h_tools_in.csv"
     FILE_OUT = "h_tools_out.csv"
     FILE_LZ = "LZ_constr_wo_header.txt"
+    FILE_FERMI_BB = "MadDM_Fermi_Limit_bb.dat"
+    FILE_FERMI_TAUTAU = "MadDM_Fermi_Limit_tautau.dat"
+    FILE_FERMI_WW = "MadDM_Fermi_Limit_WW.dat"
     data = read_csv(FILE_IN)
     data_prep = prep_csv_3D(data)
-    results = get_results(data_prep, FILE_LZ)
+    results = get_results(data_prep, FILE_LZ, FILE_FERMI_BB, FILE_FERMI_TAUTAU, FILE_FERMI_WW)
     save_csv(FILE_OUT, results)

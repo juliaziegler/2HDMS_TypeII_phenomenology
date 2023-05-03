@@ -20,7 +20,7 @@ vS=346.747053875272 #882.297764743439 #100.000000  # {100, 2000}
 tanbeta=10 #10     # {1, 10}
 ch1tt=0.4191536674553097 #0.36394218991840976 #0.27     # > 0.267, >= ch1bb (<=0.583 but not sure)
 ch1bb=0.20957683372767075 #0.12737976647144644 #0.05     # < 0.581
-m122=80266.0738307626 #98865.9490773604 #-101439.724
+mutil2=810687.3456907022 # m122/(sinbeta*cosbeta)
 mSp2=13118.4057265553 #475.490545912366 #-10000.0000
 alignm=0.9998691018476971 #0.9999986246982658 #1       # {0.98, 1}
 dl14p=-6.174630009389221 #0              # l4p = l1p + dl14p
@@ -41,7 +41,7 @@ STEP_SIZE2=5
 F=results_3D_$PARAM-$PARAM2.csv
 ########################################################
 # make this directoy for the output, directory should not exist already:
-OUTPUT=~/Applications/do_scan/output/varying_$PARAM-$PARAM2-15dof3-new_BP4
+OUTPUT=~/Applications/do_scan/output/varying_$PARAM-$PARAM2-15dof4-new_BP4-test
 # main working directory:
 MAIN_DIR=~/Applications/do_scan
 # in which directory is your SPheno:
@@ -62,7 +62,7 @@ HB_DIR=~/Applications/hbdataset-master
 HS_DIR=~/Applications/hsdataset-main
 ########################################################
 # use this basis change:
-b_change=Basis_Change_9_3D_15dof_dl14p_dl25p.py
+b_change=Basis_Change_10_3D_15dof_dl14p_dl25p_mutil2.py
 mass_b=mass_basis.csv
 inte_b=inte_basis.csv
 # use this code to extract HiggsTools results:
@@ -210,7 +210,7 @@ do
  rm $mass_b
  rm $inte_b
  echo $mh1,$mh2,$mh3,$mA,$mAS,$mHm,$v,\
-      $vS,$tanbeta,$ch1tt,$ch1bb,$m122,\
+      $vS,$tanbeta,$ch1tt,$ch1bb,$mutil2,\
       $mSp2,$alignm,$dl14p,$dl25p,$PARAM,$i,$PARAM2,$j >> $mass_b
  # open csv and calculate interaction basis parameters and save in new csv
  python3 $b_change
@@ -274,10 +274,10 @@ do
       $(mu_the_LEP),$(mu_the_CMS),$(PL_allowed),$(PL_constr),$(LZ_allowed),$(LZ_constr),\
       $(FERMI_allowed_bb),$(FERMI_constr_bb),$(FERMI_allowed_tautau),$(FERMI_constr_tautau),\
       $(FERMI_allowed_WW),$(FERMI_constr_WW),\
-      $(all_allowed)\
+      $(all_allowed) \
       >> $OUTPUT/$F
 
-# save complete SPheno and micrOMEGAs output
+ # save complete SPheno and micrOMEGAs output
  cp $SPHENO_OUT_DIR/SPheno.spc.complexZ2b $OUTPUT/SPheno_out/SPheno.spc.complexZ2b_$i-$j
  cp $MICROMEGAS_OUT_DIR/out.dat $OUTPUT/Micromegas_out/out_$i-$j.dat
  cp $MICROMEGAS_OUT_DIR/channels2.out $OUTPUT/Micromegas_out/channels2_$i-$j.out
