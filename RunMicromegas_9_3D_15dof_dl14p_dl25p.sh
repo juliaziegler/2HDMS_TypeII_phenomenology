@@ -88,7 +88,7 @@ line7="bfb,unitarity,unitarity_with_trilinears,HiggsBounds,HiggsSignals_Chi^2,Hi
 line8="BR(h1->bb),BR(h1->yy),c_h1VV,mu_the_LEP,mu_the_CMS,Planck_allowed,Planck_constr,LZ_allowed,LZ_allowed_p,LZ_allowed_n,LZ_constr_pb"
 line9="FERMI_allowed_bb,FERMI_constr_bb,FERMI_allowed_tautau,FERMI_constr_tautau,FERMI_allowed_WW,FERMI_constr_WW"
 line10="Allowed_by_all_Constraints"
-echo "#$line1,$line2,$line3,$line4,$line5,$line6,$line7,$line8,$line9,$line10" >> $OUTPUT/$F
+echo "$line1,$line2,$line3,$line4,$line5,$line6,$line7,$line8,$line9,$line10" >> $OUTPUT/$F
 
 # defining functions to extract different values from different files
 # extract interaction basis parameters from csv

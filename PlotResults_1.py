@@ -1,6 +1,51 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+
+labels_dict = {"dl14p": "$\delta_{14}'$", "dl25p": "$\delta_{25}'$", "mAS": "$m_{A_S} \, [GeV]$",
+               "vS": "$v_S \, [GeV]$", "tanbeta": "$tan β$", "ch1tt": "$c_{h_1 t t}$",
+               "ch1bb": "$c_{h_1 b b}$", "mSp2": "$m_{S}'^2 \, [GeV^2]$",
+               "Relic_Density": "$\Omega h^2$",
+               "Proton_Cross_Section": "$\sigma_{proton \, A_S} \, [cm^2]$",
+               "Neutron_Cross_Section_pb": "$\sigma_{neutron \, A_S} \, [cm^2]$",
+               "l_h1_SS_norm_to_v": "$\lambda_{h_1 A_S A_S}/v$",
+               "l_h2_SS_norm_to_v": "$\sigma_{A_S A_S -> τ τ} \, [cm^3/s]$",
+               "l_h3_SS_norm_to_v": "$\sigma_{A_S A_S -> W W} \, [cm^3/s]$",
+               "BR(h3->SS)": "$BR(h_3 -> A_S A_S)$",
+               "HiggsSignals_Chi^2_red": "$\chi^2_{red}$",
+               "Chi^2_CMS_LEP": "$\chi^2_{CMS-LEP}$"}
+
+def read_csv(FILE):
+    data = pd.read_csv(FILE, sep=",", header=None,
+                       names=["PATH", "FILE", "PARAM","PARAM2",
+                              "START_VAL","STOP_VAL","STEP_SIZE","START_VAL2",
+                              "STOP_VAL2","STEP_SIZE2"])
+    return data
+def plot_all(data):
+    PATH=data["PATH"]
+    FILE=data["FILE"]
+    shape=get_shape(data)
+    XPARAM=data["PARAM"]
+    YPARAM=data["PARAM2"]
+    # read the results file:
+    results=pd.read_csv(PATH+FILE)
+    # plot the data
+    plot_1(XPARAM, YPARAM, "Relic_Density")
+    # TODO go on here
+
+def get_shape(data):
+    X=np.ceil((data["STOP_VAL"]-data["START_VAL"])/data["STEP_SIZE"])
+    Y=np.ceil((data["STOP_VAL2"]-data["START_VAL2"])/data["STEP_SIZE2"])
+    shape = (Y,X)
+    return shape
+def plot_1(X, Y, Z):
+    # TODO write this code
+    return
+
+if __name__=='__main__':
+    FILE_IN = "pyplot_in.csv"
+    data = read_csv(FILE_IN)
+    # TODO go on here
 ########################################################################
 PATH="/home/zieglj/Applications/do_scan/output/varying_dl14p-dl25p-15dof4-new_BP4-test/"
 FILE="results_3D_dl14p-dl25p.csv"
@@ -120,3 +165,75 @@ plt.savefig(PATH+"plots_Chisq.png", format="png")
 #pos=ax.contourf(X, Y, Z, facecolors=colors)
 #fig.colorbar(pos, ax=ax)
 #plt.show()
+
+"""
+# option one: slightly ugly
+fig, ax = plt.subplots()
+pos=ax.scatter(X, Y, s=100, c=RelDen)
+if 0 in bfb:
+    cs=ax.contourf(X,Y,bfb, levels=1, colors="none",
+                hatches=["/", None])
+    CS=ax.contour(X,Y, bfb, levels=1, colors=["none", "black"])
+    ax.clabel(CS, fmt={0.5: "bfb excl."})
+if 0 in unitarity:
+    cs=ax.contourf(X,Y,unitarity, levels=1, colors="none",
+                hatches=["-", None])
+    CS=ax.contour(X,Y,unitarity, levels=1, colors=["none", "black"])
+    ax.clabel(CS, fmt={0.5: "unitarity excl."})
+if 0 in HB:
+    cs=ax.contourf(X,Y,HB, levels=1, colors="none",
+                hatches=[".", None])
+    CS=ax.contour(X,Y,HB, levels=1, colors=["none", "black"])
+    ax.clabel(CS, fmt={0.5: "HB excl."})
+if 0 in PLallowed:
+    cs=ax.contourf(X,Y,PLallowed, levels=1, colors="none",
+                hatches=["//", None])
+    CS=ax.contour(X,Y,PLallowed, levels=1, colors=["none", "black"])
+    ax.clabel(CS, fmt={0.5: "Planck excl."})
+fig.colorbar(pos, ax=ax, label="$\Omega h^2$")
+ax.set_xlabel(xlabel)
+ax.set_ylabel(ylabel)
+plt.show()
+"""
+
+"""
+# option two: less ugly
+tick_length = 1
+tick_space = 10
+line_space = 11
+
+fig, ax = plt.subplots()
+pos=ax.scatter(X, Y, s=100, c=RelDen)
+CS=ax.contour(X,Y, bfb, levels=0, colors=["black"], linestyles="dashed")
+ax.clabel(CS, fmt={0: "bfb excl."}, inline_spacing=line_space)
+plt.setp(CS.collections,
+         path_effects=[patheffects.withTickedStroke(length=tick_length, spacing=tick_space)])
+
+CS=ax.contour(X,Y,unitarity, levels=0, colors=["black"], linestyles="dotted")
+ax.clabel(CS, fmt={0: "unitarity excl."}, inline_spacing=line_space)
+plt.setp(CS.collections,
+         path_effects=[patheffects.withTickedStroke(length=tick_length, spacing=tick_space)])
+
+CS=ax.contour(X,Y,HB, levels=0, colors=["black"], linestyles="dashdot")
+ax.clabel(CS, fmt={0: "HB excl."}, inline_spacing=line_space)
+plt.setp(CS.collections,
+         path_effects=[patheffects.withTickedStroke(length=tick_length, spacing=tick_space)])
+
+CS=ax.contour(X,Y,PLallowed, levels=0, colors=["black"], linestyles="solid")
+ax.clabel(CS, fmt={0: "Planck excl."}, inline_spacing=line_space)
+plt.setp(CS.collections,
+         path_effects=[patheffects.withTickedStroke(length=tick_length, spacing=tick_space)])
+CS=ax.contour(X,Y,LZallowed, levels=0, colors=["black"], linestyles="solid")
+ax.clabel(CS, fmt={0: "LZ excl."}, inline_spacing=line_space)
+plt.setp(CS.collections,
+         path_effects=[patheffects.withTickedStroke(length=tick_length, spacing=tick_space)])
+CS=ax.contour(X,Y,FMallowed_bb, levels=0, colors=["black"], linestyles="dotted")
+ax.clabel(CS, fmt={0: "Fermi WW excl."}, inline_spacing=line_space)
+plt.setp(CS.collections,
+         path_effects=[patheffects.withTickedStroke(length=tick_length, spacing=tick_space)])
+fig.colorbar(pos, ax=ax, label="$\Omega h^2$")
+ax.set_xlabel(xlabel)
+ax.set_ylabel(ylabel)
+plt.show()
+
+"""
