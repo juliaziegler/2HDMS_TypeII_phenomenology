@@ -44,6 +44,8 @@ def get_results(data, FILE_LZ, FILE_FERMI_BB, FILE_FERMI_TAUTAU, FILE_FERMI_WW):
     PLconstr = 0.1202
 
     LZallowed = (data["PCS"][0] <= LZconstr) and (data["NCS"][0] <= LZconstr)
+    LZallowed_p = (data["PCS"][0] <= LZconstr)
+    LZallowed_n = (data["NCS"][0] <= LZconstr)
     FERMIallowed_bb = (data["INDDCS"][0]*data["INDDCS_bb"] <= FERMIconstr_bb)
     FERMIallowed_tautau = (data["INDDCS"][0]*data["INDDCS_tautau"] <= FERMIconstr_tautau)
     FERMIallowed_WW = (data["INDDCS"][0]*data["INDDCS_WW"] <= FERMIconstr_WW)
@@ -57,7 +59,8 @@ def get_results(data, FILE_LZ, FILE_FERMI_BB, FILE_FERMI_TAUTAU, FILE_FERMI_WW):
                'Chisq_red': [hsChisq_red], 'Chisq_CMS-LEP': [Chisq_CMS_LEP],
                'mu_the_LEP': [mu_the_LEP], 'mu_the_CMS': [mu_the_CMS],
                'Planckallowed': [int(PLallowed)], 'Planckconstr': PLconstr,
-               'LZallowed': [int(LZallowed)], 'LZconstr': [LZconstr],
+               'LZallowed': [int(LZallowed)], 'LZallowed_p': [int(LZallowed_p)],
+               'LZallowed_n': [int(LZallowed_n)], 'LZconstr': [LZconstr],
                'FERMIallowed_bb': [int(FERMIallowed_bb)], 'FERMIconstr_bb': [FERMIconstr_bb],
                'FERMIallowed_tautau': [int(FERMIallowed_tautau)], 'FERMIconstr_tautau': [FERMIconstr_tautau],
                'FERMIallowed_WW': [int(FERMIallowed_WW)], 'FERMIconstr_WW': [FERMIconstr_WW],

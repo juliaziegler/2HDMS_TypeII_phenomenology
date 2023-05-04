@@ -85,7 +85,7 @@ line4="BR(h1->SS),BR(h2->SS),BR(h3->SS)"
 line5="l_h1h1_ss_times_i,l_h2h2_ss_times_i,l_h3h3_ss_times_i,l_h1h2_ss_times_i,l_h1h3_ss_times_i,l_h2h3_ss_times_i"
 line6="Indirect_Detection_CS_cm^3/s,IND_h1h1,IND_h2h2,IND_h3h3,IND_h1h2,IND_h2h3,IND_bb,IND_tt,IND_tautau,IND_ss,IND_cc,IND_mumu,IND_ee,IND_WW,IND_ZZ,IND_gg,IND_gammagamma"
 line7="bfb,unitarity,unitarity_with_trilinears,HiggsBounds,HiggsSignals_Chi^2,HiggsSignals_Chi^2_red,Chi^2_CMS_LEP"
-line8="BR(h1->bb),BR(h1->yy),c_h1VV,mu_the_LEP,mu_the_CMS,Planck_allowed,Planck_constr,LZ_allowed,LZ_constr_pb"
+line8="BR(h1->bb),BR(h1->yy),c_h1VV,mu_the_LEP,mu_the_CMS,Planck_allowed,Planck_constr,LZ_allowed,LZ_allowed_p,LZ_allowed_n,LZ_constr_pb"
 line9="FERMI_allowed_bb,FERMI_constr_bb,FERMI_allowed_tautau,FERMI_constr_tautau,FERMI_allowed_WW,FERMI_constr_WW"
 line10="Allowed_by_all_Constraints"
 echo "#$line1,$line2,$line3,$line4,$line5,$line6,$line7,$line8,$line9,$line10" >> $OUTPUT/$F
@@ -189,14 +189,16 @@ mu_the_CMS() { awk -F ',' '{print $7}' $h_tools_out | sed -n 2p; }
 PL_allowed() { awk -F ',' '{print $8}' $h_tools_out | sed -n 2p; }
 PL_constr() { awk -F ',' '{print $9}' $h_tools_out | sed -n 2p; }
 LZ_allowed() { awk -F ',' '{print $10}' $h_tools_out | sed -n 2p; }
-LZ_constr() { awk -F ',' '{print $11}' $h_tools_out | sed -n 2p; }
-FERMI_allowed_bb() { awk -F ',' '{print $12}' $h_tools_out | sed -n 2p; }
-FERMI_constr_bb() { awk -F ',' '{print $13}' $h_tools_out | sed -n 2p; }
-FERMI_allowed_tautau() { awk -F ',' '{print $14}' $h_tools_out | sed -n 2p; }
-FERMI_constr_tautau() { awk -F ',' '{print $15}' $h_tools_out | sed -n 2p; }
-FERMI_allowed_WW() { awk -F ',' '{print $16}' $h_tools_out | sed -n 2p; }
-FERMI_constr_WW() { awk -F ',' '{print $17}' $h_tools_out | sed -n 2p; }
-all_allowed() { awk -F ',' '{print $18}' $h_tools_out | sed -n 2p; }
+LZ_allowed_p() { awk -F ',' '{print $11}' $h_tools_out | sed -n 2p; }
+LZ_allowed_n() { awk -F ',' '{print $12}' $h_tools_out | sed -n 2p; }
+LZ_constr() { awk -F ',' '{print $13}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_bb() { awk -F ',' '{print $14}' $h_tools_out | sed -n 2p; }
+FERMI_constr_bb() { awk -F ',' '{print $15}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_tautau() { awk -F ',' '{print $16}' $h_tools_out | sed -n 2p; }
+FERMI_constr_tautau() { awk -F ',' '{print $17}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_WW() { awk -F ',' '{print $18}' $h_tools_out | sed -n 2p; }
+FERMI_constr_WW() { awk -F ',' '{print $19}' $h_tools_out | sed -n 2p; }
+all_allowed() { awk -F ',' '{print $20}' $h_tools_out | sed -n 2p; }
 
 
 # start scan, iterating over different values for PARAM and PARAM2
@@ -271,10 +273,11 @@ do
       $(bfb),$(unitarity),$(unitarity_w_tril),\
       $(HB_allowed),$(HS_Chisq),$(HS_Chisq_red),\
       $(Chisq_CMS_LEP),$(BR_h1bb),$(BR_h1yy),$(c_h1VV),\
-      $(mu_the_LEP),$(mu_the_CMS),$(PL_allowed),$(PL_constr),$(LZ_allowed),$(LZ_constr),\
+      $(mu_the_LEP),$(mu_the_CMS),$(PL_allowed),$(PL_constr),$(LZ_allowed),\
+      $(LZ_allowed_p),$(LZ_allowed_n),$(LZ_constr),\
       $(FERMI_allowed_bb),$(FERMI_constr_bb),$(FERMI_allowed_tautau),$(FERMI_constr_tautau),\
       $(FERMI_allowed_WW),$(FERMI_constr_WW),\
-      $(all_allowed)\
+      $(all_allowed) \
       >> $OUTPUT/$F
 
 # save complete SPheno and micrOMEGAs output
