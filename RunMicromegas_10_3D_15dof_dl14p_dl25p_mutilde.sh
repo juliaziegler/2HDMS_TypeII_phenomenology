@@ -30,13 +30,13 @@ PARAM=dl14p
 dl14p=i
 START_VAL=-6.68463000938922
 STOP_VAL=-5.664630009389221
-STEP_SIZE=0.017
+STEP_SIZE=0.34
 
 PARAM2=dl25p
 dl25p=j
 START_VAL2=0.109395110330231
 STOP_VAL2=0.409395110330231
-STEP_SIZE2=0.005
+STEP_SIZE2=0.1
 
 F=results_3D_$PARAM-$PARAM2.csv
 ########################################################
@@ -293,6 +293,9 @@ echo >> $OUTPUT/$F
 done
 
 # 6. plot results
+rm $plot_in
 echo $OUTPUT,$F,$PARAM,$PARAM2,$START_VAL,$STOP_VAL,$STEP_SIZE,$START_VAL2,$STOP_VAL2,$STEP_SIZE2 \
      >> $plot_in
+cp $plot_in $OUTPUT/$plot_in
+python3 $plot_results_py
 

@@ -1,19 +1,41 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib import patheffects
 
 labels_dict = {"dl14p": "$\delta_{14}'$", "dl25p": "$\delta_{25}'$", "mAS": "$m_{A_S} \, [GeV]$",
                "vS": "$v_S \, [GeV]$", "tanbeta": "$tan β$", "ch1tt": "$c_{h_1 t t}$",
                "ch1bb": "$c_{h_1 b b}$", "mSp2": "$m_{S}'^2 \, [GeV^2]$",
                "Relic_Density": "$\Omega h^2$",
-               "Proton_Cross_Section": "$\sigma_{proton \, A_S} \, [cm^2]$",
+               "Proton_Cross_Section_pb": "$\sigma_{proton \, A_S} \, [cm^2]$",
                "Neutron_Cross_Section_pb": "$\sigma_{neutron \, A_S} \, [cm^2]$",
                "l_h1_SS_norm_to_v": "$\lambda_{h_1 A_S A_S}/v$",
-               "l_h2_SS_norm_to_v": "$\sigma_{A_S A_S -> τ τ} \, [cm^3/s]$",
-               "l_h3_SS_norm_to_v": "$\sigma_{A_S A_S -> W W} \, [cm^3/s]$",
+               "l_h2_SS_norm_to_v": "$\lambda_{h_2 A_S A_S}/v$",
+               "l_h3_SS_norm_to_v": "$\lambda_{h_3 A_S A_S}/v$",
                "BR(h3->SS)": "$BR(h_3 -> A_S A_S)$",
                "HiggsSignals_Chi^2_red": "$\chi^2_{red}$",
-               "Chi^2_CMS_LEP": "$\chi^2_{CMS-LEP}$"}
+               "Chi^2_CMS_LEP": "$\chi^2_{CMS-LEP}$",
+               "IND_bb": "$\sigma_{A_S A_S -> b b} \, [cm^3/s]$",
+               "IND_tautau": "$\sigma_{A_S A_S -> τ τ} \, [cm^3/s]$",
+               "IND_WW": "$\sigma_{A_S A_S -> W W} \, [cm^3/s]$"}
+constr_dict = {"Relic_Density": "Planck_allowed",
+               "Proton_Cross_Section_pb": "LZ_allowed_p",
+               "Neutron_Cross_Section_pb": "LZ_allowed_n",
+               "IND_bb": "FERMI_allowed_bb",
+               "IND_tautau": "FERMI_allowed_tautau",
+               "IND_WW": "FERMI_allowed_WW"}
+constr_labels_dict = {"bfb": "bfb excl.", "unitarity": "unitarity excl.",
+               "HiggsBounds": "HB excl.", "Planck_allowed": "Planck excl.",
+               "LZ_allowed_p": "LZ excl.", "LZ_allowed_n": "LZ excl.",
+               "FERMI_allowed_bb": "FERMI excl.", "FERMI_allowed_tautau": "FERMI excl.",
+               "FERMI_allowed_WW": "FERMI excl."}
+file_out_name_dict = {"Relic_Density": "RelDen", "BR(h3->SS)": "BR",
+               "Proton_Cross_Section_pb": "ddCSp", "Neutron_Cross_Section_pb": "ddCSn",
+               "HiggsSignals_Chi^2_red": "Chisqred", "Chi^2_CMS_LEP": "ChisqCMSLEP",
+               "l_h1_SS_norm_to_v": "lh1", "l_h2_SS_norm_to_v": "lh2",
+               "l_h3_SS_norm_to_v": "lh3", "IND_bb": "InddCSbb",
+               "IND_tautau": "InddCStautau", "IND_WW": "InddCSWW"}
+
 
 def read_csv(FILE):
     data = pd.read_csv(FILE, sep=",", header=None,
@@ -21,219 +43,150 @@ def read_csv(FILE):
                               "START_VAL","STOP_VAL","STEP_SIZE","START_VAL2",
                               "STOP_VAL2","STEP_SIZE2"])
     return data
-def plot_all(data):
-    PATH=data["PATH"]
-    FILE=data["FILE"]
-    shape=get_shape(data)
-    XPARAM=data["PARAM"]
-    YPARAM=data["PARAM2"]
+def plot_all(inp_file):
+    PATH=inp_file["PATH"][0]
+    FILE=inp_file["FILE"][0]
+    shape=get_shape(inp_file)
+    XPARAM=inp_file["PARAM"][0]
+    YPARAM=inp_file["PARAM2"][0]
     # read the results file:
-    results=pd.read_csv(PATH+FILE)
+    data=pd.read_csv(PATH+"/"+FILE)
+    # set tick layout for constrained regions
+    tick_length = 1
+    tick_space = 10
+    line_space = 11
     # plot the data
-    plot_1(XPARAM, YPARAM, "Relic_Density")
-    # TODO go on here
+    plot_1(XPARAM, YPARAM, "Relic_Density", 1, tick_length, tick_space, line_space, data,
+           shape, PATH)
+    plot_1(XPARAM, YPARAM, "BR(h3->SS)", 1, tick_length, tick_space, line_space, data, shape, PATH)
+    plot_2(XPARAM, YPARAM, "Proton_Cross_Section_pb", "Neutron_Cross_Section_pb", 1e-36,
+           tick_length, tick_space, line_space, data, shape, PATH)
+    plot_2(XPARAM, YPARAM, "HiggsSignals_Chi^2_red", "Chi^2_CMS_LEP", 1,
+           tick_length, tick_space, line_space, data, shape, PATH)
+    plot_3(XPARAM, YPARAM, "l_h1_SS_norm_to_v", "l_h2_SS_norm_to_v", "l_h3_SS_norm_to_v", 1,
+          tick_length, tick_space, line_space, data, shape, PATH)
+    plot_3(XPARAM, YPARAM, "IND_bb", "IND_tautau", "IND_WW",
+           np.array(data["Indirect_Detection_CS_cm^3/s"]).reshape(shape),
+           tick_length, tick_space, line_space, data, shape, PATH)
+    return
 
 def get_shape(data):
-    X=np.ceil((data["STOP_VAL"]-data["START_VAL"])/data["STEP_SIZE"])
-    Y=np.ceil((data["STOP_VAL2"]-data["START_VAL2"])/data["STEP_SIZE2"])
-    shape = (Y,X)
+    X=np.floor(1 + (data["STOP_VAL"][0]-data["START_VAL"][0])/data["STEP_SIZE"][0])
+    Y=np.floor(1 + (data["STOP_VAL2"][0]-data["START_VAL2"][0])/data["STEP_SIZE2"][0])
+    shape = (int(X),int(Y))
     return shape
-def plot_1(X, Y, Z):
-    # TODO write this code
+def plot_constr(X, Y, Z, ZPARAM, line_style, tick_length, tick_space, line_space, ax):
+    if 1 in Z:
+        label = constr_labels_dict[ZPARAM]
+        CS=ax.contour(X, Y, Z, levels=1, colors=["none", "black"], linestyles=line_style)
+        ax.clabel(CS, fmt={0.5: label}, inline_spacing=line_space)
+        plt.setp(CS.collections,
+             path_effects=[patheffects.withTickedStroke(length=tick_length, spacing=tick_space)])
+    else:
+        CS=ax.contourf(X, Y, Z, levels=1, colors=["none"], hatches="/")
+        artists, labels = CS.legend_elements()
+        labels2=["all "+constr_labels_dict[ZPARAM]]
+        ax.legend(artists, labels2)
     return
+def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
+                 tick_length, tick_space, line_space, fig):
+    pos=ax.scatter(X, Y, s=100, c=Z)
+    plot_constr(X, Y, bfb, "bfb", "dashed", tick_length, tick_space, line_space, ax)
+    plot_constr(X, Y, unitarity, "unitarity", "dotted", tick_length, tick_space,
+                line_space, ax)
+    plot_constr(X, Y, HB, "HiggsBounds", "dashdot", tick_length, tick_space, line_space, ax)
+    # plot additional constraint relevant for ZPARAM
+    if ZPARAM in constr_dict.keys():
+        add_constr_name = constr_dict[ZPARAM]
+        add_constr_data = np.array(data[add_constr_name]).reshape(shape)
+        plot_constr(X, Y, add_constr_data, add_constr_name, "solid", tick_length,
+                    tick_space, line_space, ax)
+    fig.colorbar(pos, ax=ax, label=zlabel)
+    return
+def get_general_constr(data, shape):
+    bfb=np.array(data["bfb"]).reshape(shape)
+    unitarity=np.array(data["unitarity"]).reshape(shape)
+    HB=np.array(data["HiggsBounds"]).reshape(shape)
+    return bfb, unitarity, HB
+def plot_1(XPARAM, YPARAM, ZPARAM, ZFACTOR, tick_length, tick_space, line_space, data, shape, PATH):
+    # define name for output file
+    FILE_OUT = PATH+"/plots_"+file_out_name_dict[ZPARAM]+".png"
+    # define all needed data
+    X=np.array(data[XPARAM]).reshape(shape)
+    Y=np.array(data[YPARAM]).reshape(shape)
+    Z=np.array(data[ZPARAM]).reshape(shape) * ZFACTOR
+    xlabel = labels_dict[XPARAM]
+    ylabel = labels_dict[YPARAM]
+    zlabel = labels_dict[ZPARAM]
+    # get the constraints
+    bfb, unitarity, HB = get_general_constr(data, shape)
+    # plot the data with constraint lines
+    fig, ax = plt.subplots()
+    make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
+                 tick_length, tick_space, line_space, fig)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    plt.savefig(FILE_OUT, format="png")
+    return
+def plot_2(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZFACTOR, tick_length, tick_space, line_space, data,
+           shape, PATH):
+    # define name for output file
+    FILE_OUT = PATH+"/plots_"+file_out_name_dict[ZPARAM1]+file_out_name_dict[ZPARAM2]+".png"
+    # define all needed data
+    X=np.array(data[XPARAM]).reshape(shape)
+    Y=np.array(data[YPARAM]).reshape(shape)
+    Z1=np.array(data[ZPARAM1]).reshape(shape) * ZFACTOR
+    Z2=np.array(data[ZPARAM2]).reshape(shape) * ZFACTOR
+    xlabel = labels_dict[XPARAM]
+    ylabel = labels_dict[YPARAM]
+    zlabel1 = labels_dict[ZPARAM1]
+    zlabel2 = labels_dict[ZPARAM2]
+    # get the constraints
+    bfb, unitarity, HB = get_general_constr(data, shape)
+    # plot the data with constraint lines
+    fig, (ax1, ax2) = plt.subplots(2,1)
+    make_subplot(ax1, X, Y, Z1, bfb, unitarity, HB, ZPARAM1, data, zlabel1, shape,
+                 tick_length, tick_space, line_space, fig)
+    make_subplot(ax2, X, Y, Z2, bfb, unitarity, HB, ZPARAM2, data, zlabel2, shape,
+                 tick_length, tick_space, line_space, fig)
+    ax2.set_xlabel(xlabel)
+    ax1.set_ylabel(ylabel)
+    ax2.set_ylabel(ylabel)
+    plt.savefig(FILE_OUT, format="png")
+    return
+def plot_3(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZPARAM3, ZFACTOR, tick_length,
+           tick_space, line_space, data, shape, PATH):
+    # define name for output file
+    FILE_OUT = PATH+"/plots_"+file_out_name_dict[ZPARAM1]+file_out_name_dict[ZPARAM2]+\
+               file_out_name_dict[ZPARAM3]+".png"
+    # define all needed data
+    X=np.array(data[XPARAM]).reshape(shape)
+    Y=np.array(data[YPARAM]).reshape(shape)
+    Z1=np.array(data[ZPARAM1]).reshape(shape) * ZFACTOR
+    Z2=np.array(data[ZPARAM2]).reshape(shape) * ZFACTOR
+    Z3=np.array(data[ZPARAM3]).reshape(shape) * ZFACTOR
+    xlabel = labels_dict[XPARAM]
+    ylabel = labels_dict[YPARAM]
+    zlabel1 = labels_dict[ZPARAM1]
+    zlabel2 = labels_dict[ZPARAM2]
+    zlabel3 = labels_dict[ZPARAM3]
+    # get the constraints
+    bfb, unitarity, HB = get_general_constr(data, shape)
+    # plot the data with constraint lines
+    fig, (ax1, ax2, ax3) = plt.subplots(3,1)
+    make_subplot(ax1, X, Y, Z1, bfb, unitarity, HB, ZPARAM1, data, zlabel1, shape,
+                 tick_length, tick_space, line_space, fig)
+    make_subplot(ax2, X, Y, Z2, bfb, unitarity, HB, ZPARAM2, data, zlabel2, shape,
+                 tick_length, tick_space, line_space, fig)
+    make_subplot(ax3, X, Y, Z3, bfb, unitarity, HB, ZPARAM3, data, zlabel3, shape,
+                 tick_length, tick_space, line_space, fig)
+    ax3.set_xlabel(xlabel)
+    ax2.set_ylabel(ylabel)
+    plt.savefig(FILE_OUT, format="png")
+    return
+
 
 if __name__=='__main__':
     FILE_IN = "pyplot_in.csv"
-    data = read_csv(FILE_IN)
-    # TODO go on here
-########################################################################
-PATH="/home/zieglj/Applications/do_scan/output/varying_dl14p-dl25p-15dof4-new_BP4-test/"
-FILE="results_3D_dl14p-dl25p.csv"
-shape=(60,61)
-
-XPARAM="dl14p"
-xlabel="$\delta_{14}'$"
-
-YPARAM="dl25p"
-ylabel="$\delta_{25}'$"
-
-########################################################################
-data=pd.read_csv(PATH+FILE)
-X=np.array(data[XPARAM]).reshape(shape)
-Y=np.array(data[YPARAM]).reshape(shape)
-DMmass=np.array(data["DM_mass_GeV"]).reshape(shape)
-RelDen=np.array(data["Relic_Density"]).reshape(shape)
-ddCSp=np.array(data["Proton_Cross_Section_pb"]).reshape(shape)
-ddCSn=np.array(data["Neutron_Cross_Section_pb"]).reshape(shape)
-l_h1_SS=np.array(data["l_h1_SS_norm_to_v"]).reshape(shape)
-l_h2_SS=np.array(data["l_h2_SS_norm_to_v"]).reshape(shape)
-l_h3_SS=np.array(data["l_h3_SS_norm_to_v"]).reshape(shape)
-BR_h3=np.array(data["BR(h3->SS)"]).reshape(shape)
-IndDCS=np.array(data["Indirect_Detection_CS_cm^3/s"]).reshape(shape)
-Ind_bb=np.array(data["IND_bb"]).reshape(shape)
-Ind_tautau=np.array(data["IND_tautau"]).reshape(shape)
-Ind_WW=np.array(data["IND_WW"]).reshape(shape)
-bfb=np.array(data["bfb"]).reshape(shape)
-unitarity=np.array(data["unitarity"]).reshape(shape)
-HB=np.array(data["HiggsBounds"]).reshape(shape)
-HS_Chisq=np.array(data["HiggsSignals_Chi^2"]).reshape(shape)
-HS_Chisq_red=np.array(data["HiggsSignals_Chi^2_red"]).reshape(shape)
-Chisq_CMS_LEP=np.array(data["Chi^2_CMS_LEP"]).reshape(shape)
-mu_LEP=np.array(data["mu_the_LEP"]).reshape(shape)
-mu_CMS=np.array(data["mu_the_CMS"]).reshape(shape)
-PLconstr=np.array(data["Planck_constr"]).reshape(shape)
-PLallowed=np.array(data["Planck_allowed"]).reshape(shape)
-LZconstr=np.array(data["LZ_constr_pb"]).reshape(shape)
-LZallowed=np.array(data["LZ_allowed"]).reshape(shape)
-LZallowed_p=np.array(data["LZ_allowed_p"]).reshape(shape)
-LZallowed_n=np.array(data["LZ_allowed_n"]).reshape(shape)
-FMconstr_bb=np.array(data["FERMI_constr_bb"]).reshape(shape)
-FMallowed_bb=np.array(data["FERMI_allowed_bb"]).reshape(shape)
-FMconstr_tautau=np.array(data["FERMI_constr_tautau"]).reshape(shape)
-FMallowed_tautau=np.array(data["FERMI_allowed_tautau"]).reshape(shape)
-FMconstr_WW=np.array(data["FERMI_constr_WW"]).reshape(shape)
-FMallowed_WW=np.array(data["FERMI_allowed_WW"]).reshape(shape)
-allallowed=np.array(data["Allowed_by_all_Constraints"]).reshape(shape)
-
-fig, ax = plt.subplots()
-pos=ax.scatter(X, Y, s=100, c=RelDen)
-fig.colorbar(pos, ax=ax, label="$\Omega h^2$")
-ax.set_xlabel(xlabel)
-ax.set_ylabel(ylabel)
-plt.savefig(PATH+"plots_RelDen.png", format="png")
-
-fig, (ax1, ax2) = plt.subplots(2,1)
-pos1=ax1.scatter(X, Y, s=100, c=ddCSp)
-fig.colorbar(pos1, ax=ax1, label="$\sigma_{proton \, A_S} \, [cm^2]$")
-pos2=ax2.scatter(X, Y, s=100, c=ddCSn)
-fig.colorbar(pos2, ax=ax2, label="$\sigma_{neutron \, A_S} \, [cm^2]$")
-ax2.set_xlabel(xlabel)
-ax1.set_ylabel(ylabel)
-ax2.set_ylabel(ylabel)
-plt.savefig(PATH+"plots_ddCS.png", format="png")
-
-fig, (ax1, ax2, ax3) = plt.subplots(3,1)
-pos1=ax1.scatter(X, Y, s=100, c=IndDCS*Ind_bb)
-fig.colorbar(pos1, ax=ax1, label="$\sigma_{A_S A_S -> b b} \, [cm^3/s]$")
-pos2=ax2.scatter(X, Y, s=100, c=IndDCS*Ind_tautau)
-fig.colorbar(pos2, ax=ax2, label="$\sigma_{A_S A_S -> τ τ} \, [cm^3/s]$")
-pos3=ax3.scatter(X, Y, s=100, c=IndDCS*Ind_WW)
-fig.colorbar(pos3, ax=ax3, label="$\sigma_{A_S A_S -> W W} \, [cm^3/s]$")
-ax3.set_xlabel(xlabel)
-ax2.set_ylabel(ylabel)
-plt.savefig(PATH+"plots_IndDCS.png", format="png")
-
-fig, (ax1, ax2, ax3) = plt.subplots(3,1)
-pos1=ax1.scatter(X, Y, s=100, c=l_h1_SS)
-fig.colorbar(pos1, ax=ax1, label="$\lambda_{h_1 A_S A_S}/v$")
-pos2=ax2.scatter(X, Y, s=100, c=l_h2_SS)
-fig.colorbar(pos2, ax=ax2, label="$\lambda_{h_2 A_S A_S}/v$")
-pos3=ax3.scatter(X, Y, s=100, c=l_h3_SS)
-fig.colorbar(pos3, ax=ax3, label="$\lambda_{h_3 A_S A_S}/v$")
-ax3.set_xlabel(xlabel)
-ax2.set_ylabel(ylabel)
-plt.savefig(PATH+"plots_TriCoup.png", format="png")
-
-fig, ax = plt.subplots()
-pos=ax.scatter(X, Y, s=100, c=BR_h3)
-fig.colorbar(pos, ax=ax, label="$BR(h_3 -> A_S A_S)$")
-ax.set_xlabel(xlabel)
-ax.set_ylabel(ylabel)
-plt.savefig(PATH+"plots_BR.png", format="png")
-
-fig, (ax1, ax2) = plt.subplots(2,1)
-pos1=ax1.scatter(X, Y, s=100, c=HS_Chisq_red)
-fig.colorbar(pos1, ax=ax1, label="$\chi^2_{red}$")
-pos2=ax2.scatter(X, Y, s=100, c=Chisq_CMS_LEP)
-fig.colorbar(pos2, ax=ax2, label="$\chi^2_{CMS-LEP}$")
-ax2.set_xlabel(xlabel)
-ax1.set_ylabel(ylabel)
-ax2.set_ylabel(ylabel)
-plt.savefig(PATH+"plots_Chisq.png", format="png")
-
-############## commands for future inspiration ##################
-#fig, ax = plt.subplots()
-#CS = ax.contour(X, Y, Z)
-#ax.clabel(CS, inline=True, fontsize=10)
-
-#fig, ax1 = plt.subplots()
-#pos = ax1.imshow(Z, cmap='Blues', interpolation='none')
-#fig.colorbar(pos, ax=ax1)
-#plt.show()
-
-#fig, ax = plt.subplots()
-#pos=ax.contourf(X, Y, Z, facecolors=colors)
-#fig.colorbar(pos, ax=ax)
-#plt.show()
-
-"""
-# option one: slightly ugly
-fig, ax = plt.subplots()
-pos=ax.scatter(X, Y, s=100, c=RelDen)
-if 0 in bfb:
-    cs=ax.contourf(X,Y,bfb, levels=1, colors="none",
-                hatches=["/", None])
-    CS=ax.contour(X,Y, bfb, levels=1, colors=["none", "black"])
-    ax.clabel(CS, fmt={0.5: "bfb excl."})
-if 0 in unitarity:
-    cs=ax.contourf(X,Y,unitarity, levels=1, colors="none",
-                hatches=["-", None])
-    CS=ax.contour(X,Y,unitarity, levels=1, colors=["none", "black"])
-    ax.clabel(CS, fmt={0.5: "unitarity excl."})
-if 0 in HB:
-    cs=ax.contourf(X,Y,HB, levels=1, colors="none",
-                hatches=[".", None])
-    CS=ax.contour(X,Y,HB, levels=1, colors=["none", "black"])
-    ax.clabel(CS, fmt={0.5: "HB excl."})
-if 0 in PLallowed:
-    cs=ax.contourf(X,Y,PLallowed, levels=1, colors="none",
-                hatches=["//", None])
-    CS=ax.contour(X,Y,PLallowed, levels=1, colors=["none", "black"])
-    ax.clabel(CS, fmt={0.5: "Planck excl."})
-fig.colorbar(pos, ax=ax, label="$\Omega h^2$")
-ax.set_xlabel(xlabel)
-ax.set_ylabel(ylabel)
-plt.show()
-"""
-
-"""
-# option two: less ugly
-tick_length = 1
-tick_space = 10
-line_space = 11
-
-fig, ax = plt.subplots()
-pos=ax.scatter(X, Y, s=100, c=RelDen)
-CS=ax.contour(X,Y, bfb, levels=0, colors=["black"], linestyles="dashed")
-ax.clabel(CS, fmt={0: "bfb excl."}, inline_spacing=line_space)
-plt.setp(CS.collections,
-         path_effects=[patheffects.withTickedStroke(length=tick_length, spacing=tick_space)])
-
-CS=ax.contour(X,Y,unitarity, levels=0, colors=["black"], linestyles="dotted")
-ax.clabel(CS, fmt={0: "unitarity excl."}, inline_spacing=line_space)
-plt.setp(CS.collections,
-         path_effects=[patheffects.withTickedStroke(length=tick_length, spacing=tick_space)])
-
-CS=ax.contour(X,Y,HB, levels=0, colors=["black"], linestyles="dashdot")
-ax.clabel(CS, fmt={0: "HB excl."}, inline_spacing=line_space)
-plt.setp(CS.collections,
-         path_effects=[patheffects.withTickedStroke(length=tick_length, spacing=tick_space)])
-
-CS=ax.contour(X,Y,PLallowed, levels=0, colors=["black"], linestyles="solid")
-ax.clabel(CS, fmt={0: "Planck excl."}, inline_spacing=line_space)
-plt.setp(CS.collections,
-         path_effects=[patheffects.withTickedStroke(length=tick_length, spacing=tick_space)])
-CS=ax.contour(X,Y,LZallowed, levels=0, colors=["black"], linestyles="solid")
-ax.clabel(CS, fmt={0: "LZ excl."}, inline_spacing=line_space)
-plt.setp(CS.collections,
-         path_effects=[patheffects.withTickedStroke(length=tick_length, spacing=tick_space)])
-CS=ax.contour(X,Y,FMallowed_bb, levels=0, colors=["black"], linestyles="dotted")
-ax.clabel(CS, fmt={0: "Fermi WW excl."}, inline_spacing=line_space)
-plt.setp(CS.collections,
-         path_effects=[patheffects.withTickedStroke(length=tick_length, spacing=tick_space)])
-fig.colorbar(pos, ax=ax, label="$\Omega h^2$")
-ax.set_xlabel(xlabel)
-ax.set_ylabel(ylabel)
-plt.show()
-
-"""
+    inp_file = read_csv(FILE_IN)
+    plot_all(inp_file)

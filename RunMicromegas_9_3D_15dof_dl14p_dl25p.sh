@@ -69,6 +69,9 @@ inte_b=inte_basis.csv
 h_tools=Get_exp_constr.py
 h_tools_in=h_tools_in.csv
 h_tools_out=h_tools_out.csv
+# use this for plotting the results:
+plot_results_py=PlotResults_1.py
+plot_in=pyplot_in.csv
 ########################################################
 
 # removing old and setting up new directory structure for output
@@ -288,3 +291,10 @@ do
 # draw empty lines after each block (this is needed for 3D gnuplot)
 echo >> $OUTPUT/$F
 done
+
+# 6. plot results
+rm $plot_in
+echo $OUTPUT,$F,$PARAM,$PARAM2,$START_VAL,$STOP_VAL,$STEP_SIZE,$START_VAL2,$STOP_VAL2,$STEP_SIZE2 \
+     >> $plot_in
+cp $plot_in $OUTPUT/$plot_in
+python3 $plot_results_py
