@@ -39,18 +39,18 @@ STOP_VAL2=356.747053875272
 STEP_SIZE2=5
 
 F=results_3D_$PARAM-$PARAM2.csv
+FOLDER=varying_$PARAM-$PARAM2-15dof4-new_BP1-test
 ########################################################
-# make this directoy for the output, directory should not exist already:
-OUTPUT=~/Applications/do_scan/output/varying_$PARAM-$PARAM2-15dof3-new_BP4
 # main working directory:
 MAIN_DIR=~/Applications/do_scan
+# this directory is fo all outputs, directory should exist already:
+OUT=$MAIN_DIR/output
+# make this directoy for the output, directory should not exist already:
+OUTPUT=$OUT/$FOLDER
 # in which directory is your SPheno:
 SPHENO_DIR=~/Applications/SPheno-4.0.5
 # put SPheno output in this directory:
 SPHENO_OUT_DIR=~/Applications/do_scan/output_spheno
-# in which directory is your SPheno input file:
-# (make sure to have the Les_Houches...Template... in this directory)
-SPHENO_IN_DIR=~/Applications/do_scan #SPheno-4.0.5/complexZ2bDM
 # in which directory is your micromegas:
 MICROMEGAS_DIR=~/Applications/micromegas_5.2.13/complexZ2bDM_w_IndD
 # put micromegas output in this directory:
@@ -63,15 +63,18 @@ HS_DIR=~/Applications/hsdataset-main
 ########################################################
 # use this basis change:
 b_change=Basis_Change_9_3D_15dof_dl14p_dl25p.py
-mass_b=mass_basis.csv
-inte_b=inte_basis.csv
+mass_b=$OUT/mass_basis.csv
+inte_b=$OUT/inte_basis.csv
 # use this code to extract HiggsTools results:
 h_tools=Get_exp_constr.py
-h_tools_in=h_tools_in.csv
-h_tools_out=h_tools_out.csv
+h_tools_in=$OUT/h_tools_in.csv
+h_tools_out=$OUT/h_tools_out.csv
 # use this for plotting the results:
 plot_results_py=PlotResults_1.py
-plot_in=pyplot_in.csv
+plot_in=$OUT/pyplot_in.csv
+# use this template for SPheno input:
+spheno_templ=$MAIN_DIR/LesHouches.in.complexZ2b_low_Template_MO
+spheno_in=$OUT/LesHouches.in.complexZ2b_low
 ########################################################
 
 # removing old and setting up new directory structure for output
@@ -90,8 +93,10 @@ line6="Indirect_Detection_CS_cm^3/s,IND_h1h1,IND_h2h2,IND_h3h3,IND_h1h2,IND_h2h3
 line7="bfb,unitarity,unitarity_with_trilinears,HiggsBounds,HiggsSignals_Chi^2,HiggsSignals_Chi^2_red,Chi^2_CMS_LEP"
 line8="BR(h1->bb),BR(h1->yy),c_h1VV,mu_the_LEP,mu_the_CMS,Planck_allowed,Planck_constr,LZ_allowed,LZ_allowed_p,LZ_allowed_n,LZ_constr_pb"
 line9="FERMI_allowed_bb,FERMI_constr_bb,FERMI_allowed_tautau,FERMI_constr_tautau,FERMI_allowed_WW,FERMI_constr_WW"
-line10="Allowed_by_all_Constraints"
-echo "$line1,$line2,$line3,$line4,$line5,$line6,$line7,$line8,$line9,$line10" >> $OUTPUT/$F
+line10="FERMI_allowed_cc,FERMI_constr_cc,FERMI_allowed_ee,FERMI_constr_ee,FERMI_allowed_yy,FERMI_constr_yy"
+line11="FERMI_allowed_gg,FERMI_constr_gg,FERMI_allowed_hh,FERMI_constr_hh,FERMI_allowed_mumu,FERMI_constr_mumu,FERMI_allowed_ZZ,FERMI_constr_ZZ"
+line12="Allowed_by_all_Constraints"
+echo "$line1,$line2,$line3,$line4,$line5,$line6,$line7,$line8,$line9,$line10,$line11,$line12" >> $OUTPUT/$F
 
 # defining functions to extract different values from different files
 # extract interaction basis parameters from csv
@@ -201,7 +206,21 @@ FERMI_allowed_tautau() { awk -F ',' '{print $16}' $h_tools_out | sed -n 2p; }
 FERMI_constr_tautau() { awk -F ',' '{print $17}' $h_tools_out | sed -n 2p; }
 FERMI_allowed_WW() { awk -F ',' '{print $18}' $h_tools_out | sed -n 2p; }
 FERMI_constr_WW() { awk -F ',' '{print $19}' $h_tools_out | sed -n 2p; }
-all_allowed() { awk -F ',' '{print $20}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_cc() { awk -F ',' '{print $20}' $h_tools_out | sed -n 2p; }
+FERMI_constr_cc() { awk -F ',' '{print $21}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_ee() { awk -F ',' '{print $22}' $h_tools_out | sed -n 2p; }
+FERMI_constr_ee() { awk -F ',' '{print $23}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_yy() { awk -F ',' '{print $24}' $h_tools_out | sed -n 2p; }
+FERMI_constr_yy() { awk -F ',' '{print $25}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_gg() { awk -F ',' '{print $26}' $h_tools_out | sed -n 2p; }
+FERMI_constr_gg() { awk -F ',' '{print $27}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_hh() { awk -F ',' '{print $28}' $h_tools_out | sed -n 2p; }
+FERMI_constr_hh() { awk -F ',' '{print $29}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_mumu() { awk -F ',' '{print $30}' $h_tools_out | sed -n 2p; }
+FERMI_constr_mumu() { awk -F ',' '{print $31}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_ZZ() { awk -F ',' '{print $32}' $h_tools_out | sed -n 2p; }
+FERMI_constr_ZZ() { awk -F ',' '{print $33}' $h_tools_out | sed -n 2p; }
+all_allowed() { awk -F ',' '{print $34}' $h_tools_out | sed -n 2p; }
 
 
 # start scan, iterating over different values for PARAM and PARAM2
@@ -222,7 +241,7 @@ do
 
  # 2. SPheno:
  # create SPheno input file from a template
- rm $SPHENO_IN_DIR/LesHouches.in.complexZ2b_low
+ rm $spheno_in
  sed -e "s#L1INPUT#$(l1)#" -e "s#L2INPUT#$(l2)#" -e "s#L3INPUT#$(l3)#" \
       -e "s#L4INPUT#$(l4)#" -e "s#L5INPUT#$(l5)#" -e "s#M122INPUT#$(m122)#" \
       -e "s#TANBINPUT#$(tanbeta)#" -e "s#MSP2INPUT#$(mSp2)#" \
@@ -230,12 +249,12 @@ do
       -e "s#L3PPINPUT#$(l3pp)#" -e "s#L4PINPUT#$(l4p)#" \
       -e "s#L5PINPUT#$(l5p)#" -e "s#L1PPINPUT#$(l1pp)#" \
       -e "s#VSINPUT#$(vS)#" \
-     $SPHENO_IN_DIR/LesHouches.in.complexZ2b_low_Template_MO \
-     > $SPHENO_IN_DIR/LesHouches.in.complexZ2b_low
+     $spheno_templ \
+     > $spheno_in
  # run SPheno
  cd $SPHENO_OUT_DIR
  rm SPheno.spc.complexZ2b
- $SPHENO_DIR/./bin/SPhenocomplexZ2b $SPHENO_IN_DIR/LesHouches.in.complexZ2b_low
+ $SPHENO_DIR/./bin/SPhenocomplexZ2b $spheno_in
 
  # 3. micrOMEGAs
  # run micrOMEGAs
@@ -255,7 +274,9 @@ do
       $(BR_h1bb),$(BR_h1yy),$(c_h1VV),$ch1tt,\
       $mAS,$(RelDen),$(PCS),$(NCS),$(bfb),\
       $(unitarity),$PARAM,$i,$PARAM2,$j,\
-      $(INDDCS),$(INDDCS_bb),$(INDDCS_tautau),$(INDDCS_WW)\
+      $(INDDCS),$(INDDCS_bb),$(INDDCS_tautau),$(INDDCS_WW),\
+      $(INDDCS_cc),$(INDDCS_ee),$(INDDCS_gammagamma),$(INDDCS_gg),\
+      $(INDDCS_h2h2),$(INDDCS_mumu),$(INDDCS_ZZ)\
       >> $h_tools_in
  # run the python code which runs HiggsTools
  python3 $h_tools
@@ -279,7 +300,10 @@ do
       $(mu_the_LEP),$(mu_the_CMS),$(PL_allowed),$(PL_constr),$(LZ_allowed),\
       $(LZ_allowed_p),$(LZ_allowed_n),$(LZ_constr),\
       $(FERMI_allowed_bb),$(FERMI_constr_bb),$(FERMI_allowed_tautau),$(FERMI_constr_tautau),\
-      $(FERMI_allowed_WW),$(FERMI_constr_WW),\
+      $(FERMI_allowed_WW),$(FERMI_constr_WW),$(FERMI_allowed_cc),$(FERMI_constr_cc),\
+      $(FERMI_allowed_ee),$(FERMI_constr_ee),$(FERMI_allowed_yy),$(FERMI_constr_yy),\
+      $(FERMI_allowed_gg),$(FERMI_constr_gg),$(FERMI_allowed_hh),$(FERMI_constr_hh),\
+      $(FERMI_allowed_mumu),$(FERMI_constr_mumu),$(FERMI_allowed_ZZ),$(FERMI_constr_ZZ),\
       $(all_allowed) \
       >> $OUTPUT/$F
 
@@ -296,5 +320,5 @@ done
 rm $plot_in
 echo $OUTPUT,$F,$PARAM,$PARAM2,$START_VAL,$STOP_VAL,$STEP_SIZE,$START_VAL2,$STOP_VAL2,$STEP_SIZE2 \
      >> $plot_in
-cp $plot_in $OUTPUT/$plot_in
+cp $plot_in $OUTPUT
 python3 $plot_results_py

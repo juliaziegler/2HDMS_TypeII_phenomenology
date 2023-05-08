@@ -1,6 +1,5 @@
 *.out
 *.csv
-*.dat
 *.pdf
 SPheno.spc*
 LesHouches.in.complexZ2b_low

@@ -216,6 +216,6 @@ def plot_3(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZPARAM3, tick_length,
 
 
 if __name__=='__main__':
-    FILE_IN = "pyplot_in.csv"
+    FILE_IN = "output/pyplot_in.csv"
     inp_file = read_csv(FILE_IN)
     plot_all(inp_file)

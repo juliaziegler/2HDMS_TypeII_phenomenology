@@ -3,6 +3,7 @@ import Higgs.bounds as HB
 import Higgs.signals as HS
 import pandas as pd
 from scipy import interpolate
+import numpy as np
 
 def read_csv(FILE):
     data = pd.read_csv(FILE, sep=",", header=None,
@@ -10,7 +11,9 @@ def read_csv(FILE):
                               "BR_h1yy","ch1VV","ch1tt","mAS","RelDen",
                               "PCS","NCS","bfb","unitarity",
                               "PARAM","i","PARAM2","j",
-                              "INDDCS","INDDCS_bb","INDDCS_tautau","INDDCS_WW"])
+                              "INDDCS","INDDCS_bb","INDDCS_tautau","INDDCS_WW",
+                              "INDDCS_cc","INDDCS_ee","INDDCS_yy","INDDCS_gg",
+                              "INDDCS_hh","INDDCS_mumu","INDDCS_ZZ"])
     return data
 def prep_csv_3D(data):
     if data["PARAM"][0] in data.columns:
@@ -18,11 +21,16 @@ def prep_csv_3D(data):
     if data["PARAM2"][0] in data.columns:
         data[data["PARAM2"]]=data["j"]
     return data
+def prep_csv_3D_2(data):
+    for i in data:
+        if data[i][0]==" ":
+            data[i]=0
+    return data
 def save_csv(FILE, data):
     dataframe = pd.DataFrame(data)
     dataframe.to_csv(FILE)
     return
-def get_results(data, FILE_LZ, FILE_FERMI_BB, FILE_FERMI_TAUTAU, FILE_FERMI_WW):
+def get_results(data):
     """main function to caclulate results from HiggsBounds and HiggsSignals
     and check other experimental constraints (from Planck and LZ)
     Args:
@@ -37,23 +45,43 @@ def get_results(data, FILE_LZ, FILE_FERMI_BB, FILE_FERMI_TAUTAU, FILE_FERMI_WW):
     # calculate Chi_sq for signal from CMS and LEP
     Chisq_CMS_LEP, mu_the_LEP, mu_the_CMS = calc_chisq_cms_lep(data)
     # check other experimental constraints (from Planck, LZ, Fermi, ...)
-    LZconstr = get_interp_constr(data["mAS"][0], FILE_LZ) * 1e+36
-    FERMIconstr_bb = get_interp_constr(data["mAS"][0], FILE_FERMI_BB)
-    FERMIconstr_tautau = get_interp_constr(data["mAS"][0], FILE_FERMI_TAUTAU)
-    FERMIconstr_WW = get_interp_constr(data["mAS"][0], FILE_FERMI_WW)
+    LZconstr = get_interp_constr(data["mAS"][0], constr_dict['PCS'][0]) * constr_dict['PCS'][1]
+    FERMIconstr_bb = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_bb'][0])
+    FERMIconstr_tautau = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_tautau'][0])
+    FERMIconstr_WW = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_WW'][0])
+    FERMIconstr_cc = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_cc'][0])
+    FERMIconstr_ee = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_ee'][0])
+    FERMIconstr_yy = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_yy'][0])
+    FERMIconstr_gg = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_gg'][0])
+    FERMIconstr_hh = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_hh'][0])
+    FERMIconstr_mumu = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_mumu'][0])
+    FERMIconstr_qq = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_qq'][0])
+    FERMIconstr_tt = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_tt'][0])
+    FERMIconstr_ZZ = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_ZZ'][0])
     PLconstr = 0.1202
 
     LZallowed = (data["PCS"][0] <= LZconstr) and (data["NCS"][0] <= LZconstr)
     LZallowed_p = (data["PCS"][0] <= LZconstr)
     LZallowed_n = (data["NCS"][0] <= LZconstr)
-    FERMIallowed_bb = (data["INDDCS"][0]*data["INDDCS_bb"] <= FERMIconstr_bb)
-    FERMIallowed_tautau = (data["INDDCS"][0]*data["INDDCS_tautau"] <= FERMIconstr_tautau)
-    FERMIallowed_WW = (data["INDDCS"][0]*data["INDDCS_WW"] <= FERMIconstr_WW)
+    FERMIallowed_bb = (data["INDDCS"][0]*data["INDDCS_bb"][0] <= FERMIconstr_bb or np.isnan(data["INDDCS_bb"][0]))
+    FERMIallowed_tautau = (data["INDDCS"][0]*data["INDDCS_tautau"][0] <= FERMIconstr_tautau or np.isnan(data["INDDCS_tautau"][0]))
+    FERMIallowed_WW = (data["INDDCS"][0]*data["INDDCS_WW"][0] <= FERMIconstr_WW or np.isnan(data["INDDCS_WW"][0]))
+    FERMIallowed_cc = (data["INDDCS"][0]*data["INDDCS_cc"][0] <= FERMIconstr_cc or np.isnan(data["INDDCS_cc"][0]))
+    FERMIallowed_ee = (data["INDDCS"][0]*data["INDDCS_ee"][0] <= FERMIconstr_ee or np.isnan(data["INDDCS_ee"][0]))
+    FERMIallowed_yy = (data["INDDCS"][0]*data["INDDCS_yy"][0] <= FERMIconstr_yy or np.isnan(data["INDDCS_yy"][0]))
+    FERMIallowed_gg = (data["INDDCS"][0]*data["INDDCS_gg"][0] <= FERMIconstr_gg or np.isnan(data["INDDCS_gg"][0]))
+    FERMIallowed_hh = (data["INDDCS"][0]*data["INDDCS_hh"][0] <= FERMIconstr_hh or np.isnan(data["INDDCS_hh"][0]))
+    FERMIallowed_mumu = (data["INDDCS"][0]*data["INDDCS_mumu"][0] <= FERMIconstr_mumu or np.isnan(data["INDDCS_mumu"][0]))
+    FERMIallowed_ZZ = (data["INDDCS"][0]*data["INDDCS_ZZ"][0] <= FERMIconstr_ZZ or np.isnan(data["INDDCS_ZZ"][0]))
     PLallowed = (data["RelDen"][0] <= PLconstr)
     # check if allowed by all constraints
     all_allowed = (data["bfb"][0] and data["unitarity"][0] and int(hbResult.allowed) \
               and int(LZallowed) and int(FERMIallowed_bb) and int(FERMIallowed_tautau) \
-              and int(FERMIallowed_WW) and int(PLallowed))
+              and int(FERMIallowed_WW) and int(FERMIallowed_cc)
+              and int(FERMIallowed_ee) and int(FERMIallowed_yy)
+              and int(FERMIallowed_gg) and int(FERMIallowed_hh)
+              and int(FERMIallowed_mumu) and int(FERMIallowed_ZZ)
+              and int(PLallowed))
     # put results into one dictionary
     results = {'HBallowed': [int(hbResult.allowed)], 'Chisq': [hsChisq],
                'Chisq_red': [hsChisq_red], 'Chisq_CMS-LEP': [Chisq_CMS_LEP],
@@ -64,6 +92,13 @@ def get_results(data, FILE_LZ, FILE_FERMI_BB, FILE_FERMI_TAUTAU, FILE_FERMI_WW):
                'FERMIallowed_bb': [int(FERMIallowed_bb)], 'FERMIconstr_bb': [FERMIconstr_bb],
                'FERMIallowed_tautau': [int(FERMIallowed_tautau)], 'FERMIconstr_tautau': [FERMIconstr_tautau],
                'FERMIallowed_WW': [int(FERMIallowed_WW)], 'FERMIconstr_WW': [FERMIconstr_WW],
+               'FERMIallowed_cc': [int(FERMIallowed_cc)], 'FERMIconstr_cc': [FERMIconstr_cc],
+               'FERMIallowed_ee': [int(FERMIallowed_ee)], 'FERMIconstr_ee': [FERMIconstr_ee],
+               'FERMIallowed_yy': [int(FERMIallowed_yy)], 'FERMIconstr_yy': [FERMIconstr_yy],
+               'FERMIallowed_gg': [int(FERMIallowed_gg)], 'FERMIconstr_gg': [FERMIconstr_gg],
+               'FERMIallowed_hh': [int(FERMIallowed_hh)], 'FERMIconstr_hh': [FERMIconstr_hh],
+               'FERMIallowed_mumu': [int(FERMIallowed_mumu)], 'FERMIconstr_mumu': [FERMIconstr_mumu],
+               'FERMIallowed_ZZ': [int(FERMIallowed_ZZ)], 'FERMIconstr_ZZ': [FERMIconstr_ZZ],
                'allallowed': [int(all_allowed)]}
     return results
 def get_higgstools(data):
@@ -148,15 +183,27 @@ def get_interp_constr(DM_mass, FILE):
     constr = interpolated_constr(DM_mass)
     return constr
 
+# dictionary for the names of files constaining constraints
+constr_dict = {"PCS":("constraints/LZ_constr_wo_header.txt", 1e+36),
+               "NCS":("constraints/LZ_constr_wo_header.txt", 1e+36),
+               "INDDCS_bb":("constraints/MadDM_Fermi_Limit_bb.dat", 1),
+               "INDDCS_tautau":("constraints/MadDM_Fermi_Limit_tautau.dat", 1),
+               "INDDCS_WW":("constraints/MadDM_Fermi_Limit_WW.dat", 1),
+               "INDDCS_cc":("constraints/MadDM_Fermi_Limit_cc.dat", 1),
+               "INDDCS_ee":("constraints/MadDM_Fermi_Limit_ee.dat", 1),
+               "INDDCS_yy":("constraints/MadDM_Fermi_Limit_gammagamma.dat", 1),
+               "INDDCS_gg":("constraints/MadDM_Fermi_Limit_gg.dat", 1),
+               "INDDCS_hh":("constraints/MadDM_Fermi_Limit_hh.dat", 1),
+               "INDDCS_mumu":("constraints/MadDM_Fermi_Limit_mumu.dat", 1),
+               "INDDCS_qq":("constraints/MadDM_Fermi_Limit_qq.dat", 1),
+               "INDDCS_tt":("constraints/MadDM_Fermi_Limit_tt.dat", 1),
+               "INDDCS_ZZ":("constraints/MadDM_Fermi_Limit_ZZ.dat", 1)}
 
 if __name__=='__main__':
-    FILE_IN = "h_tools_in.csv"
-    FILE_OUT = "h_tools_out.csv"
-    FILE_LZ = "LZ_constr_wo_header.txt"
-    FILE_FERMI_BB = "MadDM_Fermi_Limit_bb.dat"
-    FILE_FERMI_TAUTAU = "MadDM_Fermi_Limit_tautau.dat"
-    FILE_FERMI_WW = "MadDM_Fermi_Limit_WW.dat"
+    FILE_IN = "output/h_tools_in.csv"
+    FILE_OUT = "output/h_tools_out.csv"
     data = read_csv(FILE_IN)
     data_prep = prep_csv_3D(data)
-    results = get_results(data_prep, FILE_LZ, FILE_FERMI_BB, FILE_FERMI_TAUTAU, FILE_FERMI_WW)
+    data_prep_2 = prep_csv_3D_2(data_prep)
+    results = get_results(data_prep_2)
     save_csv(FILE_OUT, results)

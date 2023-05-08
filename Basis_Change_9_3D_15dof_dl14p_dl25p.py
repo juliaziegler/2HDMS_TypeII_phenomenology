@@ -639,8 +639,8 @@ def main_func(mass_b, FILE_OUT):
     return
 
 if __name__=='__main__':
-    FILE_IN = "mass_basis.csv"
-    FILE_OUT = "inte_basis.csv"
+    FILE_IN = "output/mass_basis.csv"
+    FILE_OUT = "output/inte_basis.csv"
     data = read_csv_3D_15dof_dl14p_dl25p(FILE_IN)
     mass_b = prep_csv_3D(data)
     main_func(mass_b, FILE_OUT)
