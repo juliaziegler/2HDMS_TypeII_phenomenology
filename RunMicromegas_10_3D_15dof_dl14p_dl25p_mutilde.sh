@@ -13,35 +13,35 @@ mh1=95 #96         # {95, 98}
 mh2=125.09 #125.09     # SM Higgs
 mh3=900 #1000 #800        # {800, 1200}
 mA=900 #1000 #800         # {800, 1200}
-mAS=133.001 #106.36 #200        # {200, 500} DM candidate (>62.5 as by ATLAS and CMS)
+mAS=325.861 #106.36 #200        # {200, 500} DM candidate (>62.5 as by ATLAS and CMS)
 mHm=900 #1000 #800        # {800, 1200}
 v=246.220569
-vS=346.747053875272 #882.297764743439 #100.000000  # {100, 2000}
+vS=239.859563619576 #882.297764743439 #100.000000  # {100, 2000}
 tanbeta=10 #10     # {1, 10}
 ch1tt=0.4191536674553097 #0.36394218991840976 #0.27     # > 0.267, >= ch1bb (<=0.583 but not sure)
 ch1bb=0.20957683372767075 #0.12737976647144644 #0.05     # < 0.581
-mutil2=810687.3456907022 # m122/(sinbeta*cosbeta)
-mSp2=13118.4057265553 #475.490545912366 #-10000.0000
-alignm=0.9998691018476971 #0.9999986246982658 #1       # {0.98, 1}
-dl14p=-6.174630009389221 #0              # l4p = l1p + dl14p
-dl25p=0.259395110330231 #0              # l5p = l2p + dl25p
+mutil2=812804.1983308262 # m122/(sinbeta*cosbeta)
+mSp2=-48087.901620072 #475.490545912366 #-10000.0000
+alignm=0.9998450892861399 #0.9999986246982658 #1       # {0.98, 1}
+dl14p=-9.69576710546982 #0              # l4p = l1p + dl14p
+dl25p=0.2474626325409999 #0              # l5p = l2p + dl25p
 ##### change these params ##############################
 PARAM=dl14p
 dl14p=i
-START_VAL=-6.68463000938922
-STOP_VAL=-5.664630009389221
+START_VAL=-9.69576710546982
+STOP_VAL=-9.69576710546982
 STEP_SIZE=0.34
 
 PARAM2=dl25p
 dl25p=j
-START_VAL2=0.109395110330231
-STOP_VAL2=0.409395110330231
+START_VAL2=0.2474626325409999
+STOP_VAL2=0.2474626325409999
 STEP_SIZE2=0.1
 
 F=results_3D_$PARAM-$PARAM2.csv
 ########################################################
 # make this directoy for the output, directory should not exist already:
-OUTPUT=~/Applications/do_scan/output/varying_$PARAM-$PARAM2-15dof4-new_BP4-test
+OUTPUT=~/Applications/do_scan/output/varying_$PARAM-$PARAM2-15dof4-new_BP1-test
 # main working directory:
 MAIN_DIR=~/Applications/do_scan
 # in which directory is your SPheno:

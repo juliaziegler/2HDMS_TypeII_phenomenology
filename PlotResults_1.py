@@ -97,7 +97,7 @@ def plot_constr(X, Y, Z, ZPARAM, line_style, tick_length, tick_space, line_space
         ax.legend(artists, labels2)
     return
 def plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps):
-    BP_PATH = "/home/julia/SyncandShare/Master/FILES/2HDMS-Z2b-DM/benchmark_point/new_BP4"
+    BP_PATH = "/home/julia/SyncandShare/Master/FILES/2HDMS-Z2b-DM/benchmark_point/new_BP1"
     BP_FILE = "results.csv"
     BP_data=pd.read_csv(BP_PATH+"/"+BP_FILE)
     ZFACTOR = get_factor(ZPARAM, BP_data, (1))
