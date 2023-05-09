@@ -28,18 +28,18 @@ dl25p=0.2474626325409999 #0              # l5p = l2p + dl25p
 ##### change these params ##############################
 PARAM=dl14p
 dl14p=i
-START_VAL=-9.69576710546982
-STOP_VAL=-9.69576710546982
-STEP_SIZE=0.34
+START_VAL=-9.95076710546982
+STOP_VAL=-9.440767105469819
+STEP_SIZE=0.005
 
 PARAM2=dl25p
 dl25p=j
-START_VAL2=0.2474626325409999
-STOP_VAL2=0.2474626325409999
-STEP_SIZE2=0.1
+START_VAL2=-0.007537367459000105
+STOP_VAL2=0.5024626325409999
+STEP_SIZE2=0.005
 
 F=results_3D_$PARAM-$PARAM2.csv
-FOLDER=varying_$PARAM-$PARAM2-15dof4-new_BP1-test
+FOLDER=varying_$PARAM-$PARAM2-15dof4-new_BP1_fine
 ########################################################
 # main working directory:
 MAIN_DIR=~/Applications/do_scan
