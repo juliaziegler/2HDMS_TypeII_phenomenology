@@ -204,6 +204,5 @@ if __name__=='__main__':
     FILE_OUT = "output/h_tools_out.csv"
     data = read_csv(FILE_IN)
     data_prep = prep_csv_3D(data)
-    data_prep_2 = prep_csv_3D_2(data_prep)
-    results = get_results(data_prep_2)
+    results = get_results(data_prep)
     save_csv(FILE_OUT, results)
