@@ -233,9 +233,10 @@ do
  # write mass basis parameters in csv
  rm $mass_b
  rm $inte_b
- echo $mh1,$mh2,$mh3,$mA,$mAS,$mHm,$v,\
-      $vS,$tanbeta,$ch1tt,$ch1bb,$m122,\
-      $mSp2,$alignm,$dl14p,$dl25p,$PARAM,$i,$PARAM2,$j >> $mass_b
+ line1=$mh1,$mh2,$mh3,$mA,$mAS,$mHm,$v
+ line2=$vS,$tanbeta,$ch1tt,$ch1bb,$mutil2
+ line3=$mSp2,$alignm,$dl14p,$dl25p,$PARAM,$i,$PARAM2,$j
+ echo $line1,$line2,$line3 >> $mass_b
  # open csv and calculate interaction basis parameters and save in new csv
  python3 $b_change
 
@@ -270,42 +271,45 @@ do
  # preparing input file for HiggsTools
  rm $h_tools_in
  rm $h_tools_out
- echo $HB_DIR,$HS_DIR,$SPHENO_OUT_DIR/SPheno.spc.complexZ2b,\
-      $(BR_h1bb),$(BR_h1yy),$(c_h1VV),$ch1tt,\
-      $mAS,$(RelDen),$(PCS),$(NCS),$(bfb),\
-      $(unitarity),$PARAM,$i,$PARAM2,$j,\
-      $(INDDCS),$(INDDCS_bb),$(INDDCS_tautau),$(INDDCS_WW),\
-      $(INDDCS_cc),$(INDDCS_ee),$(INDDCS_gammagamma),$(INDDCS_gg),\
-      $(INDDCS_h2h2),$(INDDCS_mumu),$(INDDCS_ZZ)\
-      >> $h_tools_in
+ line1=$HB_DIR,$HS_DIR,$SPHENO_OUT_DIR/SPheno.spc.complexZ2b
+ line2=$(BR_h1bb),$(BR_h1yy),$(c_h1VV),$ch1tt
+ line3=$mAS,$(RelDen),$(PCS),$(NCS),$(bfb)
+ line4=$(unitarity),$PARAM,$i,$PARAM2,$j
+ line5=$(INDDCS),$(INDDCS_bb),$(INDDCS_tautau),$(INDDCS_WW)
+ line6=$(INDDCS_cc),$(INDDCS_ee),$(INDDCS_gammagamma),$(INDDCS_gg)
+ line7=$(INDDCS_h2h2),$(INDDCS_mumu),$(INDDCS_ZZ)
+ echo $line1,$line2,$line3,$line4,$line5,$line6,$line7 >> $h_tools_in
  # run the python code which runs HiggsTools
  python3 $h_tools
 
  # 5. save output:
- echo $i,$j,$mh1,$mh2,$mh3,$mA,$mAS,$mHm,$v,$vS,$tanbeta,\
-      $ch1tt,$ch1bb,$mutil2,$mSp2,$alignm,$dl14p,$dl25p,\
-      $(DMmass),$(RelDen),$(PCS),$(NCS),\
-      $(lh1ss_norm),$(lh2ss_norm),$(lh3ss_norm),\
-      $(BR_h1SS),$(BR_h2SS),$(BR_h3SS),$(lh1h1ss_times_i),\
-      $(lh2h2ss_times_i),$(lh3h3ss_times_i),$(lh1h2ss_times_i),\
-      $(lh1h3ss_times_i),$(lh2h3ss_times_i),\
-      $(INDDCS),$(INDDCS_h1h1),$(INDDCS_h2h2),$(INDDCS_h3h3),\
-      $(INDDCS_h1h2),$(INDDCS_h2h3),$(INDDCS_bb),$(INDDCS_tt),\
-      $(INDDCS_tautau),$(INDDCS_ss),$(INDDCS_cc),$(INDDCS_mumu),\
-      $(INDDCS_ee),$(INDDCS_WW),$(INDDCS_ZZ),$(INDDCS_gg),\
-      $(INDDCS_gammagamma),\
-      $(bfb),$(unitarity),$(unitarity_w_tril),\
-      $(HB_allowed),$(HS_Chisq),$(HS_Chisq_red),\
-      $(Chisq_CMS_LEP),$(BR_h1bb),$(BR_h1yy),$(c_h1VV),\
-      $(mu_the_LEP),$(mu_the_CMS),$(PL_allowed),$(PL_constr),$(LZ_allowed),\
-      $(LZ_allowed_p),$(LZ_allowed_n),$(LZ_constr),\
-      $(FERMI_allowed_bb),$(FERMI_constr_bb),$(FERMI_allowed_tautau),$(FERMI_constr_tautau),\
-      $(FERMI_allowed_WW),$(FERMI_constr_WW),$(FERMI_allowed_cc),$(FERMI_constr_cc),\
-      $(FERMI_allowed_ee),$(FERMI_constr_ee),$(FERMI_allowed_yy),$(FERMI_constr_yy),\
-      $(FERMI_allowed_gg),$(FERMI_constr_gg),$(FERMI_allowed_hh),$(FERMI_constr_hh),\
-      $(FERMI_allowed_mumu),$(FERMI_constr_mumu),$(FERMI_allowed_ZZ),$(FERMI_constr_ZZ),\
-      $(all_allowed) \
-      >> $OUTPUT/$F
+ line1=$i,$j,$mh1,$mh2,$mh3,$mA,$mAS,$mHm,$v,$vS,$tanbeta
+ line2=$ch1tt,$ch1bb,$mutil2,$mSp2,$alignm,$dl14p,$dl25p
+ line3=$(DMmass),$(RelDen),$(PCS),$(NCS)
+ line4=$(lh1ss_norm),$(lh2ss_norm),$(lh3ss_norm)
+ line5=$(BR_h1SS),$(BR_h2SS),$(BR_h3SS),$(lh1h1ss_times_i)
+ line6=$(lh2h2ss_times_i),$(lh3h3ss_times_i),$(lh1h2ss_times_i)
+ line7=$(lh1h3ss_times_i),$(lh2h3ss_times_i)
+ line8=$(INDDCS),$(INDDCS_h1h1),$(INDDCS_h2h2),$(INDDCS_h3h3)
+ line9=$(INDDCS_h1h2),$(INDDCS_h2h3),$(INDDCS_bb),$(INDDCS_tt)
+ line10=$(INDDCS_tautau),$(INDDCS_ss),$(INDDCS_cc),$(INDDCS_mumu)
+ line11=$(INDDCS_ee),$(INDDCS_WW),$(INDDCS_ZZ),$(INDDCS_gg)
+ line12=$(INDDCS_gammagamma)
+ line13=$(bfb),$(unitarity),$(unitarity_w_tril)
+ line14=$(HB_allowed),$(HS_Chisq),$(HS_Chisq_red)
+ line15=$(Chisq_CMS_LEP),$(BR_h1bb),$(BR_h1yy),$(c_h1VV)
+ line16=$(mu_the_LEP),$(mu_the_CMS),$(PL_allowed),$(PL_constr),$(LZ_allowed)
+ line17=$(LZ_allowed_p),$(LZ_allowed_n),$(LZ_constr)
+ line18=$(FERMI_allowed_bb),$(FERMI_constr_bb),$(FERMI_allowed_tautau),$(FERMI_constr_tautau)
+ line19=$(FERMI_allowed_WW),$(FERMI_constr_WW),$(FERMI_allowed_cc),$(FERMI_constr_cc)
+ line20=$(FERMI_allowed_ee),$(FERMI_constr_ee),$(FERMI_allowed_yy),$(FERMI_constr_yy)
+ line21=$(FERMI_allowed_gg),$(FERMI_constr_gg),$(FERMI_allowed_hh),$(FERMI_constr_hh)
+ line22=$(FERMI_allowed_mumu),$(FERMI_constr_mumu),$(FERMI_allowed_ZZ),$(FERMI_constr_ZZ)
+ line23=$(all_allowed)
+ line30=$line1,$line2,$line3,$line4,$line5,$line6,$line7,$line8,$line9
+ line31=$line10,$line11,$line12,$line13,$line14,$line15,$line16
+ line32=$line17,$line18,$line19,$line20,$line21,$line22,$line23
+ echo $line30,$line31,$line32 >> $OUTPUT/$F
 
 # save complete SPheno and micrOMEGAs output
  cp $SPHENO_OUT_DIR/SPheno.spc.complexZ2b $OUTPUT/SPheno_out/SPheno.spc.complexZ2b_$i-$j
