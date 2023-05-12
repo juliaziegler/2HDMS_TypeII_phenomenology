@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib import patheffects
 import matplotlib.colors
+from scipy import ndimage
 
 labels_dict = {"dl14p": "$\delta_{14}'$", "dl25p": "$\delta_{25}'$", "mAS": "$m_{A_S} \, [GeV]$",
                "vS": "$v_S \, [GeV]$", "tanbeta": "$tan β$", "ch1tt": "$c_{h_1 t t}$",
@@ -86,16 +87,38 @@ def get_factor(PARAM, data, shape):
 def plot_constr(X, Y, Z, ZPARAM, line_style, tick_length, tick_space, line_space, ax):
     if 1 in Z:
         label = constr_labels_dict[ZPARAM]
-        CS=ax.contour(X, Y, Z, levels=1, colors=["none", "black"], linestyles=line_style)
-        ax.clabel(CS, fmt={0.5: label}, inline_spacing=line_space)
+        ############### old
+        #CS=ax.contour(X, Y, Z, levels=1, colors=["none", "black"], linestyles=line_style)
+        #ax.clabel(CS, fmt={0.5: label}, inline_spacing=line_space)
+        X_smooth = ndimage.zoom(X, 40)
+        Y_smooth = ndimage.zoom(Y, 40)
+        Z_smooth = ndimage.zoom(Z, 40)
+        CS=ax.contour(X_smooth, Y_smooth, Z_smooth, [0.5], colors=["black"], linestyles=line_style)
+        artists, labels = CS.legend_elements()
+        labels_new = [label]
+        #ax.legend(artists, labels_new)
         plt.setp(CS.collections,
              path_effects=[patheffects.withTickedStroke(length=tick_length, spacing=tick_space)])
+        ############### new
+        """
+        CS_old=plt.contour(X, Y, Z, levels=1, colors=["none", "black"], linestyles=line_style)
+        dat0 = CS_old.allsegs[0][0]
+        X_old_pre, Y_old_pre = dat0[:,0], dat0[:,1]
+        X_old, Y_old = X_old_pre[1::2], Y_old_pre[1::2]
+        tck, u = interpolate.splprep([X_old, Y_old], s=0)
+        X_new = np.linspace(min(X_old), max(X_old), 3*len(X_old))
+        Y_new = interpolate.splev(X_new, tck)
+        CS = ax.plot(X_new, Y_new[0], color="black", linestyle=line_style, label=label)
+        ax.legend()
+        """
+        ###############
     else:
-        CS=ax.contourf(X, Y, Z, levels=1, colors=["none"], hatches="/")
+        #CS=ax.contourf(X, Y, Z, levels=1, colors=["none"], hatches="/")
+        CS=ax.contourf(X, Y, Z, [0.5], colors=["none"], hatches="/")
         artists, labels = CS.legend_elements()
-        labels2=["all "+constr_labels_dict[ZPARAM]]
-        ax.legend(artists, labels2)
-    return
+        labels_new=["all "+constr_labels_dict[ZPARAM]]
+        #ax.legend(artists, labels_new)
+    return artists[0], labels_new[0]
 def plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps):
     BP_PATH = "~/SyncandShare/Master/FILES/2HDMS-Z2b-DM/benchmark_point/new_BP1"
     BP_FILE = "results.csv"
@@ -111,18 +134,27 @@ def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
                  tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm):
     ps = 100
     pos=ax.scatter(X, Y, s=ps, c=Z, norm=norm)
-    plot_constr(X, Y, bfb, "bfb", "dashed", tick_length, tick_space, line_space, ax)
-    plot_constr(X, Y, unitarity, "unitarity", "dotted", tick_length, tick_space,
-                line_space, ax)
-    plot_constr(X, Y, HB, "HiggsBounds", "dashdot", tick_length, tick_space, line_space, ax)
+    artists1, labels_new1 = plot_constr(X, Y, bfb, "bfb", "dashed", tick_length, tick_space,
+                                        line_space, ax)
+    artists2, labels_new2 = plot_constr(X, Y, unitarity, "unitarity", "dotted", tick_length,
+                                        tick_space, line_space, ax)
+    artists3, labels_new3 = plot_constr(X, Y, HB, "HiggsBounds", "dashdot", tick_length, tick_space, line_space, ax)
     # plot additional constraint relevant for ZPARAM
     if ZPARAM in constr_dict.keys():
         add_constr_name = constr_dict[ZPARAM]
         add_constr_data = np.array(data[add_constr_name]).reshape(shape)
-        plot_constr(X, Y, add_constr_data, add_constr_name, "solid", tick_length,
-                    tick_space, line_space, ax)
+        artists4, labels_new4 = plot_constr(X, Y, add_constr_data, add_constr_name, "solid",
+                                            tick_length, tick_space, line_space, ax)
     # plot BP
     plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps)
+    # make legend
+    if ZPARAM in constr_dict.keys():
+        artists = [artists1, artists2, artists3, artists4]
+        labels = [labels_new1, labels_new2, labels_new3, labels_new4]
+    else:
+        artists = [artists1, artists2, artists3]
+        labels = [labels_new1, labels_new2, labels_new3]
+    ax.legend(artists, labels)
     # make colorbar
     fig.colorbar(pos, ax=ax, label=zlabel)
     return
