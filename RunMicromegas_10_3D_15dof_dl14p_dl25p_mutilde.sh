@@ -26,20 +26,20 @@ alignm=0.9998450892861399 #0.9999986246982658 #1       # {0.98, 1}
 dl14p=-9.69576710546982 #0              # l4p = l1p + dl14p
 dl25p=0.2474626325409999 #0              # l5p = l2p + dl25p
 ##### change these params ##############################
-PARAM=vS
-vS=i
+PARAM=mAS
+mAS=i
 START_VAL=48
 STOP_VAL=900
-STEP_SIZE=8
+STEP_SIZE=9
 
-PARAM2=tanbeta
-tanbeta=j
-START_VAL2=9
-STOP_VAL2=11
-STEP_SIZE2=0.02
+PARAM2=mSp2
+mSp2=j
+START_VAL2=-200000
+STOP_VAL2=200000
+STEP_SIZE2=4000
 
 F=results_3D_$PARAM-$PARAM2.csv
-FOLDER=varying_$PARAM-$PARAM2-15dof4-new_BP1_test_fine
+FOLDER=varying_$PARAM-$PARAM2-15dof4-new_BP1_fine_fine
 ########################################################
 # main working directory:
 MAIN_DIR=~/Applications/do_scan

@@ -20,7 +20,9 @@ labels_dict = {"dl14p": "$\delta_{14}'$", "dl25p": "$\delta_{25}'$", "mAS": "$m_
                "Chi^2_CMS_LEP": "$\chi^2_{CMS-LEP}$",
                "IND_bb": "$\sigma_{A_S A_S -> b b} \, [cm^3/s]$",
                "IND_tautau": "$\sigma_{A_S A_S -> τ τ} \, [cm^3/s]$",
-               "IND_WW": "$\sigma_{A_S A_S -> W W} \, [cm^3/s]$"}
+               "IND_WW": "$\sigma_{A_S A_S -> W W} \, [cm^3/s]$",
+               "mu_the_LEP": "$\mu_{LEP}$",
+               "mu_the_CMS": "$\mu_{CMS}$"}
 constr_dict = {"Relic_Density": "Planck_allowed",
                "Proton_Cross_Section_pb": "LZ_allowed_p",
                "Neutron_Cross_Section_pb": "LZ_allowed_n",
@@ -32,12 +34,12 @@ constr_labels_dict = {"bfb": "bfb excl.", "unitarity": "unitarity excl.",
                "LZ_allowed_p": "LZ excl.", "LZ_allowed_n": "LZ excl.",
                "FERMI_allowed_bb": "FERMI excl.", "FERMI_allowed_tautau": "FERMI excl.",
                "FERMI_allowed_WW": "FERMI excl."}
-file_out_name_dict = {"Relic_Density": "RelDen", "BR(h3->SS)": "BR",
-               "Proton_Cross_Section_pb": "ddCSp", "Neutron_Cross_Section_pb": "ddCSn",
-               "HiggsSignals_Chi^2_red": "Chisqred", "Chi^2_CMS_LEP": "ChisqCMSLEP",
-               "l_h1_SS_norm_to_v": "lh1", "l_h2_SS_norm_to_v": "lh2",
-               "l_h3_SS_norm_to_v": "lh3", "IND_bb": "InddCSbb",
-               "IND_tautau": "InddCStautau", "IND_WW": "InddCSWW"}
+file_out_name_dict = {"Relic_Density": "mu_RelDen", "BR(h3->SS)": "mu_BR",
+               "Proton_Cross_Section_pb": "mu_ddCSp", "Neutron_Cross_Section_pb": "mu_ddCSn",
+               "HiggsSignals_Chi^2_red": "mu_Chisqred", "Chi^2_CMS_LEP": "mu_ChisqCMSLEP",
+               "l_h1_SS_norm_to_v": "mu_lh1", "l_h2_SS_norm_to_v": "mu_lh2",
+               "l_h3_SS_norm_to_v": "mu_lh3", "IND_bb": "mu_InddCSbb",
+               "IND_tautau": "mu_InddCStautau", "IND_WW": "mu_InddCSWW"}
 
 
 def read_csv(FILE):
@@ -50,8 +52,8 @@ def plot_all(inp_file):
     PATH=inp_file["PATH"][0]
     FILE=inp_file["FILE"][0]
     shape=get_shape(inp_file)
-    XPARAM=inp_file["PARAM"][0]
-    YPARAM=inp_file["PARAM2"][0]
+    XPARAM="mu_the_CMS"
+    YPARAM="mu_the_LEP"
     # read the results file:
     data=pd.read_csv(PATH+"/"+FILE)
     # set tick layout for constrained regions
@@ -76,7 +78,7 @@ def get_shape(data):
     X=np.floor(1 + (data["STOP_VAL"][0]-data["START_VAL"][0])/data["STEP_SIZE"][0])
     Y=np.floor(1 + (data["STOP_VAL2"][0]-data["START_VAL2"][0])/data["STEP_SIZE2"][0])
     shape = (int(X),int(Y))
-    #shape = (101,101)
+    shape = (101,101)
     return shape
 def get_factor(PARAM, data, shape):
     if (PARAM == "Proton_Cross_Section_pb" or PARAM == "Neutron_Cross_Section_pb"):
@@ -165,6 +167,7 @@ def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
         labels = [labels_new1, labels_new2, labels_new3]
     # make colorbar
     fig.colorbar(pos, ax=ax, label=zlabel)
+    plt.xlim((0,1))
     return artists, labels
 def get_general_constr(data, shape):
     bfb=np.array(data["bfb"]).reshape(shape)
