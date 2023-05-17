@@ -34,12 +34,12 @@ STEP_SIZE=9
 
 PARAM2=mSp2
 mSp2=j
-START_VAL2=-200000
-STOP_VAL2=200000
-STEP_SIZE2=4000
+START_VAL2=-100000
+STOP_VAL2=100000
+STEP_SIZE2=2000
 
 F=results_3D_$PARAM-$PARAM2.csv
-FOLDER=varying_$PARAM-$PARAM2-15dof4-new_BP1_fine_fine
+FOLDER=varying_$PARAM-$PARAM2-15dof4-new_BP1_fine_fine_fine
 ########################################################
 # main working directory:
 MAIN_DIR=~/Applications/do_scan

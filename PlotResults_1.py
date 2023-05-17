@@ -3,8 +3,22 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib import patheffects
 import matplotlib.colors
-from scipy import ndimage
-from scipy.ndimage import gaussian_filter
+#from scipy import ndimage
+#from scipy.ndimage import gaussian_filter
+#from matplotlib.ticker import FuncFormatter
+
+# Class to set the muliplier of axes in pyplot
+# solution from: https://stackoverflow.com/questions/28904397/how-to-set-the-value-of-the-axis-multiplier-in-matplotlib
+class MagnitudeFormatter(matplotlib.ticker.ScalarFormatter):
+    def __init__(self, exponent=None):
+        super().__init__()
+        self._fixed_exponent = exponent
+
+    def _set_order_of_magnitude(self):
+        if self._fixed_exponent:
+            self.orderOfMagnitude = self._fixed_exponent
+        else:
+            super()._set_order_of_magnitude()
 
 labels_dict = {"dl14p": "$\delta_{14}'$", "dl25p": "$\delta_{25}'$", "mAS": "$m_{A_S} \, [GeV]$",
                "vS": "$v_S \, [GeV]$", "tanbeta": "$tan β$", "ch1tt": "$c_{h_1 t t}$",
@@ -15,29 +29,34 @@ labels_dict = {"dl14p": "$\delta_{14}'$", "dl25p": "$\delta_{25}'$", "mAS": "$m_
                "l_h1_SS_norm_to_v": "$\lambda_{h_1 A_S A_S}/v$",
                "l_h2_SS_norm_to_v": "$\lambda_{h_2 A_S A_S}/v$",
                "l_h3_SS_norm_to_v": "$\lambda_{h_3 A_S A_S}/v$",
-               "BR(h3->SS)": "$BR(h_3 -> A_S A_S)$",
+               "BR(h3->SS)": "$BR(h_3 → A_S A_S)$",
                "HiggsSignals_Chi^2_red": "$\chi^2_{red}$",
                "Chi^2_CMS_LEP": "$\chi^2_{CMS-LEP}$",
-               "IND_bb": "$\sigma_{A_S A_S -> b b} \, [cm^3/s]$",
-               "IND_tautau": "$\sigma_{A_S A_S -> τ τ} \, [cm^3/s]$",
-               "IND_WW": "$\sigma_{A_S A_S -> W W} \, [cm^3/s]$"}
+               "IND_bb": "$\sigma_{A_S A_S → b b} \, [cm^3/s]$",
+               "IND_tautau": "$\sigma_{A_S A_S → τ τ} \, [cm^3/s]$",
+               "IND_WW": "$\sigma_{A_S A_S → W W} \, [cm^3/s]$",
+               "IND_h2h2": "$\sigma_{A_S A_S → h_2 h_2} \, [cm^3/s]$",
+               "mu_the_LEP": "$\mu_{LEP}$",
+               "mu_the_CMS": "$\mu_{CMS}$"}
 constr_dict = {"Relic_Density": "Planck_allowed",
                "Proton_Cross_Section_pb": "LZ_allowed_p",
                "Neutron_Cross_Section_pb": "LZ_allowed_n",
                "IND_bb": "FERMI_allowed_bb",
                "IND_tautau": "FERMI_allowed_tautau",
-               "IND_WW": "FERMI_allowed_WW"}
+               "IND_WW": "FERMI_allowed_WW",
+               "IND_h2h2": "FERMI_allowed_hh"}
 constr_labels_dict = {"bfb": "bfb excl.", "unitarity": "unitarity excl.",
                "HiggsBounds": "HB excl.", "Planck_allowed": "Planck excl.",
                "LZ_allowed_p": "LZ excl.", "LZ_allowed_n": "LZ excl.",
                "FERMI_allowed_bb": "FERMI excl.", "FERMI_allowed_tautau": "FERMI excl.",
-               "FERMI_allowed_WW": "FERMI excl."}
+               "FERMI_allowed_WW": "FERMI excl.",
+               "FERMI_allowed_hh": "FERMI excl."}
 file_out_name_dict = {"Relic_Density": "RelDen", "BR(h3->SS)": "BR",
                "Proton_Cross_Section_pb": "ddCSp", "Neutron_Cross_Section_pb": "ddCSn",
                "HiggsSignals_Chi^2_red": "Chisqred", "Chi^2_CMS_LEP": "ChisqCMSLEP",
                "l_h1_SS_norm_to_v": "lh1", "l_h2_SS_norm_to_v": "lh2",
                "l_h3_SS_norm_to_v": "lh3", "IND_bb": "InddCSbb",
-               "IND_tautau": "InddCStautau", "IND_WW": "InddCSWW"}
+               "IND_tautau": "InddCStautau", "IND_WW": "InddCSWW", "IND_h2h2": "InddCShh"}
 
 
 def read_csv(FILE):
@@ -50,8 +69,14 @@ def plot_all(inp_file):
     PATH=inp_file["PATH"][0]
     FILE=inp_file["FILE"][0]
     shape=get_shape(inp_file)
+    # option 1: plot against varied parameters
     XPARAM=inp_file["PARAM"][0]
     YPARAM=inp_file["PARAM2"][0]
+    """
+    # option 2: plot against mu_CMS and mu_LEP
+    XPARAM="mu_the_CMS"
+    YPARAM="mu_the_LEP"
+    """
     # read the results file:
     data=pd.read_csv(PATH+"/"+FILE)
     # set tick layout for constrained regions
@@ -60,74 +85,87 @@ def plot_all(inp_file):
     line_space = 11
     # plot the data
     plot_1(XPARAM, YPARAM, "Relic_Density", tick_length, tick_space, line_space, data,
-           shape, PATH, None)
-    plot_1(XPARAM, YPARAM, "BR(h3->SS)", tick_length, tick_space, line_space, data, shape, PATH, None)
+           shape, PATH, matplotlib.colors.LogNorm(), None)
+    plot_1(XPARAM, YPARAM, "BR(h3->SS)", tick_length, tick_space, line_space, data,
+           shape, PATH, None, None)
     plot_2(XPARAM, YPARAM, "Proton_Cross_Section_pb", "Neutron_Cross_Section_pb",
-           tick_length, tick_space, line_space, data, shape, PATH, matplotlib.colors.LogNorm())
+           tick_length, tick_space, line_space, data, shape, PATH, matplotlib.colors.LogNorm(), None)
     plot_2(XPARAM, YPARAM, "HiggsSignals_Chi^2_red", "Chi^2_CMS_LEP",
-           tick_length, tick_space, line_space, data, shape, PATH, None)
+           tick_length, tick_space, line_space, data, shape, PATH, None, None)
     plot_3(XPARAM, YPARAM, "l_h1_SS_norm_to_v", "l_h2_SS_norm_to_v", "l_h3_SS_norm_to_v",
-          tick_length, tick_space, line_space, data, shape, PATH, None)
-    plot_3(XPARAM, YPARAM, "IND_bb", "IND_tautau", "IND_WW",
-           tick_length, tick_space, line_space, data, shape, PATH, None)
+           tick_length, tick_space, line_space, data, shape, PATH, None, None)
+    plot_3(XPARAM, YPARAM, "IND_h2h2", "IND_WW", "IND_bb", tick_length, tick_space,
+           line_space, data, shape, PATH, matplotlib.colors.LogNorm(), None)
+    #plot_3(XPARAM, YPARAM, "IND_bb", "IND_tautau", "IND_WW",
+    #       tick_length, tick_space, line_space, data, shape, PATH, None, MagnitudeFormatter(-25))
     return
 
 def get_shape(data):
     X=np.floor(1 + (data["STOP_VAL"][0]-data["START_VAL"][0])/data["STEP_SIZE"][0])
     Y=np.floor(1 + (data["STOP_VAL2"][0]-data["START_VAL2"][0])/data["STEP_SIZE2"][0])
     shape = (int(X),int(Y))
-    #shape = (101,101)
+    shape = (101,101)
     return shape
 def get_factor(PARAM, data, shape):
     if (PARAM == "Proton_Cross_Section_pb" or PARAM == "Neutron_Cross_Section_pb"):
         FACTOR = 1e-36
-    elif (PARAM == "IND_bb" or PARAM == "IND_tautau" or PARAM == "IND_WW"):
+    elif (PARAM == "IND_bb" or PARAM == "IND_tautau" or PARAM == "IND_WW"
+          or PARAM == "IND_h2h2"):
         FACTOR = np.array(data["Indirect_Detection_CS_cm^3/s"]).reshape(shape)
     else:
         FACTOR = 1
     return FACTOR
-def plot_constr(X, Y, Z, ZPARAM, line_style, tick_length, tick_space, line_space, ax):
-    if 1 in Z:
-        label = constr_labels_dict[ZPARAM]
-        ############### old
-        #CS=ax.contour(X, Y, Z, levels=1, colors=["none", "black"], linestyles=line_style)
-        #ax.clabel(CS, fmt={0.5: label}, inline_spacing=line_space)
-        """
-        # option 1 for smoothing
-        X_smooth = ndimage.zoom(X, 3)
-        Y_smooth = ndimage.zoom(Y, 3)
-        Z_smooth = ndimage.zoom(Z, 3)
-        """
-        """
-        # option 2 for smoothing
-        X_smooth = gaussian_filter(X, sigma=0.5)
-        Y_smooth = gaussian_filter(Y, sigma=0.5)
-        Z_smooth = gaussian_filter(Z, sigma=0.5)
-        """
-        CS=ax.contour(X, Y, Z, [0.5], colors=["black"], linestyles=line_style)
+def plot_constr(X, Y, Z, ZPARAM, line_style, tick_length, tick_space, line_space, ax, hatch_style):
+    label = constr_labels_dict[ZPARAM]
+    if (1 in Z) and (0 in Z):
+        #if 0 in Z:
+	    #CS=ax.contour(X, Y, Z, levels=1, colors=["none", "black"], linestyles=line_style)
+	    #ax.clabel(CS, fmt={0.5: label}, inline_spacing=line_space)
+            """
+	    # option 1 for smoothing
+            X_smooth = ndimage.zoom(X, 3)
+            Y_smooth = ndimage.zoom(Y, 3)
+            Z_smooth = ndimage.zoom(Z, 3)
+            """
+            """
+            # option 2 for smoothing
+            X_smooth = gaussian_filter(X, sigma=0.5)
+            Y_smooth = gaussian_filter(Y, sigma=0.5)
+            Z_smooth = gaussian_filter(Z, sigma=0.5)
+            """
+            """
+            # option 3 for smoothing
+            CS_old=plt.contour(X, Y, Z, levels=1, colors=["none", "black"], linestyles=line_style)
+            dat0 = CS_old.allsegs[0][0]
+            X_old_pre, Y_old_pre = dat0[:,0], dat0[:,1]
+            X_old, Y_old = X_old_pre[1::2], Y_old_pre[1::2]
+            tck, u = interpolate.splprep([X_old, Y_old], s=0)
+            X_new = np.linspace(min(X_old), max(X_old), 3*len(X_old))
+            Y_new = interpolate.splev(X_new, tck)
+            CS = ax.plot(X_new, Y_new[0], color="black", linestyle=line_style, label=label)
+            ax.legend()
+            """
+            """
+            # option 1: hatched lines
+            CS=ax.contour(X, Y, Z, [0.5], colors=["black"], linestyles=line_style)
+            plt.setp(CS.collections,
+                path_effects=[patheffects.withTickedStroke(length=tick_length, spacing=tick_space)])
+            """
+            # option 2: lines + shaded area
+            #CS_0=ax.contour(X, Y, Z, [0.5], colors=["black"], linestyles="solid")
+            CS_0=ax.contour(X, Y, Z, [0.5], colors=["black"], linestyles=line_style)
+            CS=ax.contourf(X, Y, Z, levels=1, colors=["none", "none"], hatches=[hatch_style, None])
+
+            artists, labels = CS.legend_elements()
+            labels_new=[label]
+    #else:
+    elif (0 in Z) and (1 not in Z):
+        CS=ax.contourf(X, Y, Z, levels=1, colors=["none"], hatches="/")
+        #CS=ax.contourf(X, Y, Z, [0.5], colors=["none"], hatches="/")
         artists, labels = CS.legend_elements()
-        labels_new = [label]
-        plt.setp(CS.collections,
-             path_effects=[patheffects.withTickedStroke(length=tick_length, spacing=tick_space)])
-        ############### new
-        """
-        # option 3 for smoothing
-        CS_old=plt.contour(X, Y, Z, levels=1, colors=["none", "black"], linestyles=line_style)
-        dat0 = CS_old.allsegs[0][0]
-        X_old_pre, Y_old_pre = dat0[:,0], dat0[:,1]
-        X_old, Y_old = X_old_pre[1::2], Y_old_pre[1::2]
-        tck, u = interpolate.splprep([X_old, Y_old], s=0)
-        X_new = np.linspace(min(X_old), max(X_old), 3*len(X_old))
-        Y_new = interpolate.splev(X_new, tck)
-        CS = ax.plot(X_new, Y_new[0], color="black", linestyle=line_style, label=label)
-        ax.legend()
-        """
-        ###############
+        labels_new=[label]
     else:
-        #CS=ax.contourf(X, Y, Z, levels=1, colors=["none"], hatches="/")
-        CS=ax.contourf(X, Y, Z, [0.5], colors=["none"], hatches="/")
-        artists, labels = CS.legend_elements()
-        labels_new=["all "+constr_labels_dict[ZPARAM]]
+        artists, labels_new = [np.nan], [np.nan]
     return artists[0], labels_new[0]
 def plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps):
     BP_PATH = "~/SyncandShare/Master/FILES/2HDMS-Z2b-DM/benchmark_point/new_BP1"
@@ -137,23 +175,24 @@ def plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps):
     X = BP_data[XPARAM]
     Y = BP_data[YPARAM]
     Z = BP_data[ZPARAM] * ZFACTOR
-    pos=ax.scatter(X, Y, s=ps, c="red", marker="*", label="BP")
+    pos=ax.scatter(X, Y, s=100, c="red", marker="*", label="BP")
     return
 def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
-                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm):
-    ps = 100
+                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl):
+    ps = 10
     pos=ax.scatter(X, Y, s=ps, c=Z, norm=norm)
-    artists1, labels_new1 = plot_constr(X, Y, bfb, "bfb", "dashed", tick_length, tick_space,
-                                        line_space, ax)
-    artists2, labels_new2 = plot_constr(X, Y, unitarity, "unitarity", "dotted", tick_length,
-                                        tick_space, line_space, ax)
-    artists3, labels_new3 = plot_constr(X, Y, HB, "HiggsBounds", "dashdot", tick_length, tick_space, line_space, ax)
+    artists1, labels_new1 = plot_constr(X, Y, bfb, "bfb", "solid", tick_length, tick_space,
+                                        line_space, ax, "//")
+    artists2, labels_new2 = plot_constr(X, Y, unitarity, "unitarity", "dashed", tick_length,
+                                        tick_space, line_space, ax, "--")
+    artists3, labels_new3 = plot_constr(X, Y, HB, "HiggsBounds", "dashdot", tick_length,
+                                        tick_space, line_space, ax, "\\\\")
     # plot additional constraint relevant for ZPARAM
     if ZPARAM in constr_dict.keys():
         add_constr_name = constr_dict[ZPARAM]
         add_constr_data = np.array(data[add_constr_name]).reshape(shape)
-        artists4, labels_new4 = plot_constr(X, Y, add_constr_data, add_constr_name, "solid",
-                                            tick_length, tick_space, line_space, ax)
+        artists4, labels_new4 = plot_constr(X, Y, add_constr_data, add_constr_name, "dotted",
+                                            tick_length, tick_space, line_space, ax, "..")
     # plot BP
     plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps)
     # make legend
@@ -164,14 +203,16 @@ def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
         artists = [artists1, artists2, artists3]
         labels = [labels_new1, labels_new2, labels_new3]
     # make colorbar
-    fig.colorbar(pos, ax=ax, label=zlabel)
+    #ax.set_xlim(0,1)
+    #ax.set_ylim(-60000,20000)
+    bar = fig.colorbar(pos, ax=ax, label=zlabel, format=ax_multipl)
     return artists, labels
 def get_general_constr(data, shape):
     bfb=np.array(data["bfb"]).reshape(shape)
     unitarity=np.array(data["unitarity"]).reshape(shape)
     HB=np.array(data["HiggsBounds"]).reshape(shape)
     return bfb, unitarity, HB
-def plot_1(XPARAM, YPARAM, ZPARAM, tick_length, tick_space, line_space, data, shape, PATH, norm):
+def plot_1(XPARAM, YPARAM, ZPARAM, tick_length, tick_space, line_space, data, shape, PATH, norm, ax_multipl):
     # define name for output file
     FILE_OUT = PATH+"/plots_"+file_out_name_dict[ZPARAM]+".png"
     # define all needed data
@@ -187,14 +228,14 @@ def plot_1(XPARAM, YPARAM, ZPARAM, tick_length, tick_space, line_space, data, sh
     # plot the data with constraint lines
     fig, ax = plt.subplots()
     artists, labels = make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
-                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm)
+                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
-    ax.legend(artists, labels, loc="upper right")
+    ax.legend(artists, labels, loc="upper right", framealpha=1)
     plt.savefig(FILE_OUT, format="png")
     return
 def plot_2(XPARAM, YPARAM, ZPARAM1, ZPARAM2, tick_length, tick_space, line_space, data,
-           shape, PATH, norm):
+           shape, PATH, norm, ax_multipl):
     # define name for output file
     FILE_OUT = PATH+"/plots_"+file_out_name_dict[ZPARAM1]+file_out_name_dict[ZPARAM2]+".png"
     # define all needed data
@@ -213,17 +254,17 @@ def plot_2(XPARAM, YPARAM, ZPARAM1, ZPARAM2, tick_length, tick_space, line_space
     # plot the data with constraint lines
     fig, (ax1, ax2) = plt.subplots(2,1, sharex=True)
     artists, labels = make_subplot(ax1, X, Y, Z1, bfb, unitarity, HB, ZPARAM1, data, zlabel1, shape,
-                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm)
+                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
     artists2, labels2 = make_subplot(ax2, X, Y, Z2, bfb, unitarity, HB, ZPARAM2, data, zlabel2, shape,
-                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm)
+                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
     ax2.set_xlabel(xlabel)
     ax1.set_ylabel(ylabel)
     ax2.set_ylabel(ylabel)
-    ax1.legend(artists, labels, loc="upper right")
+    ax1.legend(artists, labels, loc="upper right", framealpha=1)
     plt.savefig(FILE_OUT, format="png")
     return
 def plot_3(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZPARAM3, tick_length,
-           tick_space, line_space, data, shape, PATH, norm):
+           tick_space, line_space, data, shape, PATH, norm, ax_multipl):
     # define name for output file
     FILE_OUT = PATH+"/plots_"+file_out_name_dict[ZPARAM1]+file_out_name_dict[ZPARAM2]+\
                file_out_name_dict[ZPARAM3]+".png"
@@ -246,14 +287,14 @@ def plot_3(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZPARAM3, tick_length,
     # plot the data with constraint lines
     fig, (ax1, ax2, ax3) = plt.subplots(3,1, sharex=True)
     artists, labels = make_subplot(ax1, X, Y, Z1, bfb, unitarity, HB, ZPARAM1, data, zlabel1, shape,
-                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm)
+                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
     artists2, labels2 = make_subplot(ax2, X, Y, Z2, bfb, unitarity, HB, ZPARAM2, data, zlabel2, shape,
-                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm)
+                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
     artists3, labels3 = make_subplot(ax3, X, Y, Z3, bfb, unitarity, HB, ZPARAM3, data, zlabel3, shape,
-                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm)
+                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
     ax3.set_xlabel(xlabel)
     ax2.set_ylabel(ylabel)
-    ax1.legend(artists, labels, loc="upper right")
+    ax1.legend(artists, labels, loc="upper right", framealpha=1)
     plt.savefig(FILE_OUT, format="png")
     return
 
