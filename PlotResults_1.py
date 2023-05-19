@@ -104,7 +104,7 @@ def get_shape(data):
     X=np.floor(1 + (data["STOP_VAL"][0]-data["START_VAL"][0])/data["STEP_SIZE"][0])
     Y=np.floor(1 + (data["STOP_VAL2"][0]-data["START_VAL2"][0])/data["STEP_SIZE2"][0])
     shape = (int(X),int(Y))
-    shape = (101,101)
+    #shape = (101,101)
     return shape
 def get_factor(PARAM, data, shape):
     if (PARAM == "Proton_Cross_Section_pb" or PARAM == "Neutron_Cross_Section_pb"):
@@ -205,6 +205,7 @@ def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
     # make colorbar
     #ax.set_xlim(0,1)
     #ax.set_ylim(-60000,20000)
+    #ax.yaxis.set_major_formatter(MagnitudeFormatter(4))
     bar = fig.colorbar(pos, ax=ax, label=zlabel, format=ax_multipl)
     return artists, labels
 def get_general_constr(data, shape):
