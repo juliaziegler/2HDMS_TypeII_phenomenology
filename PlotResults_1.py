@@ -48,9 +48,12 @@ constr_dict = {"Relic_Density": "Planck_allowed",
 constr_labels_dict = {"bfb": "bfb excl.", "unitarity": "unitarity excl.",
                "HiggsBounds": "HB excl.", "Planck_allowed": "Planck excl.",
                "LZ_allowed_p": "LZ excl.", "LZ_allowed_n": "LZ excl.",
-               "FERMI_allowed_bb": "FERMI excl.", "FERMI_allowed_tautau": "FERMI excl.",
+               "LZ_allowed": "LZ excl.",
+               "FERMI_allowed_bb": "FERMI excl.",
+               "FERMI_allowed_tautau": "FERMI excl.",
                "FERMI_allowed_WW": "FERMI excl.",
-               "FERMI_allowed_hh": "FERMI excl."}
+               "FERMI_allowed_hh": "FERMI excl.",
+               "FERMI_allowed": "FERMI excl."}
 file_out_name_dict = {"Relic_Density": "RelDen", "BR(h3->SS)": "BR",
                "Proton_Cross_Section_pb": "ddCSp", "Neutron_Cross_Section_pb": "ddCSn",
                "HiggsSignals_Chi^2_red": "Chisqred", "Chi^2_CMS_LEP": "ChisqCMSLEP",
@@ -98,13 +101,19 @@ def plot_all(inp_file):
            line_space, data, shape, PATH, matplotlib.colors.LogNorm(), None)
     #plot_3(XPARAM, YPARAM, "IND_bb", "IND_tautau", "IND_WW",
     #       tick_length, tick_space, line_space, data, shape, PATH, None, MagnitudeFormatter(-25))
+    plot_all_constr_s1(XPARAM, YPARAM, tick_length, tick_space,
+           line_space, data, shape, PATH, None, None)
+    plot_all_constr_s2(XPARAM, YPARAM, tick_length, tick_space,
+           line_space, data, shape, PATH, None, None)
+    plot_all_constr_s3(XPARAM, YPARAM, tick_length, tick_space,
+           line_space, data, shape, PATH, None, None)
     return
 
 def get_shape(data):
     X=np.floor(1 + (data["STOP_VAL"][0]-data["START_VAL"][0])/data["STEP_SIZE"][0])
     Y=np.floor(1 + (data["STOP_VAL2"][0]-data["START_VAL2"][0])/data["STEP_SIZE2"][0])
     shape = (int(X),int(Y))
-    shape = (101,101)
+    #shape = (101,101)
     return shape
 def get_factor(PARAM, data, shape):
     if (PARAM == "Proton_Cross_Section_pb" or PARAM == "Neutron_Cross_Section_pb"):
@@ -115,7 +124,8 @@ def get_factor(PARAM, data, shape):
     else:
         FACTOR = 1
     return FACTOR
-def plot_constr(X, Y, Z, ZPARAM, line_style, tick_length, tick_space, line_space, ax, hatch_style):
+def plot_constr(X, Y, Z, ZPARAM, line_style, tick_length,
+                tick_space, line_space, ax, hatch_style, **kwargs):
     label = constr_labels_dict[ZPARAM]
     if (1 in Z) and (0 in Z):
         #if 0 in Z:
@@ -153,15 +163,38 @@ def plot_constr(X, Y, Z, ZPARAM, line_style, tick_length, tick_space, line_space
             """
             # option 2: lines + shaded area
             #CS_0=ax.contour(X, Y, Z, [0.5], colors=["black"], linestyles="solid")
-            CS_0=ax.contour(X, Y, Z, [0.5], colors=["black"], linestyles=line_style)
+            if "color" in kwargs.keys():
+                line_color = kwargs["color"]
+            else:
+                line_color = "black"
+            CS_0=ax.contour(X, Y, Z, [0.5], colors=[line_color], linestyles=line_style)
             CS=ax.contourf(X, Y, Z, levels=1, colors=["none", "none"], hatches=[hatch_style, None])
-
-            artists, labels = CS.legend_elements()
+            if "color" in kwargs:
+                col0 = CS.collections[0]
+                col0.set_edgecolor(line_color)
+                artists, labels = CS_0.legend_elements()
+            else:
+                artists, labels = CS.legend_elements()
             labels_new=[label]
     #else:
     elif (0 in Z) and (1 not in Z):
-        CS=ax.contourf(X, Y, Z, levels=1, colors=["none"], hatches="/")
+        CS=ax.contourf(X, Y, Z, levels=1, colors=["none"], hatches=hatch_style)
         #CS=ax.contourf(X, Y, Z, [0.5], colors=["none"], hatches="/")
+        artists, labels = CS.legend_elements()
+        labels_new=[label]
+    else:
+        artists, labels_new = [np.nan], [np.nan]
+    return artists[0], labels_new[0]
+def plot_constr_s3(X, Y, Z, ZPARAM, line_style, tick_length,
+                tick_space, line_space, ax, hatch_style, color, alpha):
+    label = constr_labels_dict[ZPARAM]
+    if (1 in Z) and (0 in Z):
+        CS_0=ax.contour(X, Y, Z, [0.5], colors=[color], linestyles="solid")
+        CS=ax.contourf(X, Y, Z, levels=1, colors=[color, "none"], alpha=alpha)
+        artists, labels = CS.legend_elements()
+        labels_new=[label]
+    elif (0 in Z) and (1 not in Z):
+        CS=ax.contourf(X, Y, Z, levels=1, colors=[color], alpha=0.2)
         artists, labels = CS.legend_elements()
         labels_new=[label]
     else:
@@ -171,15 +204,15 @@ def plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps):
     BP_PATH = "~/SyncandShare/Master/FILES/2HDMS-Z2b-DM/benchmark_point/new_BP1"
     BP_FILE = "results.csv"
     BP_data=pd.read_csv(BP_PATH+"/"+BP_FILE)
-    ZFACTOR = get_factor(ZPARAM, BP_data, (1))
+    #ZFACTOR = get_factor(ZPARAM, BP_data, (1))
     X = BP_data[XPARAM]
     Y = BP_data[YPARAM]
-    Z = BP_data[ZPARAM] * ZFACTOR
+    #Z = BP_data[ZPARAM] * ZFACTOR
     pos=ax.scatter(X, Y, s=100, c="red", marker="*", label="BP")
     return
 def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
                  tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl):
-    ps = 10
+    ps = 40
     pos=ax.scatter(X, Y, s=ps, c=Z, norm=norm)
     artists1, labels_new1 = plot_constr(X, Y, bfb, "bfb", "solid", tick_length, tick_space,
                                         line_space, ax, "//")
@@ -204,7 +237,8 @@ def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
         labels = [labels_new1, labels_new2, labels_new3]
     # make colorbar
     #ax.set_xlim(0,1)
-    #ax.set_ylim(-60000,20000)
+    ax.set_ylim(-60000,20000)
+    ax.yaxis.set_major_formatter(MagnitudeFormatter(4))
     bar = fig.colorbar(pos, ax=ax, label=zlabel, format=ax_multipl)
     return artists, labels
 def get_general_constr(data, shape):
@@ -212,6 +246,31 @@ def get_general_constr(data, shape):
     unitarity=np.array(data["unitarity"]).reshape(shape)
     HB=np.array(data["HiggsBounds"]).reshape(shape)
     return bfb, unitarity, HB
+def get_fermi_constr(data, shape):
+    F_ZZ = np.array(data["FERMI_allowed_ZZ"]).reshape(shape).astype(bool)
+    F_mumu = np.array(data["FERMI_allowed_mumu"]).reshape(shape).astype(bool)
+    F_hh = np.array(data["FERMI_allowed_hh"]).reshape(shape).astype(bool)
+    F_gg = np.array(data["FERMI_allowed_gg"]).reshape(shape).astype(bool)
+    F_yy = np.array(data["FERMI_allowed_yy"]).reshape(shape).astype(bool)
+    F_ee = np.array(data["FERMI_allowed_ee"]).reshape(shape).astype(bool)
+    F_cc = np.array(data["FERMI_allowed_cc"]).reshape(shape).astype(bool)
+    F_WW = np.array(data["FERMI_allowed_WW"]).reshape(shape).astype(bool)
+    F_tautau = np.array(data["FERMI_allowed_tautau"]).reshape(shape).astype(bool)
+    F_bb = np.array(data["FERMI_allowed_bb"]).reshape(shape).astype(bool)
+    # combining all step by step into one array
+    F1 = np.logical_and(F_ZZ, F_mumu)
+    F2 = np.logical_and(F_hh, F_gg)
+    F3 = np.logical_and(F_yy, F_ee)
+    F4 = np.logical_and(F_cc, F_WW)
+    F5 = np.logical_and(F_tautau, F_bb)
+
+    F21 = np.logical_and(F1, F2)
+    F22 = np.logical_and(F3, F4)
+    F23 = np.logical_and(F5, F21)
+
+    F_31 = np.logical_and(F22, F23)
+    F_all = F_31.astype(int)
+    return F_all
 def plot_1(XPARAM, YPARAM, ZPARAM, tick_length, tick_space, line_space, data, shape, PATH, norm, ax_multipl):
     # define name for output file
     FILE_OUT = PATH+"/plots_"+file_out_name_dict[ZPARAM]+".png"
@@ -297,7 +356,153 @@ def plot_3(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZPARAM3, tick_length,
     ax1.legend(artists, labels, loc="upper right", framealpha=1)
     plt.savefig(FILE_OUT, format="png")
     return
-
+def plot_all_constr_s1(XPARAM, YPARAM, tick_length, tick_space,
+                    line_space, data, shape, PATH, norm, ax_multipl):
+    # define name for output file
+    FILE_OUT = PATH+"/plots_all_constr_style_1.png"
+    # define all needed data
+    X=np.array(data[XPARAM]).reshape(shape)
+    Y=np.array(data[YPARAM]).reshape(shape)
+    all_allowed=np.array(data["Allowed_by_all_Constraints"]).reshape(shape)
+    planck=np.array(data["Planck_allowed"]).reshape(shape)
+    lz=np.array(data["LZ_allowed"]).reshape(shape)
+    fermi = get_fermi_constr(data, shape)
+    bfb, unitarity, HB = get_general_constr(data, shape)
+    xlabel = labels_dict[XPARAM]
+    ylabel = labels_dict[YPARAM]
+    # plot the data with constraint lines
+    fig, ax = plt.subplots()
+    CS=ax.contourf(X,Y,all_allowed, levels=1,
+                   colors=["none", "green"])
+    artists, labels = CS.legend_elements()
+    artists0 = artists[1]
+    labels_new0 = "allowed by all constraints"
+    artists1, labels_new1 = plot_constr(X, Y, bfb, "bfb", "solid", tick_length, tick_space,
+                                        line_space, ax, "//")
+    artists2, labels_new2 = plot_constr(X, Y, unitarity, "unitarity", "solid", tick_length,
+                                        tick_space, line_space, ax, "--")
+    artists3, labels_new3 = plot_constr(X, Y, HB, "HiggsBounds", "solid", tick_length,
+                                        tick_space, line_space, ax, "\\\\")
+    artists4, labels_new4 = plot_constr(X, Y, planck, "Planck_allowed", "solid", tick_length,
+                                        tick_space, line_space, ax, "..")
+    artists5, labels_new5 = plot_constr(X, Y, lz, "LZ_allowed", "solid", tick_length,
+                                        tick_space, line_space, ax, "||")
+    artists6, labels_new6 = plot_constr(X, Y, fermi, "FERMI_allowed", "solid", tick_length,
+                                        tick_space, line_space, ax, "o")
+    # plot BP
+    plot_bp(XPARAM, YPARAM, None, ax, None)
+    # make legend
+    artists = [artists0, artists1, artists2, artists3, artists4,
+               artists5, artists6]
+    labels = [labels_new0, labels_new1, labels_new2, labels_new3,
+              labels_new4, labels_new5, labels_new6]
+    # make colorbar
+    #ax.set_xlim(0,1)
+    ax.set_ylim(-60000,20000)
+    ax.yaxis.set_major_formatter(MagnitudeFormatter(4))
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.legend(artists, labels, loc="upper right", framealpha=1)
+    plt.savefig(FILE_OUT, format="png")
+    return
+def plot_all_constr_s2(XPARAM, YPARAM, tick_length, tick_space,
+                    line_space, data, shape, PATH, norm, ax_multipl):
+    # define name for output file
+    FILE_OUT = PATH+"/plots_all_constr_style_2.png"
+    # define all needed data
+    X=np.array(data[XPARAM]).reshape(shape)
+    Y=np.array(data[YPARAM]).reshape(shape)
+    all_allowed=np.array(data["Allowed_by_all_Constraints"]).reshape(shape)
+    planck=np.array(data["Planck_allowed"]).reshape(shape)
+    lz=np.array(data["LZ_allowed"]).reshape(shape)
+    fermi = get_fermi_constr(data, shape)
+    bfb, unitarity, HB = get_general_constr(data, shape)
+    xlabel = labels_dict[XPARAM]
+    ylabel = labels_dict[YPARAM]
+    # plot the data with constraint lines
+    fig, ax = plt.subplots()
+    CS=ax.contourf(X,Y,all_allowed, levels=1,
+                   colors=["none", "green"])
+    artists, labels = CS.legend_elements()
+    artists0 = artists[1]
+    labels_new0 = "allowed by all constraints"
+    artists1, labels_new1 = plot_constr(X, Y, bfb, "bfb", "solid", tick_length, tick_space,
+                                        line_space, ax, "//")
+    artists2, labels_new2 = plot_constr(X, Y, unitarity, "unitarity", "solid", tick_length,
+                                        tick_space, line_space, ax, "--")
+    artists3, labels_new3 = plot_constr(X, Y, HB, "HiggsBounds", "solid", tick_length,
+                                        tick_space, line_space, ax, "\\\\")
+    artists4, labels_new4 = plot_constr(X, Y, planck, "Planck_allowed", "solid", tick_length,
+                                        tick_space, line_space, ax, "/", color="maroon")
+    artists5, labels_new5 = plot_constr(X, Y, lz, "LZ_allowed", "solid", tick_length,
+                                        tick_space, line_space, ax, "-", color="gold")
+    artists6, labels_new6 = plot_constr(X, Y, fermi, "FERMI_allowed", "solid", tick_length,
+                                        tick_space, line_space, ax, "\\", color="darkturquoise")                                        
+    # plot BP
+    plot_bp(XPARAM, YPARAM, None, ax, None)
+    # make legend
+    artists = [artists0, artists1, artists2, artists3, artists4,
+               artists5, artists6]
+    labels = [labels_new0, labels_new1, labels_new2, labels_new3,
+              labels_new4, labels_new5, labels_new6]
+    # make colorbar
+    #ax.set_xlim(0,1)
+    ax.set_ylim(-60000,20000)
+    ax.yaxis.set_major_formatter(MagnitudeFormatter(4))
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.legend(artists, labels, loc="upper right", framealpha=1)
+    plt.savefig(FILE_OUT, format="png")
+    return
+def plot_all_constr_s3(XPARAM, YPARAM, tick_length, tick_space,
+                    line_space, data, shape, PATH, norm, ax_multipl):
+    # define name for output file
+    FILE_OUT = PATH+"/plots_all_constr_style_3.png"
+    # define all needed data
+    X=np.array(data[XPARAM]).reshape(shape)
+    Y=np.array(data[YPARAM]).reshape(shape)
+    all_allowed=np.array(data["Allowed_by_all_Constraints"]).reshape(shape)
+    planck=np.array(data["Planck_allowed"]).reshape(shape)
+    lz=np.array(data["LZ_allowed"]).reshape(shape)
+    fermi = get_fermi_constr(data, shape)
+    bfb, unitarity, HB = get_general_constr(data, shape)
+    xlabel = labels_dict[XPARAM]
+    ylabel = labels_dict[YPARAM]
+    # plot the data with constraint lines
+    fig, ax = plt.subplots()
+    CS=ax.contourf(X,Y,all_allowed, levels=1,
+                   colors=["none", "green"])
+    artists, labels = CS.legend_elements()
+    artists0 = artists[1]
+    labels_new0 = "allowed by all constraints"
+    artists1, labels_new1 = plot_constr_s3(X, Y, bfb, "bfb", "solid", tick_length, tick_space,
+                                        line_space, ax, "//", color="darkviolet", alpha=1)
+    artists2, labels_new2 = plot_constr_s3(X, Y, unitarity, "unitarity", "dashed", tick_length,
+                                        tick_space, line_space, ax, "--", color="maroon", alpha=0.84)
+    artists3, labels_new3 = plot_constr_s3(X, Y, HB, "HiggsBounds", "dashdot", tick_length,
+                                        tick_space, line_space, ax, "\\\\", color="darkorange", alpha=0.68)
+    artists4, labels_new4 = plot_constr_s3(X, Y, planck, "Planck_allowed", "dotted", tick_length,
+                                        tick_space, line_space, ax, "..", color="gold", alpha=0.52)
+    artists5, labels_new5 = plot_constr_s3(X, Y, lz, "LZ_allowed", "dotted", tick_length,
+                                        tick_space, line_space, ax, "o", color="darkturquoise", alpha=0.36)
+    artists6, labels_new6 = plot_constr_s3(X, Y, fermi, "FERMI_allowed", "dotted", tick_length,
+                                        tick_space, line_space, ax, "O", color="dodgerblue", alpha=0.2)
+    # plot BP
+    plot_bp(XPARAM, YPARAM, None, ax, None)
+    # make legend
+    artists = [artists0, artists1, artists2, artists3, artists4,
+               artists5, artists6]
+    labels = [labels_new0, labels_new1, labels_new2, labels_new3,
+              labels_new4, labels_new5, labels_new6]
+    # make colorbar
+    #ax.set_xlim(0,1)
+    ax.set_ylim(-60000,20000)
+    ax.yaxis.set_major_formatter(MagnitudeFormatter(4))
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.legend(artists, labels, loc="upper right", framealpha=1)
+    plt.savefig(FILE_OUT, format="png")
+    return
 
 if __name__=='__main__':
     FILE_IN = "output/pyplot_in.csv"
