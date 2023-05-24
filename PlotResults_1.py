@@ -237,8 +237,8 @@ def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
         labels = [labels_new1, labels_new2, labels_new3]
     # make colorbar
     #ax.set_xlim(0,1)
-    ax.set_ylim(-60000,20000)
-    ax.yaxis.set_major_formatter(MagnitudeFormatter(4))
+    #ax.set_ylim(-60000,20000)
+    #ax.yaxis.set_major_formatter(MagnitudeFormatter(4))
     bar = fig.colorbar(pos, ax=ax, label=zlabel, format=ax_multipl)
     return artists, labels
 def get_general_constr(data, shape):
