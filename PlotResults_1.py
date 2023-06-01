@@ -289,7 +289,8 @@ def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
     bar = fig.colorbar(pos, ax=ax, label=zlabel, format=ax_multipl)
     # set limis and formatting for axes
     #ax.set_xlim(0,1)
-    ax.set_xlim(100,500)
+    #ax.set_xlim(100,400)
+    #ax.set_ylim(7,11)
     #ax.set_ylim(-60000,20000)
     #ax.yaxis.set_major_formatter(MagnitudeFormatter(4))
     return circ
@@ -469,7 +470,9 @@ def plot_all_constr_s2(XPARAM, YPARAM, tick_length, tick_space,
     ax.legend(handles=circ, loc="upper right", framealpha=1)
     #ax.set_xlim(0,1)
     #ax.set_ylim(0.015,0.165)
-    ax.set_xlim(100,500)
+    #ax.set_xlim(100,400)
+    #ax.set_ylim(7,11)
+    #ax.set_xlim(100,500)
     #ax.set_ylim(-60000,20000)
     #ax.yaxis.set_major_formatter(MagnitudeFormatter(4))
     ax.set_xlabel(xlabel)
