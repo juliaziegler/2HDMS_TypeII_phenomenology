@@ -171,7 +171,7 @@ def calc_chisq_cms_lep(data):
 
     # calculate Chisq_{CMS-LEP}
     chisq = ((mu_the_LEP - mu_exp_LEP)/sigma_mu_exp_LEP)**2 + \
-            ((mu_the_CMS - mu_exp_ATLAS_CMS)/sigma_mu_exp_ATLAS_CSM)**2
+            ((mu_the_CMS - mu_exp_ATLAS_CMS)/sigma_mu_exp_ATLAS_CMS)**2
     return chisq, mu_the_LEP, mu_the_CMS
 def get_interp_constr(DM_mass, FILE):
     """interpolate to get correct constraint (dependend on DM mass)
