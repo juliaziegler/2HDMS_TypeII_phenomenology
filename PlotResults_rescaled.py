@@ -23,7 +23,7 @@ class MagnitudeFormatter(matplotlib.ticker.ScalarFormatter):
 
 labels_dict = {"dl14p": "$\delta_{14}'$", "dl25p": "$\delta_{25}'$", "mAS": "$m_{A_S} \, [GeV]$",
                "vS": "$v_S \, [GeV]$", "tanbeta": "$tan β$", "ch1tt": "$c_{h_1 t t}$",
-               "ch1bb": "$c_{h_1 b b}$", "mSp2": "$m_{S}'^2 \, [GeV^2]$",
+               "ch1bb": "$c_{h_1 b b}$", "mSp2": "$m_{S}'^2 \, [GeV^2]$", "mh3": "$m_{h_3}\, [GeV]$",
                "Relic_Density": "$\Omega h^2$",
                "Proton_Cross_Section_pb": "$\sigma_{proton \, A_S} \, [cm^2]$",
                "Neutron_Cross_Section_pb": "$\sigma_{neutron \, A_S} \, [cm^2]$",
