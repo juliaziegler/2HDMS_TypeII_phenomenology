@@ -18,28 +18,28 @@ mHm=900 #1000 #800        # {800, 1200}
 v=246.220569
 vS=239.859563619576 #882.297764743439 #100.000000  # {100, 2000}
 tanbeta=10 #10     # {1, 10}
-ch1tt=0.4191536674553097 #0.36394218991840976 #0.27     # > 0.267, >= ch1bb (<=0.583 but not sure)
-ch1bb=0.20957683372767075 #0.12737976647144644 #0.05     # < 0.581
+ch1tt=0.372 #0.36394218991840976 #0.27     # > 0.267, >= ch1bb (<=0.583 but not sure)
+ch1bb=0.258 #0.12737976647144644 #0.05     # < 0.581
 mutil2=812804.1983308262 # m122/(sinbeta*cosbeta)
 mSp2=-48087.901620072 #475.490545912366 #-10000.0000
 alignm=0.9998450892861399 #0.9999986246982658 #1       # {0.98, 1}
 dl14p=-9.69576710546982 #0              # l4p = l1p + dl14p
 dl25p=0.2474626325409999 #0              # l5p = l2p + dl25p
 ##### change these params ##############################
-PARAM=ch1tt
-ch1tt=i
-START_VAL=0.267
-STOP_VAL=0.583
-STEP_SIZE=0.016
+PARAM=tanbeta
+tanbeta=i
+START_VAL=5
+STOP_VAL=10
+STEP_SIZE=0.01
 
-PARAM2=ch1bb
-ch1bb=j
-START_VAL2=0.1
-STOP_VAL2=0.581
-STEP_SIZE2=0.03
+PARAM2=mh3
+mh3=j
+START_VAL2=600
+STOP_VAL2=900
+STEP_SIZE2=20
 
 F=results_3D_$PARAM-$PARAM2.csv
-FOLDER=varying_$PARAM-$PARAM2-15dof4-rescaled-BP1_test
+FOLDER=varying_$PARAM-$PARAM2-15dof4-rescaled-BP1.2_fine
 ########################################################
 # main working directory:
 MAIN_DIR=~/Applications/do_scan

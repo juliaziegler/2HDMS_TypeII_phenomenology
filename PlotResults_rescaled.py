@@ -24,6 +24,7 @@ class MagnitudeFormatter(matplotlib.ticker.ScalarFormatter):
 labels_dict = {"dl14p": "$\delta_{14}'$", "dl25p": "$\delta_{25}'$", "mAS": "$m_{A_S} \, [GeV]$",
                "vS": "$v_S \, [GeV]$", "tanbeta": "$tan β$", "ch1tt": "$c_{h_1 t t}$",
                "ch1bb": "$c_{h_1 b b}$", "mSp2": "$m_{S}'^2 \, [GeV^2]$", "mh3": "$m_{h_3}\, [GeV]$",
+               "mutil2": "$μ̃2^2 \, [GeV^2]$", "m122": "$m_{12}^2 \, [GeV^2]$",
                "Relic_Density": "$\Omega h^2$",
                "Proton_Cross_Section_pb": "$\sigma_{proton \, A_S} \, [cm^2]$",
                "Neutron_Cross_Section_pb": "$\sigma_{neutron \, A_S} \, [cm^2]$",
@@ -253,8 +254,17 @@ def plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps):
     BP_FILE = "results.csv"
     BP_data=pd.read_csv(BP_PATH+"/"+BP_FILE)
     #ZFACTOR = get_factor(ZPARAM, BP_data, (1))
-    X = BP_data[XPARAM]
-    Y = BP_data[YPARAM]
+    if XPARAM == "m122":
+        beta = np.arctan(BP_data["tanbeta"])
+        X = BP_data["mutil2"]*np.sin(beta)*np.cos(beta)
+        Y =BP_data[YPARAM]
+    elif YPARAM == "m122":
+        beta = np.arctan(BP_data["tanbeta"])
+        X = BP_data[XPARAM]
+        Y = BP_data["mutil2"]*np.sin(beta)*np.cos(beta)
+    else:
+        X = BP_data[XPARAM]
+        Y = BP_data[YPARAM]
     #Z = BP_data[ZPARAM] * ZFACTOR
     pos=ax.scatter(X, Y, s=100, c="red", marker="*", label="BP")
     return

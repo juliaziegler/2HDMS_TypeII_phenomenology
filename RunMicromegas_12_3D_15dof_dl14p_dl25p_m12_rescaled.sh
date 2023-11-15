@@ -13,33 +13,33 @@ mh1=95 #96         # {95, 98}
 mh2=125.09 #125.09     # SM Higgs
 mh3=900 #1000 #800        # {800, 1200}
 mA=900 #1000 #800         # {800, 1200}
-mAS=133.001 #106.36 #200        # {200, 500} DM candidate (>62.5 as by ATLAS and CMS)
+mAS=325.861 #106.36 #200        # {200, 500} DM candidate (>62.5 as by ATLAS and CMS)
 mHm=900 #1000 #800        # {800, 1200}
 v=246.220569
-vS=346.747053875272 #882.297764743439 #100.000000  # {100, 2000}
+vS=239.859563619576 #882.297764743439 #100.000000  # {100, 2000}
 tanbeta=10 #10     # {1, 10}
-ch1tt=0.4191536674553097 #0.36394218991840976 #0.27     # > 0.267, >= ch1bb (<=0.583 but not sure)
-ch1bb=0.20957683372767075 #0.12737976647144644 #0.05     # < 0.581
-m122=80266.0738307626 #98865.9490773604 #-101439.724
-mSp2=13118.4057265553 #475.490545912366 #-10000.0000
-alignm=0.9998691018476971 #0.9999986246982658 #1       # {0.98, 1}
-dl14p=-6.174630009389221 #0              # l4p = l1p + dl14p
-dl25p=0.259395110330231 #0              # l5p = l2p + dl25p
+ch1tt=0.372 #0.36394218991840976 #0.27     # > 0.267, >= ch1bb (<=0.583 but not sure)
+ch1bb=0.258 #0.12737976647144644 #0.05     # < 0.581
+m122=80266.0738307626 # mutil2*(sinbeta*cosbeta)
+mSp2=-48087.901620072 #475.490545912366 #-10000.0000
+alignm=0.9998450892861399 #0.9999986246982658 #1       # {0.98, 1}
+dl14p=-9.69576710546982 #0              # l4p = l1p + dl14p
+dl25p=0.2474626325409999 #0              # l5p = l2p + dl25p
 ##### change these params ##############################
-PARAM=mAS
-mAS=i
-START_VAL=200
-STOP_VAL=300
-STEP_SIZE=50
+PARAM=tanbeta
+tanbeta=i
+START_VAL=7
+STOP_VAL=9
+STEP_SIZE=0.01
 
-PARAM2=vS
-vS=j
-START_VAL2=100
-STOP_VAL2=200
-STEP_SIZE2=50
+PARAM2=mh3
+mh3=j
+START_VAL2=600
+STOP_VAL2=900
+STEP_SIZE2=20
 
 F=results_3D_$PARAM-$PARAM2.csv
-FOLDER=varying_$PARAM-$PARAM2-15dof4-new_BP1-test_m12
+FOLDER=varying_$PARAM-$PARAM2-15dof5-rescaled-BP1.2_fine_lower_7_9
 ########################################################
 # main working directory:
 MAIN_DIR=~/Applications/do_scan
@@ -66,11 +66,11 @@ b_change=Basis_Change_9_3D_15dof_dl14p_dl25p.py
 mass_b=$OUT/mass_basis.csv
 inte_b=$OUT/inte_basis.csv
 # use this code to extract HiggsTools results:
-h_tools=Get_exp_constr.py
+h_tools=Get_exp_constr_rescaled.py
 h_tools_in=$OUT/h_tools_in.csv
 h_tools_out=$OUT/h_tools_out.csv
 # use this for plotting the results:
-plot_results_py=PlotResults_1.py
+plot_results_py=PlotResults_rescaled.py
 plot_in=$OUT/pyplot_in.csv
 # use this template for SPheno input:
 spheno_templ=$MAIN_DIR/LesHouches.in.complexZ2b_low_Template_MO
@@ -84,19 +84,21 @@ mkdir $OUTPUT/SPheno_out
 mkdir $OUTPUT/Micromegas_out
 
 # preparing headers for main output file
-line1="$PARAM,$PARAM2,mh1,mh2,mh3,mA,mAS,mHm,v,vS,tanbeta,ch1tt,ch1bb,mutil2,mSp2,alignm,dl14p,dl25p"
+line1="$PARAM,$PARAM2,mh1,mh2,mh3,mA,mAS,mHm,v,vS,tanbeta,ch1tt,ch1bb,m122,mSp2,alignm,dl14p,dl25p"
 line2="DM_mass_GeV,Relic_Density,Proton_Cross_Section_pb,Neutron_Cross_Section_pb"
+line22="Relic_Factor,Proton_CS_rescaled,Neutron_CS_rescaled"
 line3="l_h1_SS_norm_to_v,l_h2_SS_norm_to_v,l_h3_SS_norm_to_v"
 line4="BR(h1->SS),BR(h2->SS),BR(h3->SS)"
 line5="l_h1h1_ss_times_i,l_h2h2_ss_times_i,l_h3h3_ss_times_i,l_h1h2_ss_times_i,l_h1h3_ss_times_i,l_h2h3_ss_times_i"
-line6="Indirect_Detection_CS_cm^3/s,IND_h1h1,IND_h2h2,IND_h3h3,IND_h1h2,IND_h2h3,IND_bb,IND_tt,IND_tautau,IND_ss,IND_cc,IND_mumu,IND_ee,IND_WW,IND_ZZ,IND_gg,IND_gammagamma"
+line6="Indirect_Detection_CS_cm^3/s,Indirect_Detection_rescaled"
+line62="IND_h1h1,IND_h2h2,IND_h3h3,IND_h1h2,IND_h2h3,IND_bb,IND_tt,IND_tautau,IND_ss,IND_cc,IND_mumu,IND_ee,IND_WW,IND_ZZ,IND_gg,IND_gammagamma"
 line7="bfb,unitarity,unitarity_with_trilinears,HiggsBounds,HiggsSignals_Chi^2,HiggsSignals_Chi^2_red,Chi^2_CMS_LEP"
 line8="BR(h1->bb),BR(h1->yy),c_h1VV,mu_the_LEP,mu_the_CMS,Planck_allowed,Planck_constr,LZ_allowed,LZ_allowed_p,LZ_allowed_n,LZ_constr_pb"
 line9="FERMI_allowed_bb,FERMI_constr_bb,FERMI_allowed_tautau,FERMI_constr_tautau,FERMI_allowed_WW,FERMI_constr_WW"
 line10="FERMI_allowed_cc,FERMI_constr_cc,FERMI_allowed_ee,FERMI_constr_ee,FERMI_allowed_yy,FERMI_constr_yy"
 line11="FERMI_allowed_gg,FERMI_constr_gg,FERMI_allowed_hh,FERMI_constr_hh,FERMI_allowed_mumu,FERMI_constr_mumu,FERMI_allowed_ZZ,FERMI_constr_ZZ"
 line12="Allowed_by_all_Constraints"
-echo "$line1,$line2,$line3,$line4,$line5,$line6,$line7,$line8,$line9,$line10,$line11,$line12" >> $OUTPUT/$F
+echo "$line1,$line2,$line22,$line3,$line4,$line5,$line6,$line62,$line7,$line8,$line9,$line10,$line11,$line12" >> $OUTPUT/$F
 
 # defining functions to extract different values from different files
 # extract interaction basis parameters from csv
@@ -221,6 +223,10 @@ FERMI_constr_mumu() { awk -F ',' '{print $31}' $h_tools_out | sed -n 2p; }
 FERMI_allowed_ZZ() { awk -F ',' '{print $32}' $h_tools_out | sed -n 2p; }
 FERMI_constr_ZZ() { awk -F ',' '{print $33}' $h_tools_out | sed -n 2p; }
 all_allowed() { awk -F ',' '{print $34}' $h_tools_out | sed -n 2p; }
+Rel_f() { awk -F ',' '{print $35}' $h_tools_out | sed -n 2p; }
+PCS_res() { awk -F ',' '{print $36}' $h_tools_out | sed -n 2p; }
+NCS_res() { awk -F ',' '{print $37}' $h_tools_out | sed -n 2p; }
+INDDCS_res() { awk -F ',' '{print $38}' $h_tools_out | sed -n 2p; }
 
 
 # start scan, iterating over different values for PARAM and PARAM2
@@ -234,7 +240,7 @@ do
  rm $mass_b
  rm $inte_b
  line1=$mh1,$mh2,$mh3,$mA,$mAS,$mHm,$v
- line2=$vS,$tanbeta,$ch1tt,$ch1bb,$mutil2
+ line2=$vS,$tanbeta,$ch1tt,$ch1bb,$m122
  line3=$mSp2,$alignm,$dl14p,$dl25p,$PARAM,$i,$PARAM2,$j
  echo $line1,$line2,$line3 >> $mass_b
  # open csv and calculate interaction basis parameters and save in new csv
@@ -284,13 +290,13 @@ do
 
  # 5. save output:
  line1=$i,$j,$mh1,$mh2,$mh3,$mA,$mAS,$mHm,$v,$vS,$tanbeta
- line2=$ch1tt,$ch1bb,$mutil2,$mSp2,$alignm,$dl14p,$dl25p
- line3=$(DMmass),$(RelDen),$(PCS),$(NCS)
+ line2=$ch1tt,$ch1bb,$m122,$mSp2,$alignm,$dl14p,$dl25p
+ line3=$(DMmass),$(RelDen),$(PCS),$(NCS),$(Rel_f),$(PCS_res),$(NCS_res)
  line4=$(lh1ss_norm),$(lh2ss_norm),$(lh3ss_norm)
  line5=$(BR_h1SS),$(BR_h2SS),$(BR_h3SS),$(lh1h1ss_times_i)
  line6=$(lh2h2ss_times_i),$(lh3h3ss_times_i),$(lh1h2ss_times_i)
  line7=$(lh1h3ss_times_i),$(lh2h3ss_times_i)
- line8=$(INDDCS),$(INDDCS_h1h1),$(INDDCS_h2h2),$(INDDCS_h3h3)
+ line8=$(INDDCS),$(INDDCS_res),$(INDDCS_h1h1),$(INDDCS_h2h2),$(INDDCS_h3h3)
  line9=$(INDDCS_h1h2),$(INDDCS_h2h3),$(INDDCS_bb),$(INDDCS_tt)
  line10=$(INDDCS_tautau),$(INDDCS_ss),$(INDDCS_cc),$(INDDCS_mumu)
  line11=$(INDDCS_ee),$(INDDCS_WW),$(INDDCS_ZZ),$(INDDCS_gg)
@@ -311,7 +317,7 @@ do
  line32=$line17,$line18,$line19,$line20,$line21,$line22,$line23
  echo $line30,$line31,$line32 >> $OUTPUT/$F
 
-# save complete SPheno and micrOMEGAs output
+ # save complete SPheno and micrOMEGAs output
  cp $SPHENO_OUT_DIR/SPheno.spc.complexZ2b $OUTPUT/SPheno_out/SPheno.spc.complexZ2b_$i-$j
  cp $MICROMEGAS_OUT_DIR/out.dat $OUTPUT/Micromegas_out/out_$i-$j.dat
  cp $MICROMEGAS_OUT_DIR/channels2.out $OUTPUT/Micromegas_out/channels2_$i-$j.out
