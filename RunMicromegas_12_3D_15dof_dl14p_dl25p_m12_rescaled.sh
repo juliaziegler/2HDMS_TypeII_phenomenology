@@ -9,12 +9,12 @@
 LC_NUMERIC=en_US.UTF-8 # changing separator for seq command
 
 ##### start values # {scan range as in Cheng Li's} #####
-mh1=95 #96         # {95, 98}
+mh1=95.4 #96         # {95, 98}
 mh2=125.09 #125.09     # SM Higgs
-mh3=900 #1000 #800        # {800, 1200}
-mA=900 #1000 #800         # {800, 1200}
+mh3=700 #1000 #800        # {800, 1200}
+mA=700 #1000 #800         # {800, 1200}
 mAS=325.861 #106.36 #200        # {200, 500} DM candidate (>62.5 as by ATLAS and CMS)
-mHm=900 #1000 #800        # {800, 1200}
+mHm=700 #1000 #800        # {800, 1200}
 v=246.220569
 vS=239.859563619576 #882.297764743439 #100.000000  # {100, 2000}
 tanbeta=10 #10     # {1, 10}
@@ -28,18 +28,18 @@ dl25p=0.2474626325409999 #0              # l5p = l2p + dl25p
 ##### change these params ##############################
 PARAM=tanbeta
 tanbeta=i
-START_VAL=7
-STOP_VAL=9
-STEP_SIZE=0.01
+START_VAL=1
+STOP_VAL=10
+STEP_SIZE=1
 
-PARAM2=mh3
-mh3=j
-START_VAL2=600
-STOP_VAL2=900
-STEP_SIZE2=20
+PARAM2=m122
+m122=j
+START_VAL2=60266
+STOP_VAL2=70266
+STEP_SIZE2=1000
 
 F=results_3D_$PARAM-$PARAM2.csv
-FOLDER=varying_$PARAM-$PARAM2-15dof5-rescaled-BP1.2_fine_lower_7_9
+FOLDER=varying_$PARAM-$PARAM2-15dof5-rescaled-BPtest
 ########################################################
 # main working directory:
 MAIN_DIR=~/Applications/do_scan

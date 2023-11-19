@@ -9,37 +9,37 @@
 LC_NUMERIC=en_US.UTF-8 # changing separator for seq command
 
 ##### start values # {scan range as in Cheng Li's} #####
-mh1=95 #96         # {95, 98}
+mh1=95.4 #96         # {95, 98}
 mh2=125.09 #125.09     # SM Higgs
-mh3=900 #1000 #800        # {800, 1200}
-mA=900 #1000 #800         # {800, 1200}
+mh3=700 #1000 #800        # {800, 1200}
+mA=700 #1000 #800         # {800, 1200}
 mAS=325.861 #106.36 #200        # {200, 500} DM candidate (>62.5 as by ATLAS and CMS)
-mHm=900 #1000 #800        # {800, 1200}
+mHm=700 #1000 #800        # {800, 1200}
 v=246.220569
 vS=239.859563619576 #882.297764743439 #100.000000  # {100, 2000}
-tanbeta=10 #10     # {1, 10}
+tanbeta=6.6 #10     # {1, 10}
 ch1tt=0.372 #0.36394218991840976 #0.27     # > 0.267, >= ch1bb (<=0.583 but not sure)
 ch1bb=0.258 #0.12737976647144644 #0.05     # < 0.581
-mutil2=812804.1983308262 # m122/(sinbeta*cosbeta)
+mutil2=490000 #812804.1983308262 # m122/(sinbeta*cosbeta)
 mSp2=-48087.901620072 #475.490545912366 #-10000.0000
 alignm=0.9998450892861399 #0.9999986246982658 #1       # {0.98, 1}
 dl14p=-9.69576710546982 #0              # l4p = l1p + dl14p
 dl25p=0.2474626325409999 #0              # l5p = l2p + dl25p
 ##### change these params ##############################
-PARAM=tanbeta
-tanbeta=i
-START_VAL=5
-STOP_VAL=10
-STEP_SIZE=0.01
+PARAM=mAS
+mAS=i
+START_VAL=48
+STOP_VAL=900
+STEP_SIZE=12
 
-PARAM2=mh3
-mh3=j
-START_VAL2=600
-STOP_VAL2=900
-STEP_SIZE2=20
+PARAM2=mSp2
+mSp2=j
+START_VAL2=-60000
+STOP_VAL2=20000
+STEP_SIZE2=1100
 
 F=results_3D_$PARAM-$PARAM2.csv
-FOLDER=varying_$PARAM-$PARAM2-15dof4-rescaled-BP1.2_fine
+FOLDER=varying_$PARAM-$PARAM2-15dof4-rescaled-BP5_fine1
 ########################################################
 # main working directory:
 MAIN_DIR=~/Applications/do_scan
