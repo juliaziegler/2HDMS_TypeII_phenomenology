@@ -35,15 +35,19 @@ labels_dict = {"dl14p": "$\delta_{14}'$", "dl25p": "$\delta_{25}'$", "mAS": "$m_
                "HiggsSignals_Chi^2_red": "$\chi^2_{red}$",
                "Chi^2_CMS_LEP": "$\chi^2_{CMS-LEP}$",
                "IND_bb": "$\sigma_{A_S A_S → b b} \, [cm^3/s]$",
+               "IND_tt": "$\sigma_{A_S A_S → t t} \, [cm^3/s]$",
                "IND_tautau": "$\sigma_{A_S A_S → τ τ} \, [cm^3/s]$",
                "IND_WW": "$\sigma_{A_S A_S → W W} \, [cm^3/s]$",
                "IND_h2h2": "$\sigma_{A_S A_S → h_2 h_2} \, [cm^3/s]$",
+               "IND_h1h2": "$\sigma_{A_S A_S → h_1 h_2} \, [cm^3/s]$",
+               "IND_hihj": "$\sum_{i,j} \sigma_{A_S A_S → h_i h_j} \, [cm^3/s]$",
                "mu_the_LEP": "$\mu_{LEP}$",
                "mu_the_CMS": "$\mu_{CMS}$"}
 constr_dict = {"Relic_Density": "Planck_allowed",
                "Proton_Cross_Section_pb": "LZ_allowed_p",
                "Neutron_Cross_Section_pb": "LZ_allowed_n",
                "IND_bb": "FERMI_allowed_bb",
+               "IND_tt": "FERMI_allowed_tt",
                "IND_tautau": "FERMI_allowed_tautau",
                "IND_WW": "FERMI_allowed_WW",
                "IND_h2h2": "FERMI_allowed_hh"}
@@ -52,6 +56,7 @@ constr_labels_dict = {"bfb": "bfb excl.", "unitarity": "unitarity excl.",
                "LZ_allowed_p": "LZ excl.", "LZ_allowed_n": "LZ excl.",
                "LZ_allowed": "LZ excl.",
                "FERMI_allowed_bb": "Fermi excl.",
+               "FERMI_allowed_tt": "Fermi excl.",
                "FERMI_allowed_tautau": "Fermi excl.",
                "FERMI_allowed_WW": "Fermi excl.",
                "FERMI_allowed_hh": "Fermi excl.",
@@ -60,8 +65,9 @@ file_out_name_dict = {"Relic_Density": "RelDen", "BR(h3->SS)": "BR",
                "Proton_Cross_Section_pb": "ddCSp", "Neutron_Cross_Section_pb": "ddCSn",
                "HiggsSignals_Chi^2_red": "Chisqred", "Chi^2_CMS_LEP": "ChisqCMSLEP",
                "l_h1_SS_norm_to_v": "lh1", "l_h2_SS_norm_to_v": "lh2",
-               "l_h3_SS_norm_to_v": "lh3", "IND_bb": "InddCSbb",
-               "IND_tautau": "InddCStautau", "IND_WW": "InddCSWW", "IND_h2h2": "InddCShh"}
+               "l_h3_SS_norm_to_v": "lh3", "IND_bb": "InddCSbb", "IND_tt": "InddCStt",
+               "IND_tautau": "InddCStautau", "IND_WW": "InddCSWW", "IND_h2h2": "InddCShh",
+               "IND_h1h2": "InddCSh1h2","IND_hihj": "InddCShihj"}
 legend_hatch_dict = {"/": "////",
                "//": "////",
                "///": "////",
@@ -104,6 +110,8 @@ def plot_all(inp_file):
 
     plot_1(XPARAM, YPARAM, "Relic_Density", tick_length, tick_space, line_space, data,
            shape, PATH, matplotlib.colors.LogNorm(), None)
+    plot_1(XPARAM, YPARAM, "IND_hihj", tick_length, tick_space, line_space, data,
+           shape, PATH, matplotlib.colors.LogNorm(), None)
     plot_1(XPARAM, YPARAM, "BR(h3->SS)", tick_length, tick_space, line_space, data,
            shape, PATH, None, None)
     plot_2(XPARAM, YPARAM, "Proton_Cross_Section_pb", "Neutron_Cross_Section_pb",
@@ -113,6 +121,8 @@ def plot_all(inp_file):
     plot_3(XPARAM, YPARAM, "l_h1_SS_norm_to_v", "l_h2_SS_norm_to_v", "l_h3_SS_norm_to_v",
            tick_length, tick_space, line_space, data, shape, PATH, None, None)
     plot_3(XPARAM, YPARAM, "IND_h2h2", "IND_WW", "IND_bb", tick_length, tick_space,
+           line_space, data, shape, PATH, matplotlib.colors.LogNorm(), None)
+    plot_3(XPARAM, YPARAM, "IND_bb", "IND_tt", "IND_h1h2", tick_length, tick_space,
            line_space, data, shape, PATH, matplotlib.colors.LogNorm(), None)
     #plot_3(XPARAM, YPARAM, "IND_bb", "IND_tautau", "IND_WW",
     #       tick_length, tick_space, line_space, data, shape, PATH, None, MagnitudeFormatter(-25))
@@ -134,8 +144,9 @@ def get_shape(data):
 def get_factor(PARAM, data, shape):
     if (PARAM == "Proton_Cross_Section_pb" or PARAM == "Neutron_Cross_Section_pb"):
         FACTOR = 1e-36 * np.array(data["Relic_Factor"]).reshape(shape)
-    elif (PARAM == "IND_bb" or PARAM == "IND_tautau" or PARAM == "IND_WW"
-          or PARAM == "IND_h2h2"):
+    elif (PARAM == "IND_bb" or PARAM == "IND_tt" or PARAM == "IND_tautau"
+          or PARAM == "IND_WW" or PARAM == "IND_h2h2" or PARAM == "IND_h1h2"
+          or PARAM == "IND_hihj"):
         FACTOR = np.array(data["Indirect_Detection_rescaled"]).reshape(shape)
     else:
         FACTOR = 1
@@ -146,29 +157,31 @@ def get_general_constr(data, shape):
     HB=np.array(data["HiggsBounds"]).reshape(shape)
     return bfb, unitarity, HB
 def get_fermi_constr(data, shape):
-    F_ZZ = np.array(data["FERMI_allowed_ZZ"]).reshape(shape).astype(bool)
-    F_mumu = np.array(data["FERMI_allowed_mumu"]).reshape(shape).astype(bool)
-    F_hh = np.array(data["FERMI_allowed_hh"]).reshape(shape).astype(bool)
-    F_gg = np.array(data["FERMI_allowed_gg"]).reshape(shape).astype(bool)
-    F_yy = np.array(data["FERMI_allowed_yy"]).reshape(shape).astype(bool)
-    F_ee = np.array(data["FERMI_allowed_ee"]).reshape(shape).astype(bool)
-    F_cc = np.array(data["FERMI_allowed_cc"]).reshape(shape).astype(bool)
-    F_WW = np.array(data["FERMI_allowed_WW"]).reshape(shape).astype(bool)
-    F_tautau = np.array(data["FERMI_allowed_tautau"]).reshape(shape).astype(bool)
-    F_bb = np.array(data["FERMI_allowed_bb"]).reshape(shape).astype(bool)
+    #F_ZZ = np.array(data["FERMI_allowed_ZZ"]).reshape(shape).astype(bool)
+    #F_mumu = np.array(data["FERMI_allowed_mumu"]).reshape(shape).astype(bool)
+    #F_hh = np.array(data["FERMI_allowed_hh"]).reshape(shape).astype(bool)
+    #F_gg = np.array(data["FERMI_allowed_gg"]).reshape(shape).astype(bool)
+    #F_yy = np.array(data["FERMI_allowed_yy"]).reshape(shape).astype(bool)
+    #F_ee = np.array(data["FERMI_allowed_ee"]).reshape(shape).astype(bool)
+    #F_cc = np.array(data["FERMI_allowed_cc"]).reshape(shape).astype(bool)
+    #F_WW = np.array(data["FERMI_allowed_WW"]).reshape(shape).astype(bool)
+    #F_tautau = np.array(data["FERMI_allowed_tautau"]).reshape(shape).astype(bool)
+    #F_bb = np.array(data["FERMI_allowed_bb"]).reshape(shape).astype(bool)
+
     # combining all step by step into one array
-    F1 = np.logical_and(F_ZZ, F_mumu)
-    F2 = np.logical_and(F_hh, F_gg)
-    F3 = np.logical_and(F_yy, F_ee)
-    F4 = np.logical_and(F_cc, F_WW)
-    F5 = np.logical_and(F_tautau, F_bb)
+    #F1 = np.logical_and(F_ZZ, F_mumu)
+    #F2 = np.logical_and(F_hh, F_gg)
+    #F3 = np.logical_and(F_yy, F_ee)
+    #F4 = np.logical_and(F_cc, F_WW)
+    #F5 = np.logical_and(F_tautau, F_bb)
 
-    F21 = np.logical_and(F1, F2)
-    F22 = np.logical_and(F3, F4)
-    F23 = np.logical_and(F5, F21)
+    #F21 = np.logical_and(F1, F2)
+    #F22 = np.logical_and(F3, F4)
+    #F23 = np.logical_and(F5, F21)
 
-    F_31 = np.logical_and(F22, F23)
-    F_all = F_31.astype(int)
+    #F_31 = np.logical_and(F22, F23)
+    #F_all = F_31.astype(int)
+    F_all = np.array(data["FERMI_allowed"]).reshape(shape).astype(bool)
     return F_all
 def plot_constr(X, Y, Z, ZPARAM, line_style, tick_length,
                 tick_space, line_space, ax, hatch_style, **kwargs):

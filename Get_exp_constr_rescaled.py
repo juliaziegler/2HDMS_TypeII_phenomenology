@@ -13,7 +13,8 @@ def read_csv(FILE):
                               "PARAM","i","PARAM2","j",
                               "INDDCS","INDDCS_bb","INDDCS_tautau","INDDCS_WW",
                               "INDDCS_cc","INDDCS_ee","INDDCS_yy","INDDCS_gg",
-                              "INDDCS_hh","INDDCS_mumu","INDDCS_ZZ"])
+                              "INDDCS_hh","INDDCS_mumu","INDDCS_ss",
+                              "INDDCS_dd","INDDCS_uu","INDDCS_tt","INDDCS_ZZ"])
     return data
 def prep_csv_3D(data):
     if data["PARAM"][0] in data.columns:
@@ -67,9 +68,9 @@ def get_results(data):
     INDDCS_res = data["INDDCS"][0]*Rel_f**2
 
     # check constraints (against rescaled parameters)
-    LZallowed = (PCS_res <= LZconstr) and (NCS_res <= LZconstr)
     LZallowed_p = (PCS_res <= LZconstr)
     LZallowed_n = (NCS_res <= LZconstr)
+    LZallowed = (PCS_res <= LZconstr) and (NCS_res <= LZconstr)
     FERMIallowed_bb = (INDDCS_res*data["INDDCS_bb"][0] <= FERMIconstr_bb or np.isnan(data["INDDCS_bb"][0]))
     FERMIallowed_tautau = (INDDCS_res*data["INDDCS_tautau"][0] <= FERMIconstr_tautau or np.isnan(data["INDDCS_tautau"][0]))
     FERMIallowed_WW = (INDDCS_res*data["INDDCS_WW"][0] <= FERMIconstr_WW or np.isnan(data["INDDCS_WW"][0]))
@@ -79,23 +80,31 @@ def get_results(data):
     FERMIallowed_gg = (INDDCS_res*data["INDDCS_gg"][0] <= FERMIconstr_gg or np.isnan(data["INDDCS_gg"][0]))
     FERMIallowed_hh = (INDDCS_res*data["INDDCS_hh"][0] <= FERMIconstr_hh or np.isnan(data["INDDCS_hh"][0]))
     FERMIallowed_mumu = (INDDCS_res*data["INDDCS_mumu"][0] <= FERMIconstr_mumu or np.isnan(data["INDDCS_mumu"][0]))
+    FERMIallowed_ss = (INDDCS_res*data["INDDCS_ss"][0] <= FERMIconstr_qq or np.isnan(data["INDDCS_ss"][0]))
+    FERMIallowed_dd = (INDDCS_res*data["INDDCS_dd"][0] <= FERMIconstr_qq or np.isnan(data["INDDCS_dd"][0]))
+    FERMIallowed_uu = (INDDCS_res*data["INDDCS_uu"][0] <= FERMIconstr_qq or np.isnan(data["INDDCS_uu"][0]))
+    FERMIallowed_tt = (INDDCS_res*data["INDDCS_tt"][0] <= FERMIconstr_tt or np.isnan(data["INDDCS_tt"][0]))
     FERMIallowed_ZZ = (INDDCS_res*data["INDDCS_ZZ"][0] <= FERMIconstr_ZZ or np.isnan(data["INDDCS_ZZ"][0]))
+    FERMIallowed = (int(FERMIallowed_bb) and int(FERMIallowed_tautau) \
+              and int(FERMIallowed_WW) and int(FERMIallowed_cc) \
+              and int(FERMIallowed_ee) and int(FERMIallowed_yy) \
+              and int(FERMIallowed_gg) and int(FERMIallowed_hh) \
+              and int(FERMIallowed_mumu) and int(FERMIallowed_ss) \
+              and int(FERMIallowed_dd) and int(FERMIallowed_uu) \
+              and int(FERMIallowed_tt) and int(FERMIallowed_ZZ))
     PLallowed = (data["RelDen"][0] <= PLconstr)
     # check if allowed by all constraints
     all_allowed = (data["bfb"][0] and data["unitarity"][0] and int(hbResult.allowed) \
-              and int(LZallowed) and int(FERMIallowed_bb) and int(FERMIallowed_tautau) \
-              and int(FERMIallowed_WW) and int(FERMIallowed_cc)
-              and int(FERMIallowed_ee) and int(FERMIallowed_yy)
-              and int(FERMIallowed_gg) and int(FERMIallowed_hh)
-              and int(FERMIallowed_mumu) and int(FERMIallowed_ZZ)
-              and int(PLallowed))
+              and int(LZallowed) and int(FERMIallowed) and int(PLallowed))
     # put results into one dictionary
     results = {'HBallowed': [int(hbResult.allowed)], 'Chisq': [hsChisq],
                'Chisq_red': [hsChisq_red], 'Chisq_CMS-LEP': [Chisq_CMS_LEP],
                'mu_the_LEP': [mu_the_LEP], 'mu_the_CMS': [mu_the_CMS],
                'Planckallowed': [int(PLallowed)], 'Planckconstr': PLconstr,
-               'LZallowed': [int(LZallowed)], 'LZallowed_p': [int(LZallowed_p)],
-               'LZallowed_n': [int(LZallowed_n)], 'LZconstr': [LZconstr],
+               'LZallowed': [int(LZallowed)],
+               'LZallowed_p': [int(LZallowed_p)], 'LZallowed_n': [int(LZallowed_n)],
+               'LZconstr': [LZconstr],
+               'FERMIallowed': [int(FERMIallowed)],
                'FERMIallowed_bb': [int(FERMIallowed_bb)], 'FERMIconstr_bb': [FERMIconstr_bb],
                'FERMIallowed_tautau': [int(FERMIallowed_tautau)], 'FERMIconstr_tautau': [FERMIconstr_tautau],
                'FERMIallowed_WW': [int(FERMIallowed_WW)], 'FERMIconstr_WW': [FERMIconstr_WW],
@@ -105,9 +114,13 @@ def get_results(data):
                'FERMIallowed_gg': [int(FERMIallowed_gg)], 'FERMIconstr_gg': [FERMIconstr_gg],
                'FERMIallowed_hh': [int(FERMIallowed_hh)], 'FERMIconstr_hh': [FERMIconstr_hh],
                'FERMIallowed_mumu': [int(FERMIallowed_mumu)], 'FERMIconstr_mumu': [FERMIconstr_mumu],
+               'FERMIallowed_ss': [int(FERMIallowed_ss)], 'FERMIconstr_ss/qq': [FERMIconstr_qq],
+               'FERMIallowed_dd': [int(FERMIallowed_dd)], 'FERMIconstr_dd/qq': [FERMIconstr_qq],
+               'FERMIallowed_uu': [int(FERMIallowed_uu)], 'FERMIconstr_uu/qq': [FERMIconstr_qq],
+               'FERMIallowed_tt': [int(FERMIallowed_tt)], 'FERMIconstr_tt': [FERMIconstr_tt],
                'FERMIallowed_ZZ': [int(FERMIallowed_ZZ)], 'FERMIconstr_ZZ': [FERMIconstr_ZZ],
                'allallowed': [int(all_allowed)],
-               'Ref_f': [Rel_f], 'PCS_res': [PCS_res], 'NCS_res': [NCS_res], 'INDDCS_res': [INDDCS_res]}
+               'Rel_f': [Rel_f], 'PCS_res': [PCS_res], 'NCS_res': [NCS_res], 'INDDCS_res': [INDDCS_res]}
     return results
 def get_higgstools(data):
     """function to caclulate results from HiggsBounds and HiggsSignals
@@ -135,7 +148,7 @@ def get_higgstools(data):
                                     doublechargedIds2)
     hbResult = bounds(PRED)
     hsChisq = signals(PRED)
-    hsChisq_red = hsChisq / signals.observableCount() # 131 TODO: check this
+    hsChisq_red = hsChisq / signals.observableCount()
     return hbResult, hsChisq, hsChisq_red
 def calc_chisq_cms_lep(data):
     """calculate Chisq_{CMS-LEP} as in [eq. (46), from arxiv:2112.11958]

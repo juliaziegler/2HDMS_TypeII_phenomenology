@@ -26,20 +26,20 @@ alignm=0.9998450892861399 #0.9999986246982658 #1       # {0.98, 1}
 dl14p=-9.69576710546982 #0              # l4p = l1p + dl14p
 dl25p=0.2474626325409999 #0              # l5p = l2p + dl25p
 ##### change these params ##############################
-PARAM=mAS
-mAS=i
-START_VAL=48
-STOP_VAL=900
-STEP_SIZE=12
+PARAM=mutil2
+mutil2=i
+START_VAL=-490000
+STOP_VAL=490000
+STEP_SIZE=490000 #10000
 
-PARAM2=mSp2
-mSp2=j
-START_VAL2=-60000
-STOP_VAL2=20000
-STEP_SIZE2=1100
+PARAM2=tanbeta
+tabeta=j
+START_VAL2=1
+STOP_VAL2=10
+STEP_SIZE2=5 #0.5
 
 F=results_3D_$PARAM-$PARAM2.csv
-FOLDER=varying_$PARAM-$PARAM2-15dof4-rescaled-BP5_fine1
+FOLDER=varying_$PARAM-$PARAM2-15dof4-rescaled-mucolBP2_test
 ########################################################
 # main working directory:
 MAIN_DIR=~/Applications/do_scan
@@ -91,14 +91,15 @@ line3="l_h1_SS_norm_to_v,l_h2_SS_norm_to_v,l_h3_SS_norm_to_v"
 line4="BR(h1->SS),BR(h2->SS),BR(h3->SS)"
 line5="l_h1h1_ss_times_i,l_h2h2_ss_times_i,l_h3h3_ss_times_i,l_h1h2_ss_times_i,l_h1h3_ss_times_i,l_h2h3_ss_times_i"
 line6="Indirect_Detection_CS_cm^3/s,Indirect_Detection_rescaled"
-line62="IND_h1h1,IND_h2h2,IND_h3h3,IND_h1h2,IND_h2h3,IND_bb,IND_tt,IND_tautau,IND_ss,IND_cc,IND_mumu,IND_ee,IND_WW,IND_ZZ,IND_gg,IND_gammagamma"
+line62="IND_h1h1,IND_h2h2,IND_h3h3,IND_h1h2,IND_h2h3,IND_h2h1,IND_h3h2,IND_bb,IND_tt,IND_tautau,IND_ss,IND_cc,IND_mumu,IND_dd,IND_uu,IND_ee,IND_WW,IND_ZZ,IND_gg,IND_gammagamma,IND_hihj"
 line7="bfb,unitarity,unitarity_with_trilinears,HiggsBounds,HiggsSignals_Chi^2,HiggsSignals_Chi^2_red,Chi^2_CMS_LEP"
 line8="BR(h1->bb),BR(h1->yy),c_h1VV,mu_the_LEP,mu_the_CMS,Planck_allowed,Planck_constr,LZ_allowed,LZ_allowed_p,LZ_allowed_n,LZ_constr_pb"
-line9="FERMI_allowed_bb,FERMI_constr_bb,FERMI_allowed_tautau,FERMI_constr_tautau,FERMI_allowed_WW,FERMI_constr_WW"
+line9="FERMI_allowed,FERMI_allowed_bb,FERMI_constr_bb,FERMI_allowed_tautau,FERMI_constr_tautau,FERMI_allowed_WW,FERMI_constr_WW"
 line10="FERMI_allowed_cc,FERMI_constr_cc,FERMI_allowed_ee,FERMI_constr_ee,FERMI_allowed_yy,FERMI_constr_yy"
-line11="FERMI_allowed_gg,FERMI_constr_gg,FERMI_allowed_hh,FERMI_constr_hh,FERMI_allowed_mumu,FERMI_constr_mumu,FERMI_allowed_ZZ,FERMI_constr_ZZ"
+line11="FERMI_allowed_gg,FERMI_constr_gg,FERMI_allowed_hh,FERMI_constr_hh,FERMI_allowed_mumu,FERMI_constr_mumu,FERMI_allowed_ss,FERMI_constr_ss/qq"
+line112="FERMI_allowed_dd,FERMI_constr_dd/qq,FERMI_allowed_uu,FERMI_constr_uu/qq,FERMI_allowed_tt,FERMI_constr_tt,FERMI_allowed_ZZ,FERMI_constr_ZZ"
 line12="Allowed_by_all_Constraints"
-echo "$line1,$line2,$line22,$line3,$line4,$line5,$line6,$line62,$line7,$line8,$line9,$line10,$line11,$line12" >> $OUTPUT/$F
+echo "$line1,$line2,$line22,$line3,$line4,$line5,$line6,$line62,$line7,$line8,$line9,$line10,$line11,$line112,$line12" >> $OUTPUT/$F
 
 # defining functions to extract different values from different files
 # extract interaction basis parameters from csv
@@ -178,17 +179,34 @@ INDDCS_h2h2() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "h2 h2"  | awk '{pr
 INDDCS_h3h3() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "h3 h3"  | awk '{print $5}'; }
 INDDCS_h1h2() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "h1 h2"  | awk '{print $5}'; }
 INDDCS_h2h3() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "h2 h3"  | awk '{print $5}'; }
+INDDCS_h2h1() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "h2 h1"  | awk '{print $5}'; }
+INDDCS_h3h2() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "h3 h2"  | awk '{print $5}'; }
 INDDCS_bb() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "d3 D3"  | awk '{print $5}'; }
 INDDCS_tt() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "u3 U3"  | awk '{print $5}'; }
 INDDCS_tautau() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "e3 E3"  | awk '{print $5}'; }
 INDDCS_ss() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "d2 D2"  | awk '{print $5}'; }
 INDDCS_cc() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "u2 U2"  | awk '{print $5}'; }
 INDDCS_mumu() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "e2 E2"  | awk '{print $5}'; }
+INDDCS_dd() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "d1 D1"  | awk '{print $5}'; }
+INDDCS_uu() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "u1 U1"  | awk '{print $5}'; }
 INDDCS_ee() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "e1 E1"  | awk '{print $5}'; }
 INDDCS_WW() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "Wm Wp"  | awk '{print $5}'; }
 INDDCS_ZZ() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "Z Z"  | awk '{print $5}'; }
 INDDCS_gg() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "g g"  | awk '{print $5}'; }
 INDDCS_gammagamma() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "A A"  | awk '{print $5}'; }
+#INDDCS_hihj_1=$(python -c "print($(INDDCS_h1h1)+$(INDDCS_h2h2))")
+#INDDCS_hihj_2=$(python -c "print($(INDDCS_h3h3)+$(INDDCS_h1h2))")
+#INDDCS_hihj_3=$(python -c "print($INDDCS_hihj_1+$INDDCS_hihj_2)")
+#INDDCS_hihj=$(python -c "print($INDDCS_hihj_3+$(INDDCS_h2h3))")
+
+#INDDCS_hihj=$(python -c "print($(INDDCS_h1h1)+$(INDDCS_h2h2)+$(INDDCS_h3h3)+$(INDDCS_h1h2)+$(INDDCS_h2h3)+$(INDDCS_h2h1)+$(INDDCS_h3h2)+0)")
+INDDCS_hihj() { INDDCS_hihj=$(python -c "print($(INDDCS_h1h1)+$(INDDCS_h2h2)+$(INDDCS_h3h3)+$(INDDCS_h1h2)+$(INDDCS_h2h3)+$(INDDCS_h2h1)+$(INDDCS_h3h2)+0)"); echo $INDDCS_hihj; }
+
+#INDDCS_hihj=$(awk "BEGIN {print $(INDDCS_h1h1)+$(INDDCS_h2h2)+$(INDDCS_h3h3)+$(INDDCS_h1h2)+$(INDDCS_h2h3)+$(INDDCS_h2h1)+$(INDDCS_h3h2); exit}")
+#INDDCS_hihj=$(echo $(INDDCS_h1h1) + $(INDDCS_h2h2) + $(INDDCS_h3h3) + $(INDDCS_h1h2) + $(INDDCS_h2h3) + $(INDDCS_h2h1) + $(INDDCS_h3h2) | bc)
+#INDDCS_hihj=$(perl -e "print $(INDDCS_h1h1)+$(INDDCS_h2h2)+$(INDDCS_h3h3)+$(INDDCS_h1h2)+$(INDDCS_h2h3)+$(INDDCS_h2h1)+$(INDDCS_h3h2)")
+#INDDCS_hihj=$(( $(INDDCS_h1h1) + $(INDDCS_h2h2) + $(INDDCS_h3h3) + $(INDDCS_h1h2) + $(INDDCS_h2h3) + $(INDDCS_h2h1) + $(INDDCS_h3h2) ))
+
 # extract HiggsTools results and other experimental constraints
 HB_allowed() { awk -F ',' '{print $2}' $h_tools_out | sed -n 2p; }
 HS_Chisq() { awk -F ',' '{print $3}' $h_tools_out | sed -n 2p; }
@@ -202,31 +220,40 @@ LZ_allowed() { awk -F ',' '{print $10}' $h_tools_out | sed -n 2p; }
 LZ_allowed_p() { awk -F ',' '{print $11}' $h_tools_out | sed -n 2p; }
 LZ_allowed_n() { awk -F ',' '{print $12}' $h_tools_out | sed -n 2p; }
 LZ_constr() { awk -F ',' '{print $13}' $h_tools_out | sed -n 2p; }
-FERMI_allowed_bb() { awk -F ',' '{print $14}' $h_tools_out | sed -n 2p; }
-FERMI_constr_bb() { awk -F ',' '{print $15}' $h_tools_out | sed -n 2p; }
-FERMI_allowed_tautau() { awk -F ',' '{print $16}' $h_tools_out | sed -n 2p; }
-FERMI_constr_tautau() { awk -F ',' '{print $17}' $h_tools_out | sed -n 2p; }
-FERMI_allowed_WW() { awk -F ',' '{print $18}' $h_tools_out | sed -n 2p; }
-FERMI_constr_WW() { awk -F ',' '{print $19}' $h_tools_out | sed -n 2p; }
-FERMI_allowed_cc() { awk -F ',' '{print $20}' $h_tools_out | sed -n 2p; }
-FERMI_constr_cc() { awk -F ',' '{print $21}' $h_tools_out | sed -n 2p; }
-FERMI_allowed_ee() { awk -F ',' '{print $22}' $h_tools_out | sed -n 2p; }
-FERMI_constr_ee() { awk -F ',' '{print $23}' $h_tools_out | sed -n 2p; }
-FERMI_allowed_yy() { awk -F ',' '{print $24}' $h_tools_out | sed -n 2p; }
-FERMI_constr_yy() { awk -F ',' '{print $25}' $h_tools_out | sed -n 2p; }
-FERMI_allowed_gg() { awk -F ',' '{print $26}' $h_tools_out | sed -n 2p; }
-FERMI_constr_gg() { awk -F ',' '{print $27}' $h_tools_out | sed -n 2p; }
-FERMI_allowed_hh() { awk -F ',' '{print $28}' $h_tools_out | sed -n 2p; }
-FERMI_constr_hh() { awk -F ',' '{print $29}' $h_tools_out | sed -n 2p; }
-FERMI_allowed_mumu() { awk -F ',' '{print $30}' $h_tools_out | sed -n 2p; }
-FERMI_constr_mumu() { awk -F ',' '{print $31}' $h_tools_out | sed -n 2p; }
-FERMI_allowed_ZZ() { awk -F ',' '{print $32}' $h_tools_out | sed -n 2p; }
-FERMI_constr_ZZ() { awk -F ',' '{print $33}' $h_tools_out | sed -n 2p; }
-all_allowed() { awk -F ',' '{print $34}' $h_tools_out | sed -n 2p; }
-Rel_f() { awk -F ',' '{print $35}' $h_tools_out | sed -n 2p; }
-PCS_res() { awk -F ',' '{print $36}' $h_tools_out | sed -n 2p; }
-NCS_res() { awk -F ',' '{print $37}' $h_tools_out | sed -n 2p; }
-INDDCS_res() { awk -F ',' '{print $38}' $h_tools_out | sed -n 2p; }
+FERMI_allowed() { awk -F ',' '{print $14}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_bb() { awk -F ',' '{print $15}' $h_tools_out | sed -n 2p; }
+FERMI_constr_bb() { awk -F ',' '{print $16}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_tautau() { awk -F ',' '{print $17}' $h_tools_out | sed -n 2p; }
+FERMI_constr_tautau() { awk -F ',' '{print $18}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_WW() { awk -F ',' '{print $19}' $h_tools_out | sed -n 2p; }
+FERMI_constr_WW() { awk -F ',' '{print $20}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_cc() { awk -F ',' '{print $21}' $h_tools_out | sed -n 2p; }
+FERMI_constr_cc() { awk -F ',' '{print $22}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_ee() { awk -F ',' '{print $23}' $h_tools_out | sed -n 2p; }
+FERMI_constr_ee() { awk -F ',' '{print $24}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_yy() { awk -F ',' '{print $25}' $h_tools_out | sed -n 2p; }
+FERMI_constr_yy() { awk -F ',' '{print $26}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_gg() { awk -F ',' '{print $27}' $h_tools_out | sed -n 2p; }
+FERMI_constr_gg() { awk -F ',' '{print $28}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_hh() { awk -F ',' '{print $29}' $h_tools_out | sed -n 2p; }
+FERMI_constr_hh() { awk -F ',' '{print $30}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_mumu() { awk -F ',' '{print $31}' $h_tools_out | sed -n 2p; }
+FERMI_constr_mumu() { awk -F ',' '{print $32}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_ss() { awk -F ',' '{print $33}' $h_tools_out | sed -n 2p; }
+FERMI_constr_ss_qq() { awk -F ',' '{print $34}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_dd() { awk -F ',' '{print $35}' $h_tools_out | sed -n 2p; }
+FERMI_constr_dd_qq() { awk -F ',' '{print $36}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_uu() { awk -F ',' '{print $37}' $h_tools_out | sed -n 2p; }
+FERMI_constr_uu_qq() { awk -F ',' '{print $38}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_tt() { awk -F ',' '{print $39}' $h_tools_out | sed -n 2p; }
+FERMI_constr_tt() { awk -F ',' '{print $40}' $h_tools_out | sed -n 2p; }
+FERMI_allowed_ZZ() { awk -F ',' '{print $41}' $h_tools_out | sed -n 2p; }
+FERMI_constr_ZZ() { awk -F ',' '{print $42}' $h_tools_out | sed -n 2p; }
+all_allowed() { awk -F ',' '{print $43}' $h_tools_out | sed -n 2p; }
+Rel_f() { awk -F ',' '{print $44}' $h_tools_out | sed -n 2p; }
+PCS_res() { awk -F ',' '{print $45}' $h_tools_out | sed -n 2p; }
+NCS_res() { awk -F ',' '{print $46}' $h_tools_out | sed -n 2p; }
+INDDCS_res() { awk -F ',' '{print $47}' $h_tools_out | sed -n 2p; }
 
 
 # start scan, iterating over different values for PARAM and PARAM2
@@ -283,8 +310,9 @@ do
  line4=$(unitarity),$PARAM,$i,$PARAM2,$j
  line5=$(INDDCS),$(INDDCS_bb),$(INDDCS_tautau),$(INDDCS_WW)
  line6=$(INDDCS_cc),$(INDDCS_ee),$(INDDCS_gammagamma),$(INDDCS_gg)
- line7=$(INDDCS_h2h2),$(INDDCS_mumu),$(INDDCS_ZZ)
- echo $line1,$line2,$line3,$line4,$line5,$line6,$line7 >> $h_tools_in
+ line7=$(INDDCS_h2h2),$(INDDCS_mumu),$(INDDCS_ss),$(INDDCS_dd)
+ line8=$(INDDCS_uu),$(INDDCS_tt),$(INDDCS_ZZ)
+ echo $line1,$line2,$line3,$line4,$line5,$line6,$line7,$line8 >> $h_tools_in
  # run the python code which runs HiggsTools
  python3 $h_tools
 
@@ -297,24 +325,25 @@ do
  line6=$(lh2h2ss_times_i),$(lh3h3ss_times_i),$(lh1h2ss_times_i)
  line7=$(lh1h3ss_times_i),$(lh2h3ss_times_i)
  line8=$(INDDCS),$(INDDCS_res),$(INDDCS_h1h1),$(INDDCS_h2h2),$(INDDCS_h3h3)
- line9=$(INDDCS_h1h2),$(INDDCS_h2h3),$(INDDCS_bb),$(INDDCS_tt)
+ line9=$(INDDCS_h1h2),$(INDDCS_h2h3),$(INDDCS_h2h1),$(INDDCS_h3h2),$(INDDCS_bb),$(INDDCS_tt)
  line10=$(INDDCS_tautau),$(INDDCS_ss),$(INDDCS_cc),$(INDDCS_mumu)
- line11=$(INDDCS_ee),$(INDDCS_WW),$(INDDCS_ZZ),$(INDDCS_gg)
- line12=$(INDDCS_gammagamma)
+ line11=$(INDDCS_dd),$(INDDCS_uu),$(INDDCS_ee),$(INDDCS_WW),$(INDDCS_ZZ),$(INDDCS_gg)
+ line12=$(INDDCS_gammagamma),$(INDDCS_hihj)
  line13=$(bfb),$(unitarity),$(unitarity_w_tril)
  line14=$(HB_allowed),$(HS_Chisq),$(HS_Chisq_red)
  line15=$(Chisq_CMS_LEP),$(BR_h1bb),$(BR_h1yy),$(c_h1VV)
  line16=$(mu_the_LEP),$(mu_the_CMS),$(PL_allowed),$(PL_constr),$(LZ_allowed)
  line17=$(LZ_allowed_p),$(LZ_allowed_n),$(LZ_constr)
- line18=$(FERMI_allowed_bb),$(FERMI_constr_bb),$(FERMI_allowed_tautau),$(FERMI_constr_tautau)
+ line18=$(FERMI_allowed),$(FERMI_allowed_bb),$(FERMI_constr_bb),$(FERMI_allowed_tautau),$(FERMI_constr_tautau)
  line19=$(FERMI_allowed_WW),$(FERMI_constr_WW),$(FERMI_allowed_cc),$(FERMI_constr_cc)
  line20=$(FERMI_allowed_ee),$(FERMI_constr_ee),$(FERMI_allowed_yy),$(FERMI_constr_yy)
  line21=$(FERMI_allowed_gg),$(FERMI_constr_gg),$(FERMI_allowed_hh),$(FERMI_constr_hh)
- line22=$(FERMI_allowed_mumu),$(FERMI_constr_mumu),$(FERMI_allowed_ZZ),$(FERMI_constr_ZZ)
+ line22=$(FERMI_allowed_mumu),$(FERMI_constr_mumu),$(FERMI_allowed_ss),$(FERMI_constr_ss_qq)
+ line222=$(FERMI_allowed_dd),$(FERMI_constr_dd_qq),$(FERMI_allowed_uu),$(FERMI_constr_uu_qq),$(FERMI_allowed_tt),$(FERMI_constr_tt),$(FERMI_allowed_ZZ),$(FERMI_constr_ZZ)
  line23=$(all_allowed)
  line30=$line1,$line2,$line3,$line4,$line5,$line6,$line7,$line8,$line9
  line31=$line10,$line11,$line12,$line13,$line14,$line15,$line16
- line32=$line17,$line18,$line19,$line20,$line21,$line22,$line23
+ line32=$line17,$line18,$line19,$line20,$line21,$line22,$line222,$line23
  echo $line30,$line31,$line32 >> $OUTPUT/$F
 
  # save complete SPheno and micrOMEGAs output
