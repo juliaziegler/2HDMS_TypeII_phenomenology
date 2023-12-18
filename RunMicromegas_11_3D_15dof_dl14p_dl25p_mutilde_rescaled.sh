@@ -28,18 +28,18 @@ dl25p=0.2474626325409999 #0              # l5p = l2p + dl25p
 ##### change these params ##############################
 PARAM=mutil2
 mutil2=i
-START_VAL=-490000
-STOP_VAL=490000
-STEP_SIZE=490000 #10000
+START_VAL=360000
+STOP_VAL=640000
+STEP_SIZE=2800
 
 PARAM2=tanbeta
 tabeta=j
 START_VAL2=1
 STOP_VAL2=10
-STEP_SIZE2=5 #0.5
+STEP_SIZE2=0.1
 
 F=results_3D_$PARAM-$PARAM2.csv
-FOLDER=varying_$PARAM-$PARAM2-15dof4-rescaled-mucolBP2_test
+FOLDER=varying_$PARAM-$PARAM2-15dof4-rescaled-mucolBP2_fine
 ########################################################
 # main working directory:
 MAIN_DIR=~/Applications/do_scan
@@ -91,7 +91,7 @@ line3="l_h1_SS_norm_to_v,l_h2_SS_norm_to_v,l_h3_SS_norm_to_v"
 line4="BR(h1->SS),BR(h2->SS),BR(h3->SS)"
 line5="l_h1h1_ss_times_i,l_h2h2_ss_times_i,l_h3h3_ss_times_i,l_h1h2_ss_times_i,l_h1h3_ss_times_i,l_h2h3_ss_times_i"
 line6="Indirect_Detection_CS_cm^3/s,Indirect_Detection_rescaled"
-line62="IND_h1h1,IND_h2h2,IND_h3h3,IND_h1h2,IND_h2h3,IND_h2h1,IND_h3h2,IND_bb,IND_tt,IND_tautau,IND_ss,IND_cc,IND_mumu,IND_dd,IND_uu,IND_ee,IND_WW,IND_ZZ,IND_gg,IND_gammagamma,IND_hihj"
+line62="IND_h1h1,IND_h2h2,IND_h3h3,IND_h1h2,IND_h2h3,IND_h2h1,IND_h3h2,IND_bb,IND_tt,IND_tautau,IND_ss,IND_cc,IND_mumu,IND_dd,IND_uu,IND_ee,IND_WW,IND_ZZ,IND_gg,IND_gammagamma,IND_hihj,l1,l2"
 line7="bfb,unitarity,unitarity_with_trilinears,HiggsBounds,HiggsSignals_Chi^2,HiggsSignals_Chi^2_red,Chi^2_CMS_LEP"
 line8="BR(h1->bb),BR(h1->yy),c_h1VV,mu_the_LEP,mu_the_CMS,Planck_allowed,Planck_constr,LZ_allowed,LZ_allowed_p,LZ_allowed_n,LZ_constr_pb"
 line9="FERMI_allowed,FERMI_allowed_bb,FERMI_constr_bb,FERMI_allowed_tautau,FERMI_constr_tautau,FERMI_allowed_WW,FERMI_constr_WW"
@@ -328,7 +328,7 @@ do
  line9=$(INDDCS_h1h2),$(INDDCS_h2h3),$(INDDCS_h2h1),$(INDDCS_h3h2),$(INDDCS_bb),$(INDDCS_tt)
  line10=$(INDDCS_tautau),$(INDDCS_ss),$(INDDCS_cc),$(INDDCS_mumu)
  line11=$(INDDCS_dd),$(INDDCS_uu),$(INDDCS_ee),$(INDDCS_WW),$(INDDCS_ZZ),$(INDDCS_gg)
- line12=$(INDDCS_gammagamma),$(INDDCS_hihj)
+ line12=$(INDDCS_gammagamma),$(INDDCS_hihj),$(l1),$(l2)
  line13=$(bfb),$(unitarity),$(unitarity_w_tril)
  line14=$(HB_allowed),$(HS_Chisq),$(HS_Chisq_red)
  line15=$(Chisq_CMS_LEP),$(BR_h1bb),$(BR_h1yy),$(c_h1VV)
