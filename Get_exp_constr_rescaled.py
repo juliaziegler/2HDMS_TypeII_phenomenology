@@ -14,7 +14,7 @@ def read_csv(FILE):
                               "INDDCS","INDDCS_bb","INDDCS_tautau","INDDCS_WW",
                               "INDDCS_cc","INDDCS_ee","INDDCS_yy","INDDCS_gg",
                               "INDDCS_hh","INDDCS_mumu","INDDCS_ss",
-                              "INDDCS_dd","INDDCS_uu","INDDCS_tt","INDDCS_ZZ"])
+                              "INDDCS_dd","INDDCS_uu","INDDCS_tt","INDDCS_ZZ","OUT_DIR"])
     return data
 def prep_csv_3D(data):
     if data["PARAM"][0] in data.columns:
@@ -121,6 +121,9 @@ def get_results(data):
                'FERMIallowed_ZZ': [int(FERMIallowed_ZZ)], 'FERMIconstr_ZZ': [FERMIconstr_ZZ],
                'allallowed': [int(all_allowed)],
                'Rel_f': [Rel_f], 'PCS_res': [PCS_res], 'NCS_res': [NCS_res], 'INDDCS_res': [INDDCS_res]}
+    # save HiggsBounds result output as txt
+    with open(data['OUT_DIR'][0]+'/hbResult_'+str(data['i'][0])+'_'+str(data['j'][0])+'.txt', 'a') as f:
+        print(hbResult, file=f)
     return results
 def get_higgstools(data):
     """function to caclulate results from HiggsBounds and HiggsSignals
@@ -227,3 +230,4 @@ if __name__=='__main__':
     data_prep = prep_csv_3D(data)
     results = get_results(data_prep)
     save_csv(FILE_OUT, results)
+data = read_csv(FILE_IN)

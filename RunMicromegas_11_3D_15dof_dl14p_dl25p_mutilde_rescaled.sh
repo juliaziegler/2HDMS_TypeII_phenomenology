@@ -82,6 +82,7 @@ rm -r $OUTPUT
 mkdir $OUTPUT
 mkdir $OUTPUT/SPheno_out
 mkdir $OUTPUT/Micromegas_out
+mkdir $OUTPUT/HBResult_out
 
 # preparing headers for main output file
 line1="$PARAM,$PARAM2,mh1,mh2,mh3,mA,mAS,mHm,v,vS,tanbeta,ch1tt,ch1bb,mutil2,mSp2,alignm,dl14p,dl25p"
@@ -91,7 +92,8 @@ line3="l_h1_SS_norm_to_v,l_h2_SS_norm_to_v,l_h3_SS_norm_to_v"
 line4="BR(h1->SS),BR(h2->SS),BR(h3->SS)"
 line5="l_h1h1_ss_times_i,l_h2h2_ss_times_i,l_h3h3_ss_times_i,l_h1h2_ss_times_i,l_h1h3_ss_times_i,l_h2h3_ss_times_i"
 line6="Indirect_Detection_CS_cm^3/s,Indirect_Detection_rescaled"
-line62="IND_h1h1,IND_h2h2,IND_h3h3,IND_h1h2,IND_h2h3,IND_h2h1,IND_h3h2,IND_bb,IND_tt,IND_tautau,IND_ss,IND_cc,IND_mumu,IND_dd,IND_uu,IND_ee,IND_WW,IND_ZZ,IND_gg,IND_gammagamma,IND_hihj,l1,l2"
+line62="IND_h1h1,IND_h2h2,IND_h3h3,IND_h1h2,IND_h2h3,IND_h2h1,IND_h3h2,IND_bb,IND_tt,IND_tautau,IND_ss,IND_cc,IND_mumu,IND_dd,IND_uu,IND_ee,IND_WW,IND_ZZ,IND_gg,IND_gammagamma,IND_hihj"
+line63="l1,l2,l3,l4,l5,m122,l1p,l2p,l4p,l5p,l1pp,l3pp"
 line7="bfb,unitarity,unitarity_with_trilinears,HiggsBounds,HiggsSignals_Chi^2,HiggsSignals_Chi^2_red,Chi^2_CMS_LEP"
 line8="BR(h1->bb),BR(h1->yy),c_h1VV,mu_the_LEP,mu_the_CMS,Planck_allowed,Planck_constr,LZ_allowed,LZ_allowed_p,LZ_allowed_n,LZ_constr_pb"
 line9="FERMI_allowed,FERMI_allowed_bb,FERMI_constr_bb,FERMI_allowed_tautau,FERMI_constr_tautau,FERMI_allowed_WW,FERMI_constr_WW"
@@ -99,7 +101,7 @@ line10="FERMI_allowed_cc,FERMI_constr_cc,FERMI_allowed_ee,FERMI_constr_ee,FERMI_
 line11="FERMI_allowed_gg,FERMI_constr_gg,FERMI_allowed_hh,FERMI_constr_hh,FERMI_allowed_mumu,FERMI_constr_mumu,FERMI_allowed_ss,FERMI_constr_ss/qq"
 line112="FERMI_allowed_dd,FERMI_constr_dd/qq,FERMI_allowed_uu,FERMI_constr_uu/qq,FERMI_allowed_tt,FERMI_constr_tt,FERMI_allowed_ZZ,FERMI_constr_ZZ"
 line12="Allowed_by_all_Constraints"
-echo "$line1,$line2,$line22,$line3,$line4,$line5,$line6,$line62,$line7,$line8,$line9,$line10,$line11,$line112,$line12" >> $OUTPUT/$F
+echo "$line1,$line2,$line22,$line3,$line4,$line5,$line6,$line62,$line63,$line7,$line8,$line9,$line10,$line11,$line112,$line12" >> $OUTPUT/$F
 
 # defining functions to extract different values from different files
 # extract interaction basis parameters from csv
@@ -312,7 +314,8 @@ do
  line6=$(INDDCS_cc),$(INDDCS_ee),$(INDDCS_gammagamma),$(INDDCS_gg)
  line7=$(INDDCS_h2h2),$(INDDCS_mumu),$(INDDCS_ss),$(INDDCS_dd)
  line8=$(INDDCS_uu),$(INDDCS_tt),$(INDDCS_ZZ)
- echo $line1,$line2,$line3,$line4,$line5,$line6,$line7,$line8 >> $h_tools_in
+ line9=$OUTPUT/HBResult_out
+ echo $line1,$line2,$line3,$line4,$line5,$line6,$line7,$line8,$line9 >> $h_tools_in
  # run the python code which runs HiggsTools
  python3 $h_tools
 
@@ -328,7 +331,7 @@ do
  line9=$(INDDCS_h1h2),$(INDDCS_h2h3),$(INDDCS_h2h1),$(INDDCS_h3h2),$(INDDCS_bb),$(INDDCS_tt)
  line10=$(INDDCS_tautau),$(INDDCS_ss),$(INDDCS_cc),$(INDDCS_mumu)
  line11=$(INDDCS_dd),$(INDDCS_uu),$(INDDCS_ee),$(INDDCS_WW),$(INDDCS_ZZ),$(INDDCS_gg)
- line12=$(INDDCS_gammagamma),$(INDDCS_hihj),$(l1),$(l2)
+ line12=$(INDDCS_gammagamma),$(INDDCS_hihj),$(l1),$(l2),$(l3),$(l4),$(l5),$(m122),$(l1p),$(l2p),$(l4p),$(l5p),$(l1pp),$(l3pp)
  line13=$(bfb),$(unitarity),$(unitarity_w_tril)
  line14=$(HB_allowed),$(HS_Chisq),$(HS_Chisq_red)
  line15=$(Chisq_CMS_LEP),$(BR_h1bb),$(BR_h1yy),$(c_h1VV)
@@ -361,3 +364,4 @@ echo $OUTPUT,$F,$PARAM,$PARAM2,$START_VAL,$STOP_VAL,$STEP_SIZE,$START_VAL2,$STOP
      >> $plot_in
 cp $plot_in $OUTPUT
 python3 $plot_results_py
+
