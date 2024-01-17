@@ -113,8 +113,8 @@ def plot_all(inp_file):
            tick_length, tick_space, line_space, data, shape, PATH, None, None)
     plot_3(XPARAM, YPARAM, "IND_h2h2", "IND_WW", "IND_bb", tick_length, tick_space,
            line_space, data, shape, PATH, matplotlib.colors.LogNorm(), None)
-    #plot_3(XPARAM, YPARAM, "IND_bb", "IND_tautau", "IND_WW",
-    #       tick_length, tick_space, line_space, data, shape, PATH, None, MagnitudeFormatter(-25))
+    plot_3(XPARAM, YPARAM, "IND_bb", "IND_tautau", "IND_WW",
+           tick_length, tick_space, line_space, data, shape, PATH, None, MagnitudeFormatter(-25))
 
     #plot_all_constr_s1(XPARAM, YPARAM, tick_length, tick_space,
     #       line_space, data, shape, PATH, None, None)
@@ -127,8 +127,8 @@ def plot_all(inp_file):
 def get_shape(data):
     X=np.floor(1 + (data["STOP_VAL"][0]-data["START_VAL"][0])/data["STEP_SIZE"][0])
     Y=np.floor(1 + (data["STOP_VAL2"][0]-data["START_VAL2"][0])/data["STEP_SIZE2"][0])
-    shape = (int(X),int(Y))
-    #shape = (103,103)
+    #shape = (int(X),int(Y))
+    shape = (103,103)
     return shape
 def get_factor(PARAM, data, shape):
     if (PARAM == "Proton_Cross_Section_pb" or PARAM == "Neutron_Cross_Section_pb"):
@@ -531,4 +531,14 @@ def plot_all_constr_s3(XPARAM, YPARAM, tick_length, tick_space,
 if __name__=='__main__':
     FILE_IN = "output/pyplot_in.csv"
     inp_file = read_csv(FILE_IN)
+
+    SIZE_ALL = 11
+    plt.rc('font', size=SIZE_ALL)          # controls default text sizes
+    plt.rc('axes', titlesize=SIZE_ALL)     # fontsize of the axes title
+    plt.rc('axes', labelsize=SIZE_ALL)    # fontsize of the x and y labels
+    plt.rc('xtick', labelsize=SIZE_ALL)    # fontsize of the tick labels
+    plt.rc('ytick', labelsize=SIZE_ALL)    # fontsize of the tick labels
+    plt.rc('legend', fontsize=SIZE_ALL)    # legend fontsize
+    plt.rc('figure', titlesize=SIZE_ALL)
+
     plot_all(inp_file)
