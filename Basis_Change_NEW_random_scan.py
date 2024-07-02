@@ -6,81 +6,79 @@ this script calculates interaction basis and saves it as csv file"""
 import numpy as np
 import pandas as pd
 
+def random_bp_generation():
+    # define the ranges of variation
+    mh1_range = np.array([95.4, 95.4])
+    mh2_range = np.array([125.09, 125.09])
+    mh3_range = np.array([700, 700])
+    mA_range = np.array([700, 700])
+    mAS_range = np.array([200, 400])
+    mHm_range = np.array([700, 700])
+    v_range = np.array([246.220569, 246.220569])
+    vS_range = np.array([200, 400])
+    tanbeta_range = np.array([5, 10])
+    ch1tt_range = np.array([0.3, 0.4])
+    ch1bb_range = np.array([0.2, 0.3])
+    mutil2_range = np.array([-500000, 500000])
+    mSp2_range = np.array([-50000, 50000])
+    alignm_range = np.array([0.990, 1])
+    l1m24p_range = np.array([-15, 15])
+    l2m25p_range = np.array([-15, 15])
+
+    # choose a bp by random selection of values in the ranges given above
+    mh1 = random_number_gen_w_bounds(mh1_range)
+    mh2 = random_number_gen_w_bounds(mh2_range)
+    mh3 = random_number_gen_w_bounds(mh3_range)
+    mA = random_number_gen_w_bounds(mA_range)
+    mAS = random_number_gen_w_bounds(mAS_range)
+    mHm = random_number_gen_w_bounds(mHm_range)
+    v = random_number_gen_w_bounds(v_range)
+    vS = random_number_gen_w_bounds(vS_range)
+    tanbeta = random_number_gen_w_bounds(tanbeta_range)
+    ch1tt = random_number_gen_w_bounds(ch1tt_range)
+    ch1bb = random_number_gen_w_bounds(ch1bb_range)
+    mutil2 = random_number_gen_w_bounds(mutil2_range)
+    mSp2 = random_number_gen_w_bounds(mSp2_range)
+    alignm = random_number_gen_w_bounds(alignm_range)
+    l1m24p = random_number_gen_w_bounds(l1m24p_range)
+    l2m25p = random_number_gen_w_bounds(l2m25p_range)
+
+    # put into a data frame
+    data = np.array([[mh1, mh2, mh3, mA, mAS, mHm, v, vS, tanbeta,
+                     ch1tt, ch1bb, mutil2, mSp2, alignm, l1m24p, l2m25p]])
+    columns = ['mh1', 'mh2', 'mh3', 'mA', 'mAS', 'mHm', 'v', 'vS', 'tanbeta',
+               'ch1tt', 'ch1bb', 'mutil2', 'mSp2', 'alignm', 'l1m24p', 'l2m25p']
+    benchmark = pd.DataFrame(data=data, columns=columns)
+    return benchmark
+
+def random_number_gen_w_bounds(range_ar: np.ndarray):
+    ''' generates a radnom number in the given range
+
+        Args:
+            range_ar (np.ndarray): array containing two numbers: lower bound and
+            upper bound for random number
+    '''
+    lower_bound = range_ar[0]
+    upper_bound = range_ar[1]
+    random_number_in_range = lower_bound + np.random.rand()*(upper_bound - lower_bound)
+    return random_number_in_range
+
 def read_csv(FILE):
-    data = pd.read_csv(FILE, sep=",", header=None,
-                       names=["mh1", "mh2", "mh3", "mA", "mAS", "mHm", "v",
-                              "vS", "tanbeta", "ch1tt", "ch1bb", "m122",
-                              "mSp2", "PARAM", "i"])
-    return data
-
-def read_csv_3D(FILE):
-    data = pd.read_csv(FILE, sep=",", header=None,
-                       names=["mh1", "mh2", "mh3", "mA", "mAS", "mHm", "v",
-                              "vS", "tanbeta", "ch1tt", "ch1bb", "m122",
-                              "mSp2", "alignm", "PARAM", "i", "PARAM2", "j"])
-    return data
-
-def read_csv_4D(FILE):
-    data = pd.read_csv(FILE, sep=",", header=None,
-                       names=["mh1", "mh2", "mh3", "mA", "mAS", "mHm", "v",
-                              "vS", "tanbeta", "ch1tt", "ch1bb", "m122",
-                              "mSp2", "PARAM", "i", "PARAM2", "j", "PARAM3",
-                              "k"])
-    return data
-
-def read_csv_3D_15dof_lh1_lh2(FILE):
-    data = pd.read_csv(FILE, sep=",", header=None,
-                       names=["mh1", "mh2", "mh3", "mA", "mAS", "mHm", "v",
-                              "vS", "tanbeta", "ch1tt", "ch1bb", "m122",
-                              "mSp2", "alignm", "lh1", "lh2", "PARAM", "i", "PARAM2", "j"])
-    return data
-
-def read_csv_3D_15dof_l4p_l5p(FILE):
-    data = pd.read_csv(FILE, sep=",", header=None,
-                       names=["mh1", "mh2", "mh3", "mA", "mAS", "mHm", "v",
-                              "vS", "tanbeta", "ch1tt", "ch1bb", "m122",
-                              "mSp2", "alignm", "l4p", "l5p", "PARAM", "i", "PARAM2", "j"])
-    return data
-
-def read_csv_3D_15dof_dl14p_dl25p(FILE):
-    data = pd.read_csv(FILE, sep=",", header=None,
-                       names=["mh1", "mh2", "mh3", "mA", "mAS", "mHm", "v",
-                              "vS", "tanbeta", "ch1tt", "ch1bb", "m122",
-                              "mSp2", "alignm", "dl14p", "dl25p", "PARAM", "i", "PARAM2", "j"])
-    return data
-
-def read_csv_3D_15dof_dl14p_dl25p_mutil2(FILE):
-    data = pd.read_csv(FILE, sep=",", header=None,
-                       names=["mh1", "mh2", "mh3", "mA", "mAS", "mHm", "v",
-                              "vS", "tanbeta", "ch1tt", "ch1bb", "mutil2",
-                              "mSp2", "alignm", "dl14p", "dl25p", "PARAM", "i", "PARAM2", "j"])
-    return data
-
-def read_csv_old_basis(FILE):
-    data = pd.read_csv(FILE, sep=",", header=None,
-                       names=["mh1", "mh2", "mh3", "mA", "mAS", "mHm", "v",
-                              "vS", "tanbeta", "a1", "a2", "a3", "m122",
-                              "mSp2", "PARAM", "i"])
+    data = pd.read_csv(FILE, sep=",", header=0)
     return data
 
 def prep_csv(data):
-    data[data["PARAM"]]=data["i"]
-    return data
-
-def prep_csv_3D(data):
-    data[data["PARAM"]]=data["i"]
-    data[data["PARAM2"]]=data["j"]
-    return data
-
-def prep_csv_4D(data):
-    data[data["PARAM"]]=data["i"]
-    data[data["PARAM2"]]=data["j"]
-    data[data["PARAM3"]]=data["k"]
+    if "PARAM" in data.columns:
+        data[data["PARAM"]]=data["i"]
+    if "PARAM2" in data.columns:
+        data[data["PARAM2"]]=data["j"]
+    if "PARAM3" in data.columns:
+        data[data["PARAM3"]]=data["k"]
     return data
 
 def save_csv(FILE, data):
     dataframe = pd.DataFrame(data)
-    dataframe.to_csv(FILE)
+    dataframe.to_csv(FILE, index=False)
 
 def calc_basis_change(data):
     """calculate all needed parameters in the interaction basis """
@@ -436,17 +434,17 @@ def calc_red_coup(inte_b, R):
     """calculate reduced couplings (later needed in Chi^2 calculation)
     and add to inte_b
     """
-    c_h1VV = calc_c_h1VV(inte_b, R)
-    inte_b["c_h1VV"] = c_h1VV
+    ch1VV = calc_ch1VV(inte_b, R)
+    inte_b["ch1VV"] = ch1VV
     return inte_b
 
-def calc_c_h1VV(inte_b, R):
+def calc_ch1VV(inte_b, R):
     """calculate reduced coupling c_{h1 V V}
     """
     cosbeta = np.sqrt(1/(1 + inte_b["tanbeta"]**2))
     sinbeta = np.sqrt(1/(1 + 1/inte_b["tanbeta"]**2))
-    c_h1VV = cosbeta*R[1,1] + sinbeta*R[1,2]
-    return c_h1VV
+    ch1VV = cosbeta*R[1,1] + sinbeta*R[1,2]
+    return ch1VV
 
 
 def check_1(data):
@@ -673,8 +671,8 @@ def main_func(mass_b, FILE_OUT):
     return
 
 if __name__=='__main__':
-    FILE_IN = "output/mass_basis.csv"
-    FILE_OUT = "output/inte_basis.csv"
-    data = read_csv_3D_15dof_dl14p_dl25p_mutil2(FILE_IN)
-    mass_b = prep_csv_3D(data)
-    main_func(mass_b, FILE_OUT)
+    FILE_OUT_inte_b = "output/inte_basis.csv"
+    FILE_OUT_mass_b = "output/mass_basis.csv"
+    mass_b = random_bp_generation()
+    save_csv(FILE_OUT_mass_b, mass_b)
+    main_func(mass_b, FILE_OUT_inte_b)
