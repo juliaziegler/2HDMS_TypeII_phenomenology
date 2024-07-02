@@ -25,20 +25,26 @@ labels_dict = {"dl14p": "$\delta_{14}'$", "dl25p": "$\delta_{25}'$", "mAS": "$m_
                "vS": "$v_S \, [GeV]$", "tanbeta": "$tan β$", "ch1tt": "$c_{h_1 t t}$",
                "ch1bb": "$c_{h_1 b b}$", "mSp2": "$m_{S}'^2 \, [GeV^2]$",
                "Relic_Density": "$\Omega h^2$",
-               "Proton_Cross_Section_pb": "$\sigma_{proton \, A_S} \, [cm^2]$",
-               "Neutron_Cross_Section_pb": "$\sigma_{neutron \, A_S} \, [cm^2]$",
+               "Proton_Cross_Section_pb": "proton",
+               "Neutron_Cross_Section_pb": "neutron",
                "l_h1_SS_norm_to_v": "$\lambda_{h_1 A_S A_S}/v$",
                "l_h2_SS_norm_to_v": "$\lambda_{h_2 A_S A_S}/v$",
                "l_h3_SS_norm_to_v": "$\lambda_{h_3 A_S A_S}/v$",
                "BR(h3->SS)": "$BR(h_3 → A_S A_S)$",
                "HiggsSignals_Chi^2_red": "$\chi^2_{red}$",
                "Chi^2_CMS_LEP": "$\chi^2_{CMS-LEP}$",
-               "IND_bb": "$\sigma_{A_S A_S → b b} \, [cm^3/s]$",
-               "IND_tautau": "$\sigma_{A_S A_S → τ τ} \, [cm^3/s]$",
-               "IND_WW": "$\sigma_{A_S A_S → W W} \, [cm^3/s]$",
-               "IND_h2h2": "$\sigma_{A_S A_S → h_2 h_2} \, [cm^3/s]$",
+               "IND_bb": "$A_S A_S → b b$",
+               "IND_tautau": "$A_S A_S → τ τ$",
+               "IND_WW": "$A_S A_S → W W$",
+               "IND_h2h2": "$A_S A_S → h_2 h_2$",
                "mu_the_LEP": "$\mu_{LEP}$",
                "mu_the_CMS": "$\mu_{CMS}$"}
+extra_labels_dict = {"Proton_Cross_Section_pb": "$\sigma \, [cm^2]$",
+               "Neutron_Cross_Section_pb": "$\sigma \, [cm^2]$",
+               "IND_bb": "$\sigma v \, [cm^3/s]$",
+               "IND_tautau": "$\sigma v \, [cm^3/s]$",
+               "IND_WW": "$\sigma v \, [cm^3/s]$",
+               "IND_h2h2": "$\sigma v \, [cm^3/s]$"}
 constr_dict = {"Relic_Density": "Planck_allowed",
                "Proton_Cross_Section_pb": "LZ_allowed_p",
                "Neutron_Cross_Section_pb": "LZ_allowed_n",
@@ -103,18 +109,18 @@ def plot_all(inp_file):
 
     plot_1(XPARAM, YPARAM, "Relic_Density", tick_length, tick_space, line_space, data,
            shape, PATH, matplotlib.colors.LogNorm(), None)
-    plot_1(XPARAM, YPARAM, "BR(h3->SS)", tick_length, tick_space, line_space, data,
-           shape, PATH, None, None)
-    plot_2(XPARAM, YPARAM, "Proton_Cross_Section_pb", "Neutron_Cross_Section_pb",
-           tick_length, tick_space, line_space, data, shape, PATH, matplotlib.colors.LogNorm(), None)
-    plot_2(XPARAM, YPARAM, "HiggsSignals_Chi^2_red", "Chi^2_CMS_LEP",
-           tick_length, tick_space, line_space, data, shape, PATH, None, None)
-    plot_3(XPARAM, YPARAM, "l_h1_SS_norm_to_v", "l_h2_SS_norm_to_v", "l_h3_SS_norm_to_v",
-           tick_length, tick_space, line_space, data, shape, PATH, None, None)
-    plot_3(XPARAM, YPARAM, "IND_h2h2", "IND_WW", "IND_bb", tick_length, tick_space,
-           line_space, data, shape, PATH, matplotlib.colors.LogNorm(), None)
-    plot_3(XPARAM, YPARAM, "IND_bb", "IND_tautau", "IND_WW",
-           tick_length, tick_space, line_space, data, shape, PATH, None, MagnitudeFormatter(-25))
+    #plot_1(XPARAM, YPARAM, "BR(h3->SS)", tick_length, tick_space, line_space, data,
+    #       shape, PATH, None, None)
+    #plot_2(XPARAM, YPARAM, "Proton_Cross_Section_pb", "Neutron_Cross_Section_pb",
+    #       tick_length, tick_space, line_space, data, shape, PATH, matplotlib.colors.LogNorm(), None)
+    #plot_2(XPARAM, YPARAM, "HiggsSignals_Chi^2_red", "Chi^2_CMS_LEP",
+    #       tick_length, tick_space, line_space, data, shape, PATH, None, None)
+    #plot_3(XPARAM, YPARAM, "l_h1_SS_norm_to_v", "l_h2_SS_norm_to_v", "l_h3_SS_norm_to_v",
+    #       tick_length, tick_space, line_space, data, shape, PATH, None, None)
+    #plot_3(XPARAM, YPARAM, "IND_h2h2", "IND_WW", "IND_bb", tick_length, tick_space,
+    #       line_space, data, shape, PATH, matplotlib.colors.LogNorm(), None)
+    #plot_3(XPARAM, YPARAM, "IND_bb", "IND_tautau", "IND_WW",
+    #       tick_length, tick_space, line_space, data, shape, PATH, None, MagnitudeFormatter(-25))
 
     #plot_all_constr_s1(XPARAM, YPARAM, tick_length, tick_space,
     #       line_space, data, shape, PATH, None, None)
@@ -122,6 +128,13 @@ def plot_all(inp_file):
            line_space, data, shape, PATH, None, None)
     #plot_all_constr_s3(XPARAM, YPARAM, tick_length, tick_space,
     #       line_space, data, shape, PATH, None, None)
+    #plot_3_extra_label(XPARAM, YPARAM, "IND_h2h2", "IND_WW", "IND_bb", tick_length, tick_space,
+    #       line_space, data, shape, PATH, matplotlib.colors.LogNorm(), None)
+    plot_3_ax_label(XPARAM, YPARAM, "IND_h2h2", "IND_WW", "IND_bb", tick_length, tick_space,
+           line_space, data, shape, PATH, matplotlib.colors.LogNorm(), None)
+    plot_2_ax_label(XPARAM, YPARAM, "Proton_Cross_Section_pb", "Neutron_Cross_Section_pb",
+           tick_length, tick_space, line_space, data, shape, PATH, matplotlib.colors.LogNorm(), None)
+    
     return
 
 def get_shape(data):
@@ -294,6 +307,79 @@ def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
     #ax.set_ylim(-60000,20000)
     #ax.yaxis.set_major_formatter(MagnitudeFormatter(4))
     return circ
+def make_subplot_extra_label(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
+                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl, extra_label):
+    ps = 40
+    pos=ax.scatter(X, Y, s=ps, c=Z, norm=norm)
+    circ1 = plot_constr(X, Y, bfb, "bfb", "solid", tick_length, tick_space,
+                                        line_space, ax, "//")
+    circ2 = plot_constr(X, Y, unitarity, "unitarity", "solid", tick_length,
+                                        tick_space, line_space, ax, "--")
+    circ3 = plot_constr(X, Y, HB, "HiggsBounds", "solid", tick_length,
+                                        tick_space, line_space, ax, "\\\\")
+    # plot additional constraint relevant for ZPARAM
+    if ZPARAM in constr_dict.keys():
+        add_constr_name = constr_dict[ZPARAM]
+        add_constr_data = np.array(data[add_constr_name]).reshape(shape)
+        circ4 = plot_constr(X, Y, add_constr_data, add_constr_name, "solid",
+                                            tick_length, tick_space, line_space, ax, "..")
+    # plot BP
+    plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps)
+    # make legend
+    if ZPARAM in constr_dict.keys():
+        circ_o = [circ1, circ2, circ3, circ4]
+    else:
+        circ_o = [circ1, circ2, circ3]
+    circ = []
+    for i in circ_o:
+        if type(i)==matplotlib.patches.Patch:
+            circ.append(i)
+    # make colorbar
+    bar = fig.colorbar(pos, ax=ax, label=zlabel+"\n"+extra_label, format=ax_multipl)
+    # set limis and formatting for axes
+    #ax.set_xlim(0,1)
+    #ax.set_xlim(100,400)
+    #ax.set_ylim(7,11)
+    #ax.set_ylim(-60000,20000)
+    #ax.yaxis.set_major_formatter(MagnitudeFormatter(4))
+    return circ
+def make_subplot_ax_label(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
+                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl, extra_label):
+    ps = 40
+    pos=ax.scatter(X, Y, s=ps, c=Z, norm=norm)
+    circ1 = plot_constr(X, Y, bfb, "bfb", "solid", tick_length, tick_space,
+                                        line_space, ax, "//")
+    circ2 = plot_constr(X, Y, unitarity, "unitarity", "solid", tick_length,
+                                        tick_space, line_space, ax, "--")
+    circ3 = plot_constr(X, Y, HB, "HiggsBounds", "solid", tick_length,
+                                        tick_space, line_space, ax, "\\\\")
+    # plot additional constraint relevant for ZPARAM
+    if ZPARAM in constr_dict.keys():
+        add_constr_name = constr_dict[ZPARAM]
+        add_constr_data = np.array(data[add_constr_name]).reshape(shape)
+        circ4 = plot_constr(X, Y, add_constr_data, add_constr_name, "solid",
+                                            tick_length, tick_space, line_space, ax, "..")
+    # plot BP
+    plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps)
+    # make legend
+    if ZPARAM in constr_dict.keys():
+        circ_o = [circ1, circ2, circ3, circ4]
+    else:
+        circ_o = [circ1, circ2, circ3]
+    circ = []
+    for i in circ_o:
+        if type(i)==matplotlib.patches.Patch:
+            circ.append(i)
+    # make colorbar
+    bar = fig.colorbar(pos, ax=ax, label=zlabel, format=ax_multipl)
+    ax.annotate(extra_label, xy=(0.5,0.5))
+    # set limis and formatting for axes
+    #ax.set_xlim(0,1)
+    #ax.set_xlim(100,400)
+    #ax.set_ylim(7,11)
+    #ax.set_ylim(-60000,20000)
+    #ax.yaxis.set_major_formatter(MagnitudeFormatter(4))
+    return circ
 def plot_1(XPARAM, YPARAM, ZPARAM, tick_length, tick_space, line_space, data, shape, PATH, norm, ax_multipl):
     # define name for output file
     FILE_OUT = PATH+"/plots_"+file_out_name_dict[ZPARAM]+".png"
@@ -345,6 +431,37 @@ def plot_2(XPARAM, YPARAM, ZPARAM1, ZPARAM2, tick_length, tick_space, line_space
     ax1.legend(handles=circ1, loc="upper right", framealpha=1)
     plt.savefig(FILE_OUT, format="png")
     return
+def plot_2_ax_label(XPARAM, YPARAM, ZPARAM1, ZPARAM2, tick_length, tick_space, line_space, data,
+           shape, PATH, norm, ax_multipl):
+    # define name for output file
+    FILE_OUT = PATH+"/plots_"+file_out_name_dict[ZPARAM1]+file_out_name_dict[ZPARAM2]+".png"
+    # define all needed data
+    ZFACTOR1 = get_factor(ZPARAM1, data, shape)
+    ZFACTOR2 = get_factor(ZPARAM2, data, shape)
+    X=np.array(data[XPARAM]).reshape(shape)
+    Y=np.array(data[YPARAM]).reshape(shape)
+    Z1=np.array(data[ZPARAM1]).reshape(shape) * ZFACTOR1
+    Z2=np.array(data[ZPARAM2]).reshape(shape) * ZFACTOR2
+    xlabel = labels_dict[XPARAM]
+    ylabel = labels_dict[YPARAM]
+    zlabel1 = labels_dict[ZPARAM1]
+    zlabel2 = labels_dict[ZPARAM2]
+    extra_label = extra_labels_dict[ZPARAM2]
+    # get the constraints
+    bfb, unitarity, HB = get_general_constr(data, shape)
+    # plot the data with constraint lines
+    fig, (ax1, ax2) = plt.subplots(2,1, sharex=True)
+    circ1 = make_subplot(ax1, X, Y, Z1, bfb, unitarity, HB, ZPARAM1, data, zlabel1, shape,
+                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
+    circ2 = make_subplot(ax2, X, Y, Z2, bfb, unitarity, HB, ZPARAM2, data, zlabel2, shape,
+                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
+    ax2.set_xlabel(xlabel)
+    ax1.set_ylabel(ylabel)
+    ax2.set_ylabel(ylabel)
+    fig.text(0.78, 0.06, extra_label)
+    ax1.legend(handles=circ1, loc="upper right", framealpha=1)
+    plt.savefig(FILE_OUT, format="png")
+    return
 def plot_3(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZPARAM3, tick_length,
            tick_space, line_space, data, shape, PATH, norm, ax_multipl):
     # define name for output file
@@ -376,6 +493,82 @@ def plot_3(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZPARAM3, tick_length,
                  tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
     ax3.set_xlabel(xlabel)
     ax2.set_ylabel(ylabel)
+    ax1.legend(handles=circ1, loc="upper right", framealpha=1)
+    plt.savefig(FILE_OUT, format="png")
+    return
+def plot_3_extra_label(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZPARAM3, tick_length,
+           tick_space, line_space, data, shape, PATH, norm, ax_multipl):
+    # define name for output file
+    FILE_OUT = PATH+"/plots_"+file_out_name_dict[ZPARAM1]+file_out_name_dict[ZPARAM2]+\
+               file_out_name_dict[ZPARAM3]+".png"
+    # define all needed data
+    ZFACTOR1 = get_factor(ZPARAM1, data, shape)
+    ZFACTOR2 = get_factor(ZPARAM2, data, shape)
+    ZFACTOR3 = get_factor(ZPARAM3, data, shape)
+    X=np.array(data[XPARAM]).reshape(shape)
+    Y=np.array(data[YPARAM]).reshape(shape)
+    Z1=np.array(data[ZPARAM1]).reshape(shape) * ZFACTOR1
+    Z2=np.array(data[ZPARAM2]).reshape(shape) * ZFACTOR2
+    Z3=np.array(data[ZPARAM3]).reshape(shape) * ZFACTOR3
+    xlabel = labels_dict[XPARAM]
+    ylabel = labels_dict[YPARAM]
+    zlabel1 = labels_dict[ZPARAM1]
+    zlabel2 = labels_dict[ZPARAM2]
+    zlabel3 = labels_dict[ZPARAM3]
+    extra_label = extra_labels_dict[ZPARAM2]
+    # get the constraints
+    bfb, unitarity, HB = get_general_constr(data, shape)
+    # plot the data with constraint lines
+    fig, (ax1, ax2, ax3) = plt.subplots(3,1, sharex=True)
+    circ1 = make_subplot(ax1, X, Y, Z1, bfb, unitarity, HB, ZPARAM1, data, zlabel1, shape,
+                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
+    circ2 = make_subplot_extra_label(ax2, X, Y, Z2, bfb, unitarity, HB, ZPARAM2, data, zlabel2, shape,
+                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl, extra_label)
+    circ3 = make_subplot(ax3, X, Y, Z3, bfb, unitarity, HB, ZPARAM3, data, zlabel3, shape,
+                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
+    ax3.set_xlabel(xlabel)
+    ax2.set_ylabel(ylabel)
+    ax1.legend(handles=circ1, loc="upper right", framealpha=1)
+    plt.savefig(FILE_OUT, format="png")
+    return
+def plot_3_ax_label(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZPARAM3, tick_length,
+           tick_space, line_space, data, shape, PATH, norm, ax_multipl):
+    # define name for output file
+    FILE_OUT = PATH+"/plots_"+file_out_name_dict[ZPARAM1]+file_out_name_dict[ZPARAM2]+\
+               file_out_name_dict[ZPARAM3]+".png"
+    # define all needed data
+    ZFACTOR1 = get_factor(ZPARAM1, data, shape)
+    ZFACTOR2 = get_factor(ZPARAM2, data, shape)
+    ZFACTOR3 = get_factor(ZPARAM3, data, shape)
+    X=np.array(data[XPARAM]).reshape(shape)
+    Y=np.array(data[YPARAM]).reshape(shape)
+    Z1=np.array(data[ZPARAM1]).reshape(shape) * ZFACTOR1
+    Z2=np.array(data[ZPARAM2]).reshape(shape) * ZFACTOR2
+    Z3=np.array(data[ZPARAM3]).reshape(shape) * ZFACTOR3
+    xlabel = labels_dict[XPARAM]
+    ylabel = labels_dict[YPARAM]
+    zlabel1 = labels_dict[ZPARAM1]
+    zlabel2 = labels_dict[ZPARAM2]
+    zlabel3 = labels_dict[ZPARAM3]
+    extra_label = extra_labels_dict[ZPARAM2]
+    # get the constraints
+    bfb, unitarity, HB = get_general_constr(data, shape)
+    # plot the data with constraint lines
+    fig, (ax1, ax2, ax3) = plt.subplots(3,1, sharex=True)
+    circ1 = make_subplot(ax1, X, Y, Z1, bfb, unitarity, HB, ZPARAM1, data, zlabel1, shape,
+                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
+    circ2 = make_subplot(ax2, X, Y, Z2, bfb, unitarity, HB, ZPARAM2, data, zlabel2, shape,
+                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
+    circ3 = make_subplot(ax3, X, Y, Z3, bfb, unitarity, HB, ZPARAM3, data, zlabel3, shape,
+                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
+    ax3.set_xlabel(xlabel)
+    ax2.set_ylabel(ylabel)
+    ################################################
+    fig.text(0.78, 0.06, extra_label)
+    # both do the same 
+    #ax3.text(-9.8, 0.2, extra_label)
+    #ax3.annotate(extra_label, xy=(-9.8,0.2))
+    ################################################
     ax1.legend(handles=circ1, loc="upper right", framealpha=1)
     plt.savefig(FILE_OUT, format="png")
     return
@@ -532,7 +725,7 @@ if __name__=='__main__':
     FILE_IN = "output/pyplot_in.csv"
     inp_file = read_csv(FILE_IN)
 
-    SIZE_ALL = 11
+    SIZE_ALL = 13
     plt.rc('font', size=SIZE_ALL)          # controls default text sizes
     plt.rc('axes', titlesize=SIZE_ALL)     # fontsize of the axes title
     plt.rc('axes', labelsize=SIZE_ALL)    # fontsize of the x and y labels

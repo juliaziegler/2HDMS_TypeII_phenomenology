@@ -51,7 +51,18 @@ labels_dict = {"dl14p": "$\delta_{14}'$",
                "mu_the_LEP": "$\mu_{LEP}$",
                "mu_the_CMS": "$\mu_{CMS}$",
                "l1m24p": "$\lambda_1' - 2\lambda_4'$",
-               "l2m25p": "$\lambda_2' - 2\lambda_5'$"}
+               "l2m25p": "$\lambda_2' - 2\lambda_5'$",
+               "l1": "$\lambda_{1}$",
+               "l2": "$\lambda_{2}$",
+               "l3": "$\lambda_{3}$",
+               "l4": "$\lambda_{4}$",
+               "l5": "$\lambda_{5}$",
+               "l1p": "$\lambda_{1}'$",
+               "l2p": "$\lambda_{2}'$",
+               "l4p": "$\lambda_{4}'$",
+               "l5p": "$\lambda_{5}'$",
+               "l1pp": "$\lambda_{1}''$",
+               "l3pp": "$\lambda_{3}''$"}
 constr_dict = {"Relic_Density": "Planck_allowed",
                "Proton_Cross_Section_pb": "LZ_allowed_p",
                "Neutron_Cross_Section_pb": "LZ_allowed_n",
@@ -145,7 +156,16 @@ def plot_all(inp_file):
            line_space, data, shape, PATH, matplotlib.colors.LogNorm(), None)
     #plot_3(XPARAM, YPARAM, "IND_bb", "IND_tautau", "IND_WW",
     #       tick_length, tick_space, line_space, data, shape, PATH, None, MagnitudeFormatter(-25))
-
+    plot_3(XPARAM, YPARAM, "l1", "l2", "l3",
+           tick_length, tick_space, line_space, data, shape, PATH, None, None)
+    plot_2(XPARAM, YPARAM, "l4", "l5",
+           tick_length, tick_space, line_space, data, shape, PATH, None, None)
+    plot_2(XPARAM, YPARAM, "l1p", "l2p",
+           tick_length, tick_space, line_space, data, shape, PATH, None, None)
+    plot_2(XPARAM, YPARAM, "l4p", "l5p",
+           tick_length, tick_space, line_space, data, shape, PATH, None, None)
+    plot_2(XPARAM, YPARAM, "l1pp", "l3pp",
+           tick_length, tick_space, line_space, data, shape, PATH, None, None)
     #plot_all_constr_s1(XPARAM, YPARAM, tick_length, tick_space,
     #       line_space, data, shape, PATH, None, None)
     plot_all_constr_s2(XPARAM, YPARAM, tick_length, tick_space,
@@ -158,7 +178,7 @@ def get_shape(data):
     X=np.floor(1 + (data["STOP_VAL"][0]-data["START_VAL"][0])/data["STEP_SIZE"][0])
     Y=np.floor(1 + (data["STOP_VAL2"][0]-data["START_VAL2"][0])/data["STEP_SIZE2"][0])
     shape = (int(X),int(Y))
-    #shape = (103,103)
+    #shape = (33,101)
     return shape
 def get_factor(PARAM, data, shape):
     if (PARAM == "Proton_Cross_Section_pb" or PARAM == "Neutron_Cross_Section_pb"):
@@ -282,8 +302,10 @@ def plot_constr_s3(X, Y, Z, ZPARAM, line_style, tick_length,
         #artists, labels_new = [np.nan], [np.nan]
     return circ
 def plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps):
-    BP_PATH = "~/SyncandShare/Master/FILES/2HDMS-Z2b-DM/benchmark_point/new_BP1"
-    BP_FILE = "results.csv"
+    #BP_PATH = "~/SyncandShare/Master/FILES/2HDMS-Z2b-DM/benchmark_point/new_BP1"
+    #BP_FILE = "results.csv"
+    BP_PATH = "~/SyncandShare/Master/FILES/2HDMS-Z2b-DM/benchmark_point/new_BPs/BP3_95.4_3x700"
+    BP_FILE = "BP3_95.4_3x700.csv"
     BP_data=pd.read_csv(BP_PATH+"/"+BP_FILE)
     #ZFACTOR = get_factor(ZPARAM, BP_data, (1))
     if XPARAM == "m122":
@@ -317,7 +339,7 @@ def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
         circ4 = plot_constr(X, Y, add_constr_data, add_constr_name, "solid",
                                             tick_length, tick_space, line_space, ax, "..")
     # plot BP
-    #plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps)
+    plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps)
     # make legend
     if ZPARAM in constr_dict.keys():
         circ_o = [circ1, circ2, circ3, circ4]
@@ -338,7 +360,11 @@ def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
     return circ
 def plot_1(XPARAM, YPARAM, ZPARAM, tick_length, tick_space, line_space, data, shape, PATH, norm, ax_multipl):
     # define name for output file
-    FILE_OUT = PATH+"/plots_"+file_out_name_dict[ZPARAM]+".png"
+    if ZPARAM in file_out_name_dict.keys():
+        OUTNAME = file_out_name_dict[ZPARAM]
+    else:
+        OUTNAME = ZPARAM
+    FILE_OUT = PATH+"/plots_"+OUTNAME+".png"
     # define all needed data
     ZFACTOR = get_factor(ZPARAM, data, shape)
     X=np.array(data[XPARAM]).reshape(shape)
@@ -346,7 +372,10 @@ def plot_1(XPARAM, YPARAM, ZPARAM, tick_length, tick_space, line_space, data, sh
     Z=np.array(data[ZPARAM]).reshape(shape) * ZFACTOR
     xlabel = labels_dict[XPARAM]
     ylabel = labels_dict[YPARAM]
-    zlabel = labels_dict[ZPARAM]
+    if ZPARAM in labels_dict.keys():
+        zlabel = labels_dict[ZPARAM]
+    else:
+        zlabel = ZPARAM
     # get the constraints
     bfb, unitarity, HB = get_general_constr(data, shape)
     # plot the data with constraint lines
@@ -361,7 +390,15 @@ def plot_1(XPARAM, YPARAM, ZPARAM, tick_length, tick_space, line_space, data, sh
 def plot_2(XPARAM, YPARAM, ZPARAM1, ZPARAM2, tick_length, tick_space, line_space, data,
            shape, PATH, norm, ax_multipl):
     # define name for output file
-    FILE_OUT = PATH+"/plots_"+file_out_name_dict[ZPARAM1]+file_out_name_dict[ZPARAM2]+".png"
+    if ZPARAM1 in file_out_name_dict.keys():
+        OUTNAME1 = file_out_name_dict[ZPARAM1]
+    else:
+        OUTNAME1 = ZPARAM1
+    if ZPARAM2 in file_out_name_dict.keys():
+        OUTNAME2 = file_out_name_dict[ZPARAM2]
+    else:
+        OUTNAME2 = ZPARAM2
+    FILE_OUT = PATH+"/plots_"+OUTNAME1+OUTNAME2+".png"
     # define all needed data
     ZFACTOR1 = get_factor(ZPARAM1, data, shape)
     ZFACTOR2 = get_factor(ZPARAM2, data, shape)
@@ -371,8 +408,14 @@ def plot_2(XPARAM, YPARAM, ZPARAM1, ZPARAM2, tick_length, tick_space, line_space
     Z2=np.array(data[ZPARAM2]).reshape(shape) * ZFACTOR2
     xlabel = labels_dict[XPARAM]
     ylabel = labels_dict[YPARAM]
-    zlabel1 = labels_dict[ZPARAM1]
-    zlabel2 = labels_dict[ZPARAM2]
+    if ZPARAM1 in labels_dict.keys():
+        zlabel1 = labels_dict[ZPARAM1]
+    else:
+        zlabel1 = ZPARAM1
+    if ZPARAM2 in labels_dict.keys():
+        zlabel2 = labels_dict[ZPARAM2]
+    else:
+        zlabel2 = ZPARAM2
     # get the constraints
     bfb, unitarity, HB = get_general_constr(data, shape)
     # plot the data with constraint lines
@@ -390,8 +433,19 @@ def plot_2(XPARAM, YPARAM, ZPARAM1, ZPARAM2, tick_length, tick_space, line_space
 def plot_3(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZPARAM3, tick_length,
            tick_space, line_space, data, shape, PATH, norm, ax_multipl):
     # define name for output file
-    FILE_OUT = PATH+"/plots_"+file_out_name_dict[ZPARAM1]+file_out_name_dict[ZPARAM2]+\
-               file_out_name_dict[ZPARAM3]+".png"
+    if ZPARAM1 in file_out_name_dict.keys():
+        OUTNAME1 = file_out_name_dict[ZPARAM1]
+    else:
+        OUTNAME1 = ZPARAM1
+    if ZPARAM2 in file_out_name_dict.keys():
+        OUTNAME2 = file_out_name_dict[ZPARAM2]
+    else:
+        OUTNAME2 = ZPARAM2
+    if ZPARAM3 in file_out_name_dict.keys():
+        OUTNAME3 = file_out_name_dict[ZPARAM3]
+    else:
+        OUTNAME3 = ZPARAM3
+    FILE_OUT = PATH+"/plots_"+OUTNAME1+OUTNAME2+OUTNAME3+".png"
     # define all needed data
     ZFACTOR1 = get_factor(ZPARAM1, data, shape)
     ZFACTOR2 = get_factor(ZPARAM2, data, shape)
@@ -403,9 +457,18 @@ def plot_3(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZPARAM3, tick_length,
     Z3=np.array(data[ZPARAM3]).reshape(shape) * ZFACTOR3
     xlabel = labels_dict[XPARAM]
     ylabel = labels_dict[YPARAM]
-    zlabel1 = labels_dict[ZPARAM1]
-    zlabel2 = labels_dict[ZPARAM2]
-    zlabel3 = labels_dict[ZPARAM3]
+    if ZPARAM1 in labels_dict.keys():
+        zlabel1 = labels_dict[ZPARAM1]
+    else:
+        zlabel1 = ZPARAM1
+    if ZPARAM2 in labels_dict.keys():
+        zlabel2 = labels_dict[ZPARAM2]
+    else:
+        zlabel2 = ZPARAM2
+    if ZPARAM3 in labels_dict.keys():
+        zlabel3 = labels_dict[ZPARAM3]
+    else:
+        zlabel3 = ZPARAM3
     # get the constraints
     bfb, unitarity, HB = get_general_constr(data, shape)
     # plot the data with constraint lines

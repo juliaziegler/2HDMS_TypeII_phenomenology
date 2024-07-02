@@ -254,16 +254,6 @@ def main_func(data, mass_b, inte_b, microm_spheno, FILE_OUT_h_tools):
     except:
         print('file does not exist')
         save_csv(FILE_OUT, results_all)
-    '''
-    if data["ITERATION"][0]==0:
-        save_csv(FILE_OUT, results_all)
-    else:
-        save_csv(FILE_OUT_h_tools, results_all)
-        results_all_old = read_csv(FILE_OUT)
-        results_all_current = read_csv(FILE_OUT_h_tools)
-        results_all_new = pd.concat([results_all_old, results_all_current])
-        save_csv(FILE_OUT, results_all_new)
-        '''
     return
 
 if __name__=='__main__':

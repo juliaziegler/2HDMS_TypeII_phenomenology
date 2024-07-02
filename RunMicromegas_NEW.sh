@@ -194,8 +194,8 @@ do
  rm $h_tools_in_filenames
  rm $h_tools_in
  rm $h_tools_out
- head="HB_DIR","HS_DIR","HT_INP","FILE_OUT","ITERATION"
- line1=$HB_DIR,$HS_DIR,$SPHENO_OUT_DIR/SPheno.spc.complexZ2b,$OUTPUT/$F,$(($j+$i))
+ head="HB_DIR","HS_DIR","HT_INP","FILE_OUT"
+ line1=$HB_DIR,$HS_DIR,$SPHENO_OUT_DIR/SPheno.spc.complexZ2b,$OUTPUT/$F
  echo $head >> $h_tools_in_filenames
  echo $line1 >> $h_tools_in_filenames
  head1="RelDen","PCS_pb","NCS_pb","BR_h1SS","BR_h2SS","BR_h3SS","BR_h1bb","BR_h1yy"
