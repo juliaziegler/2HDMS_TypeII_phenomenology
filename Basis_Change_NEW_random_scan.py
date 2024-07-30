@@ -7,23 +7,26 @@ import numpy as np
 import pandas as pd
 
 def random_bp_generation():
+    # TODO this part has to be adapted
     # define the ranges of variation
     mh1_range = np.array([95.4, 95.4])
     mh2_range = np.array([125.09, 125.09])
-    mh3_range = np.array([700, 700])
-    mA_range = np.array([700, 700])
-    mAS_range = np.array([200, 400])
-    mHm_range = np.array([700, 700])
+    mh3_range = np.array([700, 750])
+    mA_range = np.array([700, 750])
+    mAS_range = np.array([40, 90])
+    mHm_range = np.array([700, 750])
     v_range = np.array([246.220569, 246.220569])
-    vS_range = np.array([200, 400])
-    tanbeta_range = np.array([5, 10])
+    vS_range = np.array([40, 300])
+    tanbeta_range = np.array([0, 10])
     ch1tt_range = np.array([0.3, 0.4])
     ch1bb_range = np.array([0.2, 0.3])
     mutil2_range = np.array([-500000, 500000])
-    mSp2_range = np.array([-50000, 50000])
+    mSp2_range = np.array([-500000, 500000])
     alignm_range = np.array([0.990, 1])
-    l1m24p_range = np.array([-15, 15])
-    l2m25p_range = np.array([-15, 15])
+    #l1m24p_range = np.array([-15, 15])
+    #l2m25p_range = np.array([-15, 15])
+    lh1_range = np.array([-0.5, 0.5])
+    lh2_range = np.array([-50, 50])
 
     # choose a bp by random selection of values in the ranges given above
     mh1 = random_number_gen_w_bounds(mh1_range)
@@ -40,14 +43,20 @@ def random_bp_generation():
     mutil2 = random_number_gen_w_bounds(mutil2_range)
     mSp2 = random_number_gen_w_bounds(mSp2_range)
     alignm = random_number_gen_w_bounds(alignm_range)
-    l1m24p = random_number_gen_w_bounds(l1m24p_range)
-    l2m25p = random_number_gen_w_bounds(l2m25p_range)
+    #l1m24p = random_number_gen_w_bounds(l1m24p_range)
+    #l2m25p = random_number_gen_w_bounds(l2m25p_range)
+    lh1 = random_number_gen_w_bounds(lh1_range)
+    lh2 = random_number_gen_w_bounds(lh2_range)
 
     # put into a data frame
+    #data = np.array([[mh1, mh2, mh3, mA, mAS, mHm, v, vS, tanbeta,
+    #                 ch1tt, ch1bb, mutil2, mSp2, alignm, l1m24p, l2m25p]])
+    #columns = ['mh1', 'mh2', 'mh3', 'mA', 'mAS', 'mHm', 'v', 'vS', 'tanbeta',
+    #           'ch1tt', 'ch1bb', 'mutil2', 'mSp2', 'alignm', 'l1m24p', 'l2m25p']
     data = np.array([[mh1, mh2, mh3, mA, mAS, mHm, v, vS, tanbeta,
-                     ch1tt, ch1bb, mutil2, mSp2, alignm, l1m24p, l2m25p]])
+                     ch1tt, ch1bb, mutil2, mSp2, alignm, lh1, lh2]])
     columns = ['mh1', 'mh2', 'mh3', 'mA', 'mAS', 'mHm', 'v', 'vS', 'tanbeta',
-               'ch1tt', 'ch1bb', 'mutil2', 'mSp2', 'alignm', 'l1m24p', 'l2m25p']
+               'ch1tt', 'ch1bb', 'mutil2', 'mSp2', 'alignm', 'lh1', 'lh2']
     benchmark = pd.DataFrame(data=data, columns=columns)
     return benchmark
 

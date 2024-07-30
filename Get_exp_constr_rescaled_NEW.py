@@ -46,7 +46,7 @@ def get_results(data):
     FERMIconstr_ee = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_ee'][0])
     FERMIconstr_yy = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_yy'][0])
     FERMIconstr_gg = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_gg'][0])
-    FERMIconstr_hh = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_hh'][0])
+    FERMIconstr_hh = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_h2h2'][0])
     FERMIconstr_mumu = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_mumu'][0])
     FERMIconstr_qq = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_qq'][0])
     FERMIconstr_tt = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_tt'][0])
@@ -70,7 +70,7 @@ def get_results(data):
     FERMIallowed_ee = (INDDCS_res_cm3_over_s*data["INDDCS_ee"][0] <= FERMIconstr_ee or np.isnan(data["INDDCS_ee"][0]))
     FERMIallowed_yy = (INDDCS_res_cm3_over_s*data["INDDCS_yy"][0] <= FERMIconstr_yy or np.isnan(data["INDDCS_yy"][0]))
     FERMIallowed_gg = (INDDCS_res_cm3_over_s*data["INDDCS_gg"][0] <= FERMIconstr_gg or np.isnan(data["INDDCS_gg"][0]))
-    FERMIallowed_hh = (INDDCS_res_cm3_over_s*data["INDDCS_hh"][0] <= FERMIconstr_hh or np.isnan(data["INDDCS_hh"][0]))
+    FERMIallowed_hh = (INDDCS_res_cm3_over_s*data["INDDCS_h2h2"][0] <= FERMIconstr_hh or np.isnan(data["INDDCS_h2h2"][0]))
     FERMIallowed_mumu = (INDDCS_res_cm3_over_s*data["INDDCS_mumu"][0] <= FERMIconstr_mumu or np.isnan(data["INDDCS_mumu"][0]))
     FERMIallowed_ss = (INDDCS_res_cm3_over_s*data["INDDCS_ss"][0] <= FERMIconstr_qq or np.isnan(data["INDDCS_ss"][0]))
     FERMIallowed_dd = (INDDCS_res_cm3_over_s*data["INDDCS_dd"][0] <= FERMIconstr_qq or np.isnan(data["INDDCS_dd"][0]))
@@ -231,7 +231,7 @@ constr_dict = {"PCS_pb":("constraints/LZ_constr_wo_header.txt", 1e+36),
                "INDDCS_ee":("constraints/MadDM_Fermi_Limit_ee.dat", 1),
                "INDDCS_yy":("constraints/MadDM_Fermi_Limit_gammagamma.dat", 1),
                "INDDCS_gg":("constraints/MadDM_Fermi_Limit_gg.dat", 1),
-               "INDDCS_hh":("constraints/MadDM_Fermi_Limit_hh.dat", 1),
+               "INDDCS_h2h2":("constraints/MadDM_Fermi_Limit_hh.dat", 1),
                "INDDCS_mumu":("constraints/MadDM_Fermi_Limit_mumu.dat", 1),
                "INDDCS_qq":("constraints/MadDM_Fermi_Limit_qq.dat", 1),
                "INDDCS_tt":("constraints/MadDM_Fermi_Limit_tt.dat", 1),
@@ -239,6 +239,7 @@ constr_dict = {"PCS_pb":("constraints/LZ_constr_wo_header.txt", 1e+36),
 
 def main_func(data, mass_b, inte_b, microm_spheno, FILE_OUT_h_tools):
     FILE_OUT = data["FILE_OUT"][0]
+    FILE_OUT_allowed = data["FILE_OUT_allowed"][0]
     # get results from HiggsTools
     results = get_results(pd.concat([data, mass_b, inte_b, microm_spheno], axis=1))
     results_df = pd.DataFrame(results)
@@ -254,6 +255,16 @@ def main_func(data, mass_b, inte_b, microm_spheno, FILE_OUT_h_tools):
     except:
         print('file does not exist')
         save_csv(FILE_OUT, results_all)
+    if results_all['allallowed'][0] == 1:
+        try:
+            results_all_allowed_old = read_csv(FILE_OUT_allowed)
+            save_csv(FILE_OUT_h_tools, results_all)
+            results_all_current = read_csv(FILE_OUT_h_tools)
+            results_all_allowed_new = pd.concat([results_all_allowed_old, results_all_current])
+            save_csv(FILE_OUT, results_all_allowed_new)
+        except:
+            #print('file does not exist')
+            save_csv(FILE_OUT, results_all)
     return
 
 if __name__=='__main__':

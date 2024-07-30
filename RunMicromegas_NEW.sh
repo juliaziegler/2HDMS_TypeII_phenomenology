@@ -23,14 +23,16 @@ ch1bb=0.258 #0.12737976647144644 #0.05     # < 0.581
 mutil2=490000 #812804.1983308262 # m122/(sinbeta*cosbeta)
 mSp2=-48087.901620072 #475.490545912366 #-10000.0000
 alignm=0.9998450892861399 #0.9999986246982658 #1       # {0.98, 1}
-l1m24p=12.79563962 #0              # = l1p -2*l4p
-l2m25p=-0.18298887299999997 #0              # = l2p + -2*l5p
+#l1m24p=12.79563962 #0              # = l1p -2*l4p
+#l2m25p=-0.18298887299999997 #0              # = l2p + -2*l5p
+lh1=0
+lh2=7
 ##### change these params ##############################
-PARAM=l1m24p
+PARAM=lh2
 l1m24p=i
-START_VAL=-12
-STOP_VAL=12
-STEP_SIZE=6
+START_VAL=5
+STOP_VAL=7
+STEP_SIZE=1
 
 PARAM2=tanbeta
 tanbeta=j
@@ -71,7 +73,7 @@ h_tools_in=$OUT/h_tools_in.csv
 h_tools_out=$OUT/h_tools_out.csv
 h_tools_in_filenames=$OUT/h_tools_in_filenames.csv
 # use this for plotting the results:
-plot_results_py=PlotResults_rescaled.py
+plot_results_py=PlotResults_rescaled_NEW.py
 plot_in=$OUT/pyplot_in.csv
 # use this template for SPheno input:
 spheno_templ=$MAIN_DIR/LesHouches.in.complexZ2b_low_Template_MO
@@ -154,8 +156,10 @@ do
  # remove old and create new bases
  rm $mass_b
  rm $inte_b
- head1="mh1","mh2","mh3","mA","mAS","mHm","v","vS","tanbeta","ch1tt","ch1bb","mutil2","mSp2","alignm","l1m24p","l2m25p","PARAM","i","PARAM2","j"
- line1=$mh1,$mh2,$mh3,$mA,$mAS,$mHm,$v,$vS,$tanbeta,$ch1tt,$ch1bb,$mutil2,$mSp2,$alignm,$l1m24p,$l2m25p,$PARAM,$i,$PARAM2,$j
+ #head1="mh1","mh2","mh3","mA","mAS","mHm","v","vS","tanbeta","ch1tt","ch1bb","mutil2","mSp2","alignm","l1m24p","l2m25p","PARAM","i","PARAM2","j"
+ #line1=$mh1,$mh2,$mh3,$mA,$mAS,$mHm,$v,$vS,$tanbeta,$ch1tt,$ch1bb,$mutil2,$mSp2,$alignm,$l1m24p,$l2m25p,$PARAM,$i,$PARAM2,$j
+ head1="mh1","mh2","mh3","mA","mAS","mHm","v","vS","tanbeta","ch1tt","ch1bb","mutil2","mSp2","alignm","lh1","lh2","PARAM","i","PARAM2","j"
+ line1=$mh1,$mh2,$mh3,$mA,$mAS,$mHm,$v,$vS,$tanbeta,$ch1tt,$ch1bb,$mutil2,$mSp2,$alignm,$lh1,$lh2,$PARAM,$i,$PARAM2,$j
  echo $head1 >> $mass_b
  echo $line1 >> $mass_b
  # run python basis change
@@ -194,12 +198,12 @@ do
  rm $h_tools_in_filenames
  rm $h_tools_in
  rm $h_tools_out
- head="HB_DIR","HS_DIR","HT_INP","FILE_OUT"
- line1=$HB_DIR,$HS_DIR,$SPHENO_OUT_DIR/SPheno.spc.complexZ2b,$OUTPUT/$F
+ head="HB_DIR","HS_DIR","HT_INP","FILE_OUT","FILE_OUT_allowed"
+ line1=$HB_DIR,$HS_DIR,$SPHENO_OUT_DIR/SPheno.spc.complexZ2b,$OUTPUT/$F,$OUTPUT/results_allowed.csv
  echo $head >> $h_tools_in_filenames
  echo $line1 >> $h_tools_in_filenames
  head1="RelDen","PCS_pb","NCS_pb","BR_h1SS","BR_h2SS","BR_h3SS","BR_h1bb","BR_h1yy"
- head2="unitarity","unitarity_w_tril","INDDCS_cm3_over_s","INDDCS_h1h1","INDDCS_hh","INDDCS_h3h3"
+ head2="unitarity","unitarity_w_tril","INDDCS_cm3_over_s","INDDCS_h1h1","INDDCS_h2h2","INDDCS_h3h3"
  head3="INDDCS_h1h2","INDDCS_h2h3","INDDCS_h2h1","INDDCS_h3h2"
  head4="INDDCS_hihj","INDDCS_bb","INDDCS_tt","INDDCS_tautau"
  head5="INDDCS_ss","INDDCS_cc","INDDCS_mumu","INDDCS_dd"
@@ -218,18 +222,14 @@ do
  echo $line1,$line2,$line3,$line4,$line5,$line6,$line7,$line8 >> $h_tools_in
  # run python HiggsTools
  python3 $h_tools
- 
+
  # 5. save complete SPheno and micrOMEGAs output
  cp $SPHENO_OUT_DIR/SPheno.spc.complexZ2b $OUTPUT/SPheno_out/SPheno.spc.complexZ2b_$i-$j
  cp $MICROMEGAS_OUT_DIR/out.dat $OUTPUT/Micromegas_out/out_$i-$j.dat
  cp $MICROMEGAS_OUT_DIR/channels2.out $OUTPUT/Micromegas_out/channels2_$i-$j.out
  done
-# draw empty lines after each block (this is needed for 3D gnuplot)
-echo >> $OUTPUT/$F
 done
 
-# TODO did some changes above but have not matched with plotting function
-# TODO write new plotting function that matches the rest
 # 6. plot results
 rm $plot_in
 echo $OUTPUT,$F,$PARAM,$PARAM2,$START_VAL,$STOP_VAL,$STEP_SIZE,$START_VAL2,$STOP_VAL2,$STEP_SIZE2 \

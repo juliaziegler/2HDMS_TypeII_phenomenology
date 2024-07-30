@@ -5,7 +5,7 @@ LC_NUMERIC=en_US.UTF-8 # changing separator for seq command
 
 ##### change these params ##############################
 # define number of random iterations
-ITERATIONS=3
+ITERATIONS=100
 
 # define names of output file and folder
 F=results.csv
@@ -153,12 +153,12 @@ do
  rm $h_tools_in_filenames
  rm $h_tools_in
  rm $h_tools_out
- head="HB_DIR","HS_DIR","HT_INP","FILE_OUT"
- line1=$HB_DIR,$HS_DIR,$SPHENO_OUT_DIR/SPheno.spc.complexZ2b,$OUTPUT/$F
+ head="HB_DIR","HS_DIR","HT_INP","FILE_OUT","FILE_OUT_allowed"
+ line1=$HB_DIR,$HS_DIR,$SPHENO_OUT_DIR/SPheno.spc.complexZ2b,$OUTPUT/$F,$OUTPUT/results_allowed.csv
  echo $head >> $h_tools_in_filenames
  echo $line1 >> $h_tools_in_filenames
  head1="RelDen","PCS_pb","NCS_pb","BR_h1SS","BR_h2SS","BR_h3SS","BR_h1bb","BR_h1yy"
- head2="unitarity","unitarity_w_tril","INDDCS_cm3_over_s","INDDCS_h1h1","INDDCS_hh","INDDCS_h3h3"
+ head2="unitarity","unitarity_w_tril","INDDCS_cm3_over_s","INDDCS_h1h1","INDDCS_h2h2","INDDCS_h3h3"
  head3="INDDCS_h1h2","INDDCS_h2h3","INDDCS_h2h1","INDDCS_h3h2"
  head4="INDDCS_hihj","INDDCS_bb","INDDCS_tt","INDDCS_tautau"
  head5="INDDCS_ss","INDDCS_cc","INDDCS_mumu","INDDCS_dd"
