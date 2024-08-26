@@ -261,10 +261,10 @@ def main_func(data, mass_b, inte_b, microm_spheno, FILE_OUT_h_tools):
             save_csv(FILE_OUT_h_tools, results_all)
             results_all_current = read_csv(FILE_OUT_h_tools)
             results_all_allowed_new = pd.concat([results_all_allowed_old, results_all_current])
-            save_csv(FILE_OUT, results_all_allowed_new)
+            save_csv(FILE_OUT_allowed, results_all_allowed_new)
         except:
             #print('file does not exist')
-            save_csv(FILE_OUT, results_all)
+            save_csv(FILE_OUT_allowed, results_all)
     return
 
 if __name__=='__main__':

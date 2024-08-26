@@ -9,29 +9,38 @@ import pandas as pd
 def random_bp_generation():
     # TODO this part has to be adapted
     # define the ranges of variation
-    mh1_range = np.array([95.4, 95.4])
+    mh1_range = np.array([400, 500])
     mh2_range = np.array([125.09, 125.09])
-    mh3_range = np.array([700, 750])
-    mA_range = np.array([700, 750])
-    mAS_range = np.array([40, 90])
-    mHm_range = np.array([700, 750])
+    mh3_range = np.array([600, 1200])
+    #mA_range = np.array([600, 700])
+    mAS_range = np.array([40, 500])
+    #mHm_range = np.array([600, 700])
     v_range = np.array([246.220569, 246.220569])
-    vS_range = np.array([40, 300])
+    vS_range = np.array([10, 1000])
     tanbeta_range = np.array([0, 10])
-    ch1tt_range = np.array([0.3, 0.4])
-    ch1bb_range = np.array([0.2, 0.3])
-    mutil2_range = np.array([-500000, 500000])
-    mSp2_range = np.array([-500000, 500000])
-    alignm_range = np.array([0.990, 1])
-    #l1m24p_range = np.array([-15, 15])
-    #l2m25p_range = np.array([-15, 15])
-    lh1_range = np.array([-0.5, 0.5])
-    lh2_range = np.array([-50, 50])
+    # NOTE currently the ch1tt and ch1bb checks are turned off
+    ch1tt_range = np.array([-0.5, 0.5])
+    ch1bb_range = np.array([-0.5, 0.5])
+    # TODO chose some useful values for mutil2 and mSp2 and
+    #      vary only in small range around them
+    #      or pick out best BP and vary around it
+    mutil2_range = np.array([40000, 600000]) #497690-10000, 497690+10000])
+    mSp2_range = np.array([-80000, 600000]) #251243-10000, 251243+10000])
+    alignm_range = np.array([0.998, 1])
+    l1m24p_range = np.array([-0.5, 0.5])
+    l2m25p_range = np.array([-0.5, 0.5])
+    #lh1_range = np.array([-3, 3])
+    #lh2_range = np.array([-3, 3])
 
     # choose a bp by random selection of values in the ranges given above
     mh1 = random_number_gen_w_bounds(mh1_range)
     mh2 = random_number_gen_w_bounds(mh2_range)
+
+    #mh3_range = np.array([2*mh1, 1200])
     mh3 = random_number_gen_w_bounds(mh3_range)
+    mA_range = np.array([mh3-50, mh3+50])
+    mHm_range = np.array([mh3-50, mh3+50])
+
     mA = random_number_gen_w_bounds(mA_range)
     mAS = random_number_gen_w_bounds(mAS_range)
     mHm = random_number_gen_w_bounds(mHm_range)
@@ -43,20 +52,20 @@ def random_bp_generation():
     mutil2 = random_number_gen_w_bounds(mutil2_range)
     mSp2 = random_number_gen_w_bounds(mSp2_range)
     alignm = random_number_gen_w_bounds(alignm_range)
-    #l1m24p = random_number_gen_w_bounds(l1m24p_range)
-    #l2m25p = random_number_gen_w_bounds(l2m25p_range)
-    lh1 = random_number_gen_w_bounds(lh1_range)
-    lh2 = random_number_gen_w_bounds(lh2_range)
+    l1m24p = random_number_gen_w_bounds(l1m24p_range)
+    l2m25p = random_number_gen_w_bounds(l2m25p_range)
+    #lh1 = random_number_gen_w_bounds(lh1_range)
+    #lh2 = random_number_gen_w_bounds(lh2_range)
 
     # put into a data frame
-    #data = np.array([[mh1, mh2, mh3, mA, mAS, mHm, v, vS, tanbeta,
-    #                 ch1tt, ch1bb, mutil2, mSp2, alignm, l1m24p, l2m25p]])
-    #columns = ['mh1', 'mh2', 'mh3', 'mA', 'mAS', 'mHm', 'v', 'vS', 'tanbeta',
-    #           'ch1tt', 'ch1bb', 'mutil2', 'mSp2', 'alignm', 'l1m24p', 'l2m25p']
     data = np.array([[mh1, mh2, mh3, mA, mAS, mHm, v, vS, tanbeta,
-                     ch1tt, ch1bb, mutil2, mSp2, alignm, lh1, lh2]])
+                     ch1tt, ch1bb, mutil2, mSp2, alignm, l1m24p, l2m25p]])
     columns = ['mh1', 'mh2', 'mh3', 'mA', 'mAS', 'mHm', 'v', 'vS', 'tanbeta',
-               'ch1tt', 'ch1bb', 'mutil2', 'mSp2', 'alignm', 'lh1', 'lh2']
+               'ch1tt', 'ch1bb', 'mutil2', 'mSp2', 'alignm', 'l1m24p', 'l2m25p']
+    #data = np.array([[mh1, mh2, mh3, mA, mAS, mHm, v, vS, tanbeta,
+    #                 ch1tt, ch1bb, mutil2, mSp2, alignm, lh1, lh2]])
+    #columns = ['mh1', 'mh2', 'mh3', 'mA', 'mAS', 'mHm', 'v', 'vS', 'tanbeta',
+    #           'ch1tt', 'ch1bb', 'mutil2', 'mSp2', 'alignm', 'lh1', 'lh2']
     benchmark = pd.DataFrame(data=data, columns=columns)
     return benchmark
 
@@ -103,9 +112,10 @@ def calc_basis_change(data):
         a2 = calc_a2(data)
         a3 = calc_a3(data, a1, a2)
         # check whether a1 and a2 are in the allowed range (as in Cheng Li's)
-        STOP_1 = check_1(data)
-        STOP_2 = check_2(a2)
-        STOP = STOP_1 + STOP_2
+        #STOP_1 = check_1(data)
+        #STOP_2 = check_2(a2)
+        #STOP = STOP_1 + STOP_2
+        STOP = 0
     # if the checks are passed calculation goes on
     if STOP == 0:
         R = calc_R(a1, a2, a3)

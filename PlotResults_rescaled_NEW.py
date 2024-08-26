@@ -304,9 +304,9 @@ def plot_constr_s3(X, Y, Z, ZPARAM, line_style, tick_length,
         #artists, labels_new = [np.nan], [np.nan]
     return circ
 def plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps):
-    #BP_PATH = "~/SyncandShare/Master/FILES/2HDMS-Z2b-DM/benchmark_point/new_BP1"
+    #BP_PATH = "~/SyncandShare/Master/FILE/benchmark_points/new_BP1"
     #BP_FILE = "results.csv"
-    BP_PATH = "~/SyncandShare/Master/FILES/2HDMS-Z2b-DM/benchmark_point/new_BPs/BP3_95.4_3x700"
+    BP_PATH = "~/SyncandShare/Master/FILES/benchmark_points/new_BPs/BP3_95.4_3x700"
     BP_FILE = "BP3_95.4_3x700_new_notation.csv"
     BP_data=pd.read_csv(BP_PATH+"/"+BP_FILE)
     #ZFACTOR = get_factor(ZPARAM, BP_data, (1))
