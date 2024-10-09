@@ -50,11 +50,12 @@ def calc_basis_change(data):
         l1 = calc_l1(data, mu2, R)
         l2 = calc_l2(data, mu2, R)
         l3 = calc_l3(data, mu2, R)
-        l2p = calc_l2p(data, R)
-        l1p = calc_l1p(data, R, l2p)
+        mSp2 = calc_mSp2(data, R)
+        l2p = calc_l2p(data, R, mSp2)
+        l1p = calc_l1p(data, R, l2p, mSp2)
         l4p = calc_l4p(data, R, l1p)
         l5p = calc_l5p(data, R, l2p)
-        l1pp = calc_l1pp(data, l4p, l5p)
+        l1pp = calc_l1pp(data, l4p, l5p, mSp2)
         l2pp = l1pp
         l3pp = calc_l3pp(data, R, l1pp)
         # check whether bfb conditions are fulfilled
@@ -67,7 +68,7 @@ def calc_basis_change(data):
                              l3pp[0])
         inte_basis = {"l1": l1, "l2": l2, "l3": l3, "l4": l4, "l5": l5,
                       "m122": m122, "tanbeta": data["tanbeta"][0],
-                      "mSp2": data["mSp2"][0], "l1p": l1p, "l2p": l2p,
+                      "mSp2": mSp2, "l1p": l1p, "l2p": l2p,
                       "l3pp": l3pp, "l4p": l4p, "l5p": l5p, "l1pp": l1pp,
                       "vS": data["vS"][0], "v": data["v"][0],
                       "bfb": bfb_allowed}
@@ -139,7 +140,7 @@ def calc_l3(data, mu2, R):
            + data["mh3"]**2 * R[2,0] * R[2,1]) \
           - mu2 + 2*data["mHm"]**2)
     return l3
-def calc_l1p(data, R, l2p):
+def calc_l1p(data, R, l2p, mSp2):
     cosbeta = np.sqrt(1/(1 + data["tanbeta"]**2))
     if "lh1" in data.columns and "lh2" in data.columns:
         beta = np.arctan(data["tanbeta"])
@@ -155,7 +156,6 @@ def calc_l1p(data, R, l2p):
         R31 = R[2,0]
         R32 = R[2,1]
         R33 = R[2,2]
-        mSp2 = data["mSp2"]
         mAS = data["mAS"]
         mh1 = data["mh1"]
         mh2 = data["mh2"]
@@ -201,7 +201,7 @@ def calc_l1p(data, R, l2p):
                + data["mh2"]**2 * R[1,0] * R[1,2] \
                + data["mh3"]**2 * R[2,0] * R[2,2])
     return l1p
-def calc_l2p(data, R):
+def calc_l2p(data, R, mSp2):
     sinbeta = np.sqrt(1/(1 + 1/data["tanbeta"]**2))
     if "lh1" in data.columns and "lh2" in data.columns:
         beta = np.arctan(data["tanbeta"])
@@ -217,7 +217,6 @@ def calc_l2p(data, R):
         R31 = R[2,0]
         R32 = R[2,1]
         R33 = R[2,2]
-        mSp2 = data["mSp2"]
         mAS = data["mAS"]
         mh1 = data["mh1"]
         mh2 = data["mh2"]
@@ -302,9 +301,9 @@ def calc_l5p(data, R, l2p):
     else:
         l5p = l2p
     return l5p
-def calc_l1pp(data, l4p, l5p):
+def calc_l1pp(data, l4p, l5p, mSp2):
     l1pp = (-3/(2*data["vS"]**2))* \
-           (2*data["mSp2"] \
+           (2*mSp2 \
             + 2*data["v"]**2 *(l4p/(1 + data["tanbeta"]**2) \
                                + l5p/(1 + 1/data["tanbeta"]**2)) \
             + data["mAS"]**2)
@@ -316,6 +315,41 @@ def calc_l3pp(data, R, l1pp):
                    + data["mh3"]**2 * R[2,2]**2) \
                   - 5*l1pp)
     return l3pp
+
+def calc_mSp2(data, R):
+    if "mSp2" in data.columns:
+        mSp2 = data["mSp2"][0]
+    elif "l1ml3pp" in data.columns:
+        cosbeta = np.sqrt(1/(1 + data["tanbeta"]**2))
+        sinbeta = np.sqrt(1/(1 + 1/data["tanbeta"]**2))
+
+        R11 = R[0,0]
+        R12 = R[0,1]
+        R13 = R[0,2]
+        R21 = R[1,0]
+        R22 = R[1,1]
+        R23 = R[1,2]
+        R31 = R[2,0]
+        R32 = R[2,1]
+        R33 = R[2,2]
+        mAS = data["mAS"]
+        mh1 = data["mh1"]
+        mh2 = data["mh2"]
+        mh3 = data["mh3"]
+        vS = data["vS"]
+        v = data["v"]
+        l1m24p = data["l1m24p"]
+        l2m25p = data["l2m25p"]
+        l1ml3pp = data["l1ml3pp"]
+
+        mSp2 = -(1/2 * mAS**2 \
+                 + 1/4 * mh1**2 * (R13**2 + R11*R13*v*cosbeta/vS + R12*R13*v*sinbeta/vS) \
+                 + 1/4 * mh2**2 * (R23**2 + R21*R23*v*cosbeta/vS + R22*R23*v*sinbeta/vS) \
+                 + 1/4 * mh3**2 * (R33**2 + R31*R33*v*cosbeta/vS + R32*R33*v*sinbeta/vS) \
+                 - v**2/4 * (l1m24p*cosbeta**2 + l2m25p*sinbeta**2) \
+                 + vS**2/8 * l1ml3pp \
+                 )
+    return mSp2
 
 
 def calc_DM_coup(mass_b, inte_b, R):

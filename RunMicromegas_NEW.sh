@@ -21,27 +21,28 @@ tanbeta=6.6 #10     # {1, 10}
 ch1tt=0.372 #0.36394218991840976 #0.27     # > 0.267, >= ch1bb (<=0.583 but not sure)
 ch1bb=0.258 #0.12737976647144644 #0.05     # < 0.581
 mutil2=490000 #812804.1983308262 # m122/(sinbeta*cosbeta)
-mSp2=-48087.901620072 #475.490545912366 #-10000.0000
+#mSp2=-48087.901620072 #475.490545912366 #-10000.0000
+l1ml3pp=-1.0112
 alignm=0.9998450892861399 #0.9999986246982658 #1       # {0.98, 1}
-#l1m24p=12.79563962 #0              # = l1p -2*l4p
-#l2m25p=-0.18298887299999997 #0              # = l2p + -2*l5p
-lh1=0
-lh2=7
+l1m24p=12.75 #0             # = l1p -2*l4p
+l2m25p=-0.3135 #0              # = l2p + -2*l5p
+#lh1=0
+#lh2=7
 ##### change these params ##############################
-PARAM=lh2
-l1m24p=i
-START_VAL=5
-STOP_VAL=7
-STEP_SIZE=1
+PARAM=mAS
+mAS=i
+START_VAL=50
+STOP_VAL=700
+STEP_SIZE=6.5
 
-PARAM2=tanbeta
-tanbeta=j
-START_VAL2=1
-STOP_VAL2=10
-STEP_SIZE2=5 #0.5
+PARAM2=l1ml3pp
+l1ml3pp=j
+START_VAL2=-10
+STOP_VAL2=1
+STEP_SIZE2=0.11
 
 F=results_$PARAM-$PARAM2.csv
-FOLDER=varying_$PARAM-$PARAM2-NEW-test
+FOLDER=varying_$PARAM-$PARAM2-mucollBP2_new_basis_scan1
 ########################################################
 # main working directory:
 MAIN_DIR=~/Applications/do_scan
@@ -158,8 +159,10 @@ do
  rm $inte_b
  #head1="mh1","mh2","mh3","mA","mAS","mHm","v","vS","tanbeta","ch1tt","ch1bb","mutil2","mSp2","alignm","l1m24p","l2m25p","PARAM","i","PARAM2","j"
  #line1=$mh1,$mh2,$mh3,$mA,$mAS,$mHm,$v,$vS,$tanbeta,$ch1tt,$ch1bb,$mutil2,$mSp2,$alignm,$l1m24p,$l2m25p,$PARAM,$i,$PARAM2,$j
- head1="mh1","mh2","mh3","mA","mAS","mHm","v","vS","tanbeta","ch1tt","ch1bb","mutil2","mSp2","alignm","lh1","lh2","PARAM","i","PARAM2","j"
- line1=$mh1,$mh2,$mh3,$mA,$mAS,$mHm,$v,$vS,$tanbeta,$ch1tt,$ch1bb,$mutil2,$mSp2,$alignm,$lh1,$lh2,$PARAM,$i,$PARAM2,$j
+ #head1="mh1","mh2","mh3","mA","mAS","mHm","v","vS","tanbeta","ch1tt","ch1bb","mutil2","mSp2","alignm","lh1","lh2","PARAM","i","PARAM2","j"
+ #line1=$mh1,$mh2,$mh3,$mA,$mAS,$mHm,$v,$vS,$tanbeta,$ch1tt,$ch1bb,$mutil2,$mSp2,$alignm,$lh1,$lh2,$PARAM,$i,$PARAM2,$j
+ head1="mh1","mh2","mh3","mA","mAS","mHm","v","vS","tanbeta","ch1tt","ch1bb","mutil2","l1ml3pp","alignm","l1m24p","l2m25p","PARAM","i","PARAM2","j"
+ line1=$mh1,$mh2,$mh3,$mA,$mAS,$mHm,$v,$vS,$tanbeta,$ch1tt,$ch1bb,$mutil2,$l1ml3pp,$alignm,$l1m24p,$l2m25p,$PARAM,$i,$PARAM2,$j
  echo $head1 >> $mass_b
  echo $line1 >> $mass_b
  # run python basis change

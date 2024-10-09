@@ -52,6 +52,7 @@ labels_dict = {"dl14p": "$\delta_{14}'$",
                "mu_the_CMS": "$\mu_{CMS}$",
                "l1m24p": "$\lambda_1' - 2\lambda_4'$",
                "l2m25p": "$\lambda_2' - 2\lambda_5'$",
+               "l1ml3pp": "$\lambda_1'' - \lambda_3''$",
                "l1": "$\lambda_{1}$",
                "l2": "$\lambda_{2}$",
                "l3": "$\lambda_{3}$",
@@ -306,8 +307,10 @@ def plot_constr_s3(X, Y, Z, ZPARAM, line_style, tick_length,
 def plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps):
     #BP_PATH = "~/SyncandShare/Master/FILE/benchmark_points/new_BP1"
     #BP_FILE = "results.csv"
-    BP_PATH = "~/SyncandShare/Master/FILES/benchmark_points/new_BPs/BP3_95.4_3x700"
-    BP_FILE = "BP3_95.4_3x700_new_notation.csv"
+    #BP_PATH = "~/SyncandShare/Master/FILES/benchmark_points/new_BPs/BP3_95.4_3x700"
+    #BP_FILE = "BP3_95.4_3x700_new_notation.csv"
+    BP_PATH = "~/SyncandShare/2HDMS/FILES/benchmark_points/mucoll_BP2_new_basis"
+    BP_FILE = "results_mAS-tanbeta.csv"
     BP_data=pd.read_csv(BP_PATH+"/"+BP_FILE)
     #ZFACTOR = get_factor(ZPARAM, BP_data, (1))
     if XPARAM == "m122":
@@ -326,7 +329,7 @@ def plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps):
     return
 def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
                  tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl):
-    ps = 40
+    ps = 20 #40
     pos=ax.scatter(X, Y, s=ps, c=Z, norm=norm)
     circ1 = plot_constr(X, Y, bfb, "bfb", "solid", tick_length, tick_space,
                                         line_space, ax, "//")
@@ -341,7 +344,7 @@ def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
         circ4 = plot_constr(X, Y, add_constr_data, add_constr_name, "solid",
                                             tick_length, tick_space, line_space, ax, "..")
     # plot BP
-    #plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps)
+    plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps)
     # make legend
     if ZPARAM in constr_dict.keys():
         circ_o = [circ1, circ2, circ3, circ4]
@@ -566,7 +569,7 @@ def plot_all_constr_s2(XPARAM, YPARAM, tick_length, tick_space,
     circ6 = plot_constr(X, Y, fermi, "FERMIallowed", "solid", tick_length,
                                         tick_space, line_space, ax, "\\", color="darkturquoise")
     # plot BP
-    #plot_bp(XPARAM, YPARAM, None, ax, None)
+    plot_bp(XPARAM, YPARAM, None, ax, None)
     # make legend
     circ_o = [circ0, circ1, circ2, circ3, circ4,
                circ5, circ6]
