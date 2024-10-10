@@ -135,7 +135,7 @@ def get_results(data):
                'NCS_res_pb': [NCS_res_pb], 
                'INDDCS_res_cm3_over_s': [INDDCS_res_cm3_over_s],
                'allallowed': [int(all_allowed)]}
-    return results
+    return results, hbResult
 
 def get_higgstools(data):
     """function to caclulate results from HiggsBounds and HiggsSignals
@@ -237,11 +237,11 @@ constr_dict = {"PCS_pb":("constraints/LZ_constr_wo_header.txt", 1e+36),
                "INDDCS_tt":("constraints/MadDM_Fermi_Limit_tt.dat", 1),
                "INDDCS_ZZ":("constraints/MadDM_Fermi_Limit_ZZ.dat", 1)}
 
-def main_func(data, mass_b, inte_b, microm_spheno, FILE_OUT_h_tools):
+def main_func(data, mass_b, inte_b, microm_spheno, FILE_OUT_h_tools, FILE_OUT_h_tools_print):
     FILE_OUT = data["FILE_OUT"][0]
     FILE_OUT_allowed = data["FILE_OUT_allowed"][0]
     # get results from HiggsTools
-    results = get_results(pd.concat([data, mass_b, inte_b, microm_spheno], axis=1))
+    results, hbResult = get_results(pd.concat([data, mass_b, inte_b, microm_spheno], axis=1))
     results_df = pd.DataFrame(results)
     # combine everything into one results table
     results_all = pd.concat([mass_b, inte_b, microm_spheno, results_df], axis=1)
@@ -265,6 +265,9 @@ def main_func(data, mass_b, inte_b, microm_spheno, FILE_OUT_h_tools):
         except:
             #print('file does not exist')
             save_csv(FILE_OUT_allowed, results_all)
+    # save the Higgsbounds print out
+    with open(FILE_OUT_h_tools_print, 'a') as f:
+        print(hbResult, file=f)
     return
 
 if __name__=='__main__':
@@ -273,10 +276,11 @@ if __name__=='__main__':
     FILE_IN_inte_b = "output/inte_basis.csv"
     FILE_IN_microm_spheno = "output/h_tools_in.csv"
     FILE_OUT_h_tools = "output/h_tools_out.csv"
+    FILE_OUT_h_tools_print = "output/h_tools_out_print.txt"
     data = read_csv(FILE_IN)
     mass_b = read_csv(FILE_IN_mass_b)
     mass_b_prep = prep_csv(mass_b)
     inte_b = read_csv(FILE_IN_inte_b)
     inte_b_prep = prep_csv(inte_b)
     microm_spheno = read_csv(FILE_IN_microm_spheno)
-    main_func(data, mass_b_prep, inte_b_prep, microm_spheno, FILE_OUT_h_tools)
+    main_func(data, mass_b_prep, inte_b_prep, microm_spheno, FILE_OUT_h_tools, FILE_OUT_h_tools_print)

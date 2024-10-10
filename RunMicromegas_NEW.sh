@@ -33,16 +33,16 @@ PARAM=mAS
 mAS=i
 START_VAL=50
 STOP_VAL=700
-STEP_SIZE=6.5
+STEP_SIZE=65
 
 PARAM2=l1ml3pp
 l1ml3pp=j
 START_VAL2=-10
 STOP_VAL2=1
-STEP_SIZE2=0.11
+STEP_SIZE2=1.1
 
 F=results_$PARAM-$PARAM2.csv
-FOLDER=varying_$PARAM-$PARAM2-mucollBP2_new_basis_scan1
+FOLDER=varying_$PARAM-$PARAM2-mucollBP2_new_basis_scan10x10
 ########################################################
 # main working directory:
 MAIN_DIR=~/Applications/do_scan
@@ -71,8 +71,9 @@ inte_b=$OUT/inte_basis.csv
 # use this code to extract HiggsTools results:
 h_tools=Get_exp_constr_rescaled_NEW.py
 h_tools_in=$OUT/h_tools_in.csv
-h_tools_out=$OUT/h_tools_out.csv
 h_tools_in_filenames=$OUT/h_tools_in_filenames.csv
+h_tools_out=$OUT/h_tools_out.csv
+h_tools_out_print=$OUT/h_tools_out_print.txt
 # use this for plotting the results:
 plot_results_py=PlotResults_rescaled_NEW.py
 plot_in=$OUT/pyplot_in.csv
@@ -87,6 +88,7 @@ rm -r $OUTPUT
 mkdir $OUTPUT
 mkdir $OUTPUT/SPheno_out
 mkdir $OUTPUT/Micromegas_out
+mkdir $OUTPUT/HiggsTools_out
 
 # defining functions to extract different values from different files
 # extract interaction basis parameters from csv
@@ -201,6 +203,7 @@ do
  rm $h_tools_in_filenames
  rm $h_tools_in
  rm $h_tools_out
+ rm $h_tools_out_print
  head="HB_DIR","HS_DIR","HT_INP","FILE_OUT","FILE_OUT_allowed"
  line1=$HB_DIR,$HS_DIR,$SPHENO_OUT_DIR/SPheno.spc.complexZ2b,$OUTPUT/$F,$OUTPUT/results_allowed.csv
  echo $head >> $h_tools_in_filenames
@@ -226,10 +229,11 @@ do
  # run python HiggsTools
  python3 $h_tools
 
- # 5. save complete SPheno and micrOMEGAs output
+ # 5. save complete SPheno, MicrOMEGAs and HiggsTools output
  cp $SPHENO_OUT_DIR/SPheno.spc.complexZ2b $OUTPUT/SPheno_out/SPheno.spc.complexZ2b_$i-$j
  cp $MICROMEGAS_OUT_DIR/out.dat $OUTPUT/Micromegas_out/out_$i-$j.dat
  cp $MICROMEGAS_OUT_DIR/channels2.out $OUTPUT/Micromegas_out/channels2_$i-$j.out
+ cp $h_tools_out_print $OUTPUT/HiggsTools_out/hbResult_$i-$j.txt
  done
 done
 
