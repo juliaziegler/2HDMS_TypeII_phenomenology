@@ -329,7 +329,7 @@ def plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps):
     return
 def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
                  tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl):
-    ps = 20 #40
+    ps = 45
     pos=ax.scatter(X, Y, s=ps, c=Z, norm=norm)
     circ1 = plot_constr(X, Y, bfb, "bfb", "solid", tick_length, tick_space,
                                         line_space, ax, "//")
@@ -344,7 +344,7 @@ def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
         circ4 = plot_constr(X, Y, add_constr_data, add_constr_name, "solid",
                                             tick_length, tick_space, line_space, ax, "..")
     # plot BP
-    plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps)
+    #plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps)
     # make legend
     if ZPARAM in constr_dict.keys():
         circ_o = [circ1, circ2, circ3, circ4]
@@ -569,7 +569,7 @@ def plot_all_constr_s2(XPARAM, YPARAM, tick_length, tick_space,
     circ6 = plot_constr(X, Y, fermi, "FERMIallowed", "solid", tick_length,
                                         tick_space, line_space, ax, "\\", color="darkturquoise")
     # plot BP
-    plot_bp(XPARAM, YPARAM, None, ax, None)
+    #plot_bp(XPARAM, YPARAM, None, ax, None)
     # make legend
     circ_o = [circ0, circ1, circ2, circ3, circ4,
                circ5, circ6]

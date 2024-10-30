@@ -71,7 +71,18 @@ def calc_basis_change(data):
                       "mSp2": mSp2, "l1p": l1p, "l2p": l2p,
                       "l3pp": l3pp, "l4p": l4p, "l5p": l5p, "l1pp": l1pp,
                       "vS": data["vS"][0], "v": data["v"][0],
-                      "bfb": bfb_allowed}
+                      "bfb": bfb_allowed,
+                      "a1": a1, "a2": a2, "a3": a3,
+                      "R11": R[0,0], "R12": R[0,1], "R13": R[0,2],
+                      "R21": R[1,0], "R22": R[1,1], "R23": R[1,2],
+                      "R31": R[2,0], "R32": R[2,1], "R33": R[2,2]}
+        # if the reduced couplings are not in the mass basis we need to calculate them,
+        # they will be needed later on in the scan
+        if "ch1tt" not in data.columns:
+            ch1tt = calc_ch1tt(a1, a2, data["tanbeta"])
+            ch1bb = calc_ch1bb(a1, a2, data["tanbeta"])
+            inte_basis["ch1tt"] = ch1tt
+            inte_basis["ch1bb"] = ch1bb
     return inte_basis, R
 
 def calc_R(a1, a2, a3):
@@ -422,6 +433,20 @@ def calc_ch1VV(inte_b, R):
     sinbeta = np.sqrt(1/(1 + 1/inte_b["tanbeta"]**2))
     ch1VV = cosbeta*R[1,1] + sinbeta*R[1,2]
     return ch1VV
+
+def calc_ch1tt(a1, a2, tanbeta):
+    """calculate reduced coupling c_{h1 t t}
+    """
+    sinbeta = np.sqrt(1/(1 + 1/tanbeta**2))
+    ch1tt = np.sin(a1)*np.cos(a2) / sinbeta
+    return ch1tt
+
+def calc_ch1bb(a1, a2, tanbeta):
+    """calculate reduced coupling c_{h1 b b}
+    """
+    cosbeta = np.sqrt(1/(1 + tanbeta**2))
+    ch1bb = np.cos(a1)*np.cos(a1) / cosbeta
+    return ch1bb
 
 
 def check_1(data):

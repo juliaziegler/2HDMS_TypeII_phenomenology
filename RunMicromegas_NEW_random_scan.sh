@@ -5,11 +5,11 @@ LC_NUMERIC=en_US.UTF-8 # changing separator for seq command
 
 ##### change these params ##############################
 # define number of random iterations
-ITERATIONS=3
+ITERATIONS=1000
 
 # define names of output file and folder
 F=results.csv
-FOLDER=random_scan_new_basis_test1
+FOLDER=BP_400_900_vary_l1ml3pp_l1m24p_l2m25p #find_BP_random_wo95_800_1000_2900_scan1
 ########################################################
 # main working directory:
 MAIN_DIR=~/Applications/do_scan

@@ -11,38 +11,40 @@ LC_NUMERIC=en_US.UTF-8 # changing separator for seq command
 ##### start values # {scan range as in Cheng Li's} #####
 mh1=95.4 #96         # {95, 98}
 mh2=125.09 #125.09     # SM Higgs
-mh3=700 #1000 #800        # {800, 1200}
-mA=700 #1000 #800         # {800, 1200}
-mAS=325.861 #106.36 #200        # {200, 500} DM candidate (>62.5 as by ATLAS and CMS)
-mHm=700 #1000 #800        # {800, 1200}
+mh3=900 #1000 #800        # {800, 1200}
+mA=900 #1000 #800         # {800, 1200}
+mAS=400 #106.36 #200        # {200, 500} DM candidate (>62.5 as by ATLAS and CMS)
+mHm=900 #1000 #800        # {800, 1200}
 v=246.220569
-vS=239.859563619576 #882.297764743439 #100.000000  # {100, 2000}
-tanbeta=6.6 #10     # {1, 10}
-ch1tt=0.372 #0.36394218991840976 #0.27     # > 0.267, >= ch1bb (<=0.583 but not sure)
-ch1bb=0.258 #0.12737976647144644 #0.05     # < 0.581
-mutil2=490000 #812804.1983308262 # m122/(sinbeta*cosbeta)
-#mSp2=-48087.901620072 #475.490545912366 #-10000.0000
-l1ml3pp=-1.0112
-alignm=0.9998450892861399 #0.9999986246982658 #1       # {0.98, 1}
-l1m24p=12.75 #0             # = l1p -2*l4p
-l2m25p=-0.3135 #0              # = l2p + -2*l5p
+vS=319.75 #882.297764743439 #100.000000  # {100, 2000}
+tanbeta=1.33 #10     # {1, 10}
+ch1tt=0.477 #0.36394218991840976 #0.27     # > 0.267, >= ch1bb (<=0.583 but not sure)
+ch1bb=0.396 #0.12737976647144644 #0.05     # < 0.581
+mutil2=629000 #812804.1983308262 # m122/(sinbeta*cosbeta)
+#mSp2=-48087.901620072 #-48088.7561783789 #475.490545912366 #-10000.0000
+l1ml3pp=-0.394
+alignm=0.99946 #0.9999986246982658 #1       # {0.98, 1}
+l1m24p=0.251 #0             # = l1p - 2*l4p
+l2m25p=-0.0957 #0              # = l2p - 2*l5p
 #lh1=0
 #lh2=7
+#dl14p=-9.69379358278573 # = l4p - l1p
+#dl25p=0.2474516683463732 # = l2p - l5p
 ##### change these params ##############################
-PARAM=mAS
-mAS=i
-START_VAL=50
-STOP_VAL=700
-STEP_SIZE=65
+PARAM=l1m24p
+l1m24p=i
+START_VAL=5
+STOP_VAL=5.5
+STEP_SIZE=1
 
-PARAM2=l1ml3pp
-l1ml3pp=j
-START_VAL2=-10
-STOP_VAL2=1
-STEP_SIZE2=1.1
+PARAM2=l2m25p
+l2m25p=j
+START_VAL2=0.001
+STOP_VAL2=0.002
+STEP_SIZE2=1
 
 F=results_$PARAM-$PARAM2.csv
-FOLDER=varying_$PARAM-$PARAM2-mucollBP2_new_basis_scan10x10
+FOLDER=varying_$PARAM-$PARAM2-mucollBP400-900_new_basis_test
 ########################################################
 # main working directory:
 MAIN_DIR=~/Applications/do_scan
@@ -159,6 +161,8 @@ do
  # remove old and create new bases
  rm $mass_b
  rm $inte_b
+ #head1="mh1","mh2","mh3","mA","mAS","mHm","v","vS","tanbeta","ch1tt","ch1bb","mutil2","mSp2","alignm","dl14p","dl25p","PARAM","i","PARAM2","j"
+ #line1=$mh1,$mh2,$mh3,$mA,$mAS,$mHm,$v,$vS,$tanbeta,$ch1tt,$ch1bb,$mutil2,$mSp2,$alignm,$dl14p,$dl25p,$PARAM,$i,$PARAM2,$j
  #head1="mh1","mh2","mh3","mA","mAS","mHm","v","vS","tanbeta","ch1tt","ch1bb","mutil2","mSp2","alignm","l1m24p","l2m25p","PARAM","i","PARAM2","j"
  #line1=$mh1,$mh2,$mh3,$mA,$mAS,$mHm,$v,$vS,$tanbeta,$ch1tt,$ch1bb,$mutil2,$mSp2,$alignm,$l1m24p,$l2m25p,$PARAM,$i,$PARAM2,$j
  #head1="mh1","mh2","mh3","mA","mAS","mHm","v","vS","tanbeta","ch1tt","ch1bb","mutil2","mSp2","alignm","lh1","lh2","PARAM","i","PARAM2","j"
