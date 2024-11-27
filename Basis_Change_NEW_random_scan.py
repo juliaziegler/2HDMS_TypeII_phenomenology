@@ -11,28 +11,29 @@ def random_bp_generation():
     # TODO this part has to be adapted: define the ranges of variation below
     # NOTE currently the ch1tt and ch1bb checks are turned off
     # choose a bp by random selection of values in the ranges given above
-    mAS = 400 #1000 #random_number_gen_w_bounds(np.array([70-5, 70+5]))
-    mh1 = 95.4 #800 #random_number_gen_w_bounds(np.array([95.4, 95.4]))
+    mAS = 1000 #random_number_gen_w_bounds(np.array([70-5, 70+5]))
+    mh1 = 800 #random_number_gen_w_bounds(np.array([95.4, 95.4]))
     mh2 = 125.09 #random_number_gen_w_bounds(np.array([125.09, 125.09]))
-    mh3 = 900 #2900 #random_number_gen_w_bounds(np.array([150-5, 150+15])) #np.array([2*mAS, 1200])
-    mA = 900 #800 #random_number_gen_w_bounds(np.array([900, 900])) #np.array([mh3-50, mh3+50])
-    mHm = 900 #800 #random_number_gen_w_bounds(np.array([900, 900])) #np.array([mh3-50, mh3+50])
+    mh3 = 2900 #random_number_gen_w_bounds(np.array([150-5, 150+15])) #np.array([2*mAS, 1200])
+    mA = 800 #random_number_gen_w_bounds(np.array([900, 900])) #np.array([mh3-50, mh3+50])
+    mHm = 800 #random_number_gen_w_bounds(np.array([900, 900])) #np.array([mh3-50, mh3+50])
     v = 246.220569 #random_number_gen_w_bounds(np.array([246.220569, 246.220569]))
-    vS = 319.75 #random_number_gen_w_bounds(np.array([100, 3000]))
-    tanbeta = 1.33 #random_number_gen_w_bounds(np.array([1, 10]))
-    ch1bb = 0.396 #random_number_gen_w_bounds(np.array([-1,1])) #[0, 0.581]))
-    ch1tt = 0.477 #random_number_gen_w_bounds(np.array([-1,1])) #[np.max([0.267, ch1bb]), 0.583])) #np.array([0.267, 0.583])
-    mutil2 = 629000 #random_number_gen_w_bounds(np.array([670000-100000, 670000+100000]))
+    vS = random_number_gen_w_bounds(np.array([100, 5000]))
+    tanbeta = random_number_gen_w_bounds(np.array([1, 10]))
+    #ch1bb = random_number_gen_w_bounds(np.array([-1,1])) #[0, 0.581]))
+    #ch1tt = random_number_gen_w_bounds(np.array([-1,1])) #[np.max([0.267, ch1bb]), 0.583])) #np.array([0.267, 0.583])
+    mutil2 = random_number_gen_w_bounds(np.array([670000-300000, 670000+200000]))
     #mSp2 = random_number_gen_w_bounds(np.array([-80000, 600000]))
-    alignm = 0.99946 #random_number_gen_w_bounds(np.array([0.998, 1]))
-    l1ml3pp = random_number_gen_w_bounds(np.array([-10, 10]))
-    l1m24p = random_number_gen_w_bounds(np.array([-10, 10]))
-    l2m25p = random_number_gen_w_bounds(np.array([-10, 10]))
+    #alignm = #random_number_gen_w_bounds(np.array([0.998, 1]))
+    l1ml3pp = random_number_gen_w_bounds(np.array([-3, 3]))
+    l1m24p = random_number_gen_w_bounds(np.array([-3, 3]))
+    l2m25p = random_number_gen_w_bounds(np.array([-3, 3]))
     #lh1 = random_number_gen_w_bounds(np.array([-3, 3]))
     #lh2 = random_number_gen_w_bounds(np.array([-3, 3]))
-    #cosbeta_a1 = random_number_gen_w_bounds(np.array([-0.1, 0.1]))
-    #a2 = random_number_gen_w_bounds(np.array([-0.1, 0.1]))
-    #a3 = random_number_gen_w_bounds(np.array([-0.1, 0.1]))
+    a1 = random_number_gen_w_bounds(np.array([-np.pi, np.pi]))
+    a2 = random_number_gen_w_bounds(np.array([-np.pi, np.pi]))
+    a3 = random_number_gen_w_bounds(np.array([-np.pi, np.pi]))
+    #cosbeta_a1 = random_number_gen_w_bounds(np.array([-0.2, 0.2]))
     #a1 = -np.arccos(cosbeta_a1) + np.arctan(tanbeta)
 
     # put into a data frame
@@ -44,14 +45,14 @@ def random_bp_generation():
     #                 ch1tt, ch1bb, mutil2, mSp2, alignm, lh1, lh2]])
     #columns = ['mh1', 'mh2', 'mh3', 'mA', 'mAS', 'mHm', 'v', 'vS', 'tanbeta',
     #           'ch1tt', 'ch1bb', 'mutil2', 'mSp2', 'alignm', 'lh1', 'lh2']
-    data = np.array([[mh1, mh2, mh3, mA, mAS, mHm, v, vS, tanbeta,
-                     ch1tt, ch1bb, mutil2, l1ml3pp, alignm, l1m24p, l2m25p]])
-    columns = ['mh1', 'mh2', 'mh3', 'mA', 'mAS', 'mHm', 'v', 'vS', 'tanbeta',
-               'ch1tt', 'ch1bb', 'mutil2', 'l1ml3pp', 'alignm', 'l1m24p', 'l2m25p']
     #data = np.array([[mh1, mh2, mh3, mA, mAS, mHm, v, vS, tanbeta,
-    #                 a1, a2, mutil2, l1ml3pp, a3, l1m24p, l2m25p]])
+    #                 ch1tt, ch1bb, mutil2, l1ml3pp, alignm, l1m24p, l2m25p]])
     #columns = ['mh1', 'mh2', 'mh3', 'mA', 'mAS', 'mHm', 'v', 'vS', 'tanbeta',
-    #           'a1', 'a2', 'mutil2', 'l1ml3pp', 'a3', 'l1m24p', 'l2m25p']
+    #           'ch1tt', 'ch1bb', 'mutil2', 'l1ml3pp', 'alignm', 'l1m24p', 'l2m25p']
+    data = np.array([[mh1, mh2, mh3, mA, mAS, mHm, v, vS, tanbeta,
+                     a1, a2, mutil2, l1ml3pp, a3, l1m24p, l2m25p]])
+    columns = ['mh1', 'mh2', 'mh3', 'mA', 'mAS', 'mHm', 'v', 'vS', 'tanbeta',
+               'a1', 'a2', 'mutil2', 'l1ml3pp', 'a3', 'l1m24p', 'l2m25p']
     benchmark = pd.DataFrame(data=data, columns=columns)
     return benchmark
 

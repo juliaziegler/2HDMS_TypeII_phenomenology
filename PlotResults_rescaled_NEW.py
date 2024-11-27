@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib import patheffects
 import matplotlib.colors
 import matplotlib.patches as mpatches
+import sys
 #from scipy import ndimage
 #from scipy.ndimage import gaussian_filter
 #from matplotlib.ticker import FuncFormatter
@@ -25,7 +26,7 @@ labels_dict = {"dl14p": "$\delta_{14}'$",
                "dl25p": "$\delta_{25}'$",
                "mAS": "$m_{A_S} \, [GeV]$",
                "vS": "$v_S \, [GeV]$",
-               "tanbeta": "$tan β$",
+               "tanbeta": "tan$β$",
                "ch1tt": "$c_{h_1 t t}$",
                "ch1bb": "$c_{h_1 b b}$",
                "mSp2": "$m_{S}'^2 \, [GeV^2]$",
@@ -115,26 +116,17 @@ legend_hatch_dict = {"/": "////",
                "o": "oo"}
 
 
-def read_csv(FILE):
-    data = pd.read_csv(FILE, sep=",", header=None,
-                       names=["PATH", "FILE", "PARAM","PARAM2",
-                              "START_VAL","STOP_VAL","STEP_SIZE","START_VAL2",
-                              "STOP_VAL2","STEP_SIZE2"])
-    return data
-def plot_all(inp_file):
-    PATH=inp_file["PATH"][0]
-    FILE=inp_file["FILE"][0]
-    shape=get_shape(inp_file)
+def plot_all(data, PATH):
     # option 1: plot against varied parameters
-    XPARAM=inp_file["PARAM"][0]
-    YPARAM=inp_file["PARAM2"][0]
+    XPARAM = data['PARAM'][0]
+    YPARAM = data['PARAM2'][0]
     """
     # option 2: plot against mu_CMS and mu_LEP
     XPARAM="mu_the_CMS"
     YPARAM="mu_the_LEP"
     """
-    # read the results file:
-    data=pd.read_csv(PATH+"/"+FILE)
+    # get the shape for the plots
+    shape = get_shape_from_data(data)
     # set tick layout for constrained regions
     tick_length = 1
     tick_space = 10
@@ -143,8 +135,8 @@ def plot_all(inp_file):
 
     plot_1(XPARAM, YPARAM, "RelDen", tick_length, tick_space, line_space, data,
            shape, PATH, matplotlib.colors.LogNorm(), None)
-    plot_1(XPARAM, YPARAM, "INDDCS_hihj", tick_length, tick_space, line_space, data,
-           shape, PATH, matplotlib.colors.LogNorm(), None)
+    #plot_1(XPARAM, YPARAM, "INDDCS_hihj", tick_length, tick_space, line_space, data,
+    #       shape, PATH, matplotlib.colors.LogNorm(), None)
     plot_1(XPARAM, YPARAM, "BR_h3SS", tick_length, tick_space, line_space, data,
            shape, PATH, None, None)
     plot_2(XPARAM, YPARAM, "PCS_pb", "NCS_pb",
@@ -159,16 +151,16 @@ def plot_all(inp_file):
            line_space, data, shape, PATH, matplotlib.colors.LogNorm(), None)
     #plot_3(XPARAM, YPARAM, "INDDCS_bb", "INDDCS_INDDCS_tautau", "INDDCS_WW",
     #       tick_length, tick_space, line_space, data, shape, PATH, None, MagnitudeFormatter(-25))
-    plot_3(XPARAM, YPARAM, "l1", "l2", "l3",
-           tick_length, tick_space, line_space, data, shape, PATH, None, None)
-    plot_2(XPARAM, YPARAM, "l4", "l5",
-           tick_length, tick_space, line_space, data, shape, PATH, None, None)
-    plot_2(XPARAM, YPARAM, "l1p", "l2p",
-           tick_length, tick_space, line_space, data, shape, PATH, None, None)
-    plot_2(XPARAM, YPARAM, "l4p", "l5p",
-           tick_length, tick_space, line_space, data, shape, PATH, None, None)
-    plot_2(XPARAM, YPARAM, "l1pp", "l3pp",
-           tick_length, tick_space, line_space, data, shape, PATH, None, None)
+    #plot_3(XPARAM, YPARAM, "l1", "l2", "l3",
+    #       tick_length, tick_space, line_space, data, shape, PATH, None, None)
+    #plot_2(XPARAM, YPARAM, "l4", "l5",
+    #       tick_length, tick_space, line_space, data, shape, PATH, None, None)
+    #plot_2(XPARAM, YPARAM, "l1p", "l2p",
+    #       tick_length, tick_space, line_space, data, shape, PATH, None, None)
+    #plot_2(XPARAM, YPARAM, "l4p", "l5p",
+    #       tick_length, tick_space, line_space, data, shape, PATH, None, None)
+    #plot_2(XPARAM, YPARAM, "l1pp", "l3pp",
+    #       tick_length, tick_space, line_space, data, shape, PATH, None, None)
     #plot_all_constr_s1(XPARAM, YPARAM, tick_length, tick_space,
     #       line_space, data, shape, PATH, None, None)
     plot_all_constr_s2(XPARAM, YPARAM, tick_length, tick_space,
@@ -177,12 +169,31 @@ def plot_all(inp_file):
     #       line_space, data, shape, PATH, None, None)
     return
 
-def get_shape(data):
-    X=np.floor(1 + (data["STOP_VAL"][0]-data["START_VAL"][0])/data["STEP_SIZE"][0])
-    Y=np.floor(1 + (data["STOP_VAL2"][0]-data["START_VAL2"][0])/data["STEP_SIZE2"][0])
-    shape = (int(X),int(Y))
-    #shape = (33,101)
+def get_shape_from_data(data):
+    START_VAL, STOP_VAL, STEP_SIZE, START_VAL2, STOP_VAL2, STEP_SIZE2 = prep_get_shape_from_data(data)
+    shape = get_shape(START_VAL, STOP_VAL, STEP_SIZE, START_VAL2, STOP_VAL2, STEP_SIZE2)
     return shape
+
+def prep_get_shape_from_data(data):
+    # start and stop values of x parameter ('i')
+    START_VAL = min(data['i'])
+    STOP_VAL = max(data['i'])
+    # start and stop values of y parameter ('j')
+    START_VAL2 = min(data['j'])
+    STOP_VAL2 = max(data['j'])
+    # step size of y parameter (can be extracted directly)
+    STEP_SIZE2 = data['j'][1] - data['j'][0]
+    # calculatin step size of x parameter (first need to find index, where x changes)
+    STEPS_NUM_2 = round((STOP_VAL2 - START_VAL2) / STEP_SIZE2)
+    STEP_SIZE = data['i'][STEPS_NUM_2 + 1] - data['i'][STEPS_NUM_2]
+    return START_VAL, STOP_VAL, STEP_SIZE, START_VAL2, STOP_VAL2, STEP_SIZE2
+
+def get_shape(START_VAL, STOP_VAL, STEP_SIZE, START_VAL2, STOP_VAL2, STEP_SIZE2):
+    X=np.floor(1 + (STOP_VAL-START_VAL)/STEP_SIZE)
+    Y=np.floor(1 + (STOP_VAL2-START_VAL2)/STEP_SIZE2)
+    shape = (int(X),int(Y))
+    return shape
+
 def get_factor(PARAM, data, shape):
     if (PARAM == "PCS_pb" or PARAM == "NCS_pb"):
         FACTOR = 1e-36 * np.array(data["Rel_f"]).reshape(shape)
@@ -193,11 +204,13 @@ def get_factor(PARAM, data, shape):
     else:
         FACTOR = 1
     return FACTOR
+
 def get_general_constr(data, shape):
     bfb=np.array(data["bfb"]).reshape(shape)
     unitarity=np.array(data["unitarity"]).reshape(shape)
     HB=np.array(data["HBallowed"]).reshape(shape)
     return bfb, unitarity, HB
+
 def get_fermi_constr(data, shape):
     #F_ZZ = np.array(data["FERMIallowed_ZZ"]).reshape(shape).astype(bool)
     #F_mumu = np.array(data["FERMIallowed_mumu"]).reshape(shape).astype(bool)
@@ -225,6 +238,7 @@ def get_fermi_constr(data, shape):
     #F_all = F_31.astype(int)
     F_all = np.array(data["FERMIallowed"]).reshape(shape).astype(bool)
     return F_all
+
 def plot_constr(X, Y, Z, ZPARAM, line_style, tick_length,
                 tick_space, line_space, ax, hatch_style, **kwargs):
     label = constr_labels_dict[ZPARAM]
@@ -282,8 +296,9 @@ def plot_constr(X, Y, Z, ZPARAM, line_style, tick_length,
             col0.set_edgecolor(line_color)
         circ = mpatches.Patch(edgecolor=line_color, facecolor="none", hatch=legend_hatch_dict[hatch_style], label=label)
     else:
-        circ = np.nan
+        circ = mpatches.Patch(edgecolor=line_color, facecolor="none", hatch=legend_hatch_dict[hatch_style], label=label)
     return circ
+
 def plot_constr_s3(X, Y, Z, ZPARAM, line_style, tick_length,
                 tick_space, line_space, ax, hatch_style, color, alpha):
     """plot constraints as coloured areas
@@ -304,6 +319,7 @@ def plot_constr_s3(X, Y, Z, ZPARAM, line_style, tick_length,
         circ = np.nan
         #artists, labels_new = [np.nan], [np.nan]
     return circ
+
 def plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps):
     #BP_PATH = "~/SyncandShare/Master/FILE/benchmark_points/new_BP1"
     #BP_FILE = "results.csv"
@@ -327,42 +343,59 @@ def plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps):
     #Z = BP_data[ZPARAM] * ZFACTOR
     pos=ax.scatter(X, Y, s=100, c="red", marker="*", label="BP")
     return
+
 def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
                  tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl):
     ps = 45
-    pos=ax.scatter(X, Y, s=ps, c=Z, norm=norm)
-    circ1 = plot_constr(X, Y, bfb, "bfb", "solid", tick_length, tick_space,
-                                        line_space, ax, "//")
-    circ2 = plot_constr(X, Y, unitarity, "unitarity", "solid", tick_length,
-                                        tick_space, line_space, ax, "--")
-    circ3 = plot_constr(X, Y, HB, "HBallowed", "solid", tick_length,
-                                        tick_space, line_space, ax, "\\\\")
-    # plot additional constraint relevant for ZPARAM
-    if ZPARAM in constr_dict.keys():
-        add_constr_name = constr_dict[ZPARAM]
-        add_constr_data = np.array(data[add_constr_name]).reshape(shape)
-        circ4 = plot_constr(X, Y, add_constr_data, add_constr_name, "solid",
-                                            tick_length, tick_space, line_space, ax, "..")
-    # plot BP
-    #plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps)
-    # make legend
-    if ZPARAM in constr_dict.keys():
-        circ_o = [circ1, circ2, circ3, circ4]
+    if np.isnan(Z).all()==False:
+        # if the values does not change, set some arbitrary limits for the axes
+        if (np.max(Z)-np.min(Z)) == 0:
+            pos=ax.scatter(X, Y, s=ps, c=Z, vmin=np.max(Z)-1, vmax=np.max(Z)+1)
+        # if plotting relic density make sure that Planck limit is covered by the axis
+        elif ZPARAM == 'RelDen':
+            pos=ax.scatter(X, Y, s=ps, c=Z, vmin=np.min(Z), vmax=np.max([np.max(Z), 0.1201]))
+        # or just set the limits automatically
+        else:
+            pos=ax.scatter(X, Y, s=ps, c=Z, norm=norm)
+        circ1 = plot_constr(X, Y, bfb, "bfb", "solid", tick_length, tick_space,
+                                            line_space, ax, "//")
+        circ2 = plot_constr(X, Y, unitarity, "unitarity", "solid", tick_length,
+                                            tick_space, line_space, ax, "--")
+        circ3 = plot_constr(X, Y, HB, "HBallowed", "solid", tick_length,
+                                            tick_space, line_space, ax, "\\\\")
+        # plot additional constraint relevant for ZPARAM
+        if ZPARAM in constr_dict.keys():
+            add_constr_name = constr_dict[ZPARAM]
+            add_constr_data = np.array(data[add_constr_name]).reshape(shape)
+            circ4 = plot_constr(X, Y, add_constr_data, add_constr_name, "solid",
+                                                tick_length, tick_space, line_space, ax, "..")
+        # plot BP
+        #plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps)
+        # make legend
+        if ZPARAM in constr_dict.keys():
+            circ_o = [circ1, circ2, circ3, circ4]
+        else:
+            circ_o = [circ1, circ2, circ3]
+        circ = []
+        for i in circ_o:
+            if type(i)==matplotlib.patches.Patch:
+                circ.append(i)
+        # make colorbar
+        bar = fig.colorbar(pos, ax=ax, label=zlabel, format=ax_multipl)
+        # if plotting relic density make a red mark on the color bar at 0.1191 (desired relic density)
+        if ZPARAM == 'RelDen':
+            bar.ax.axhspan(0.1181, 0.1201, color='red') # 0.1191 +- 0.001
+        # set limis and formatting for axes
+        #ax.set_xlim(0,1)
+        #ax.set_xlim(100,400)
+        #ax.set_ylim(7,11)
+        #ax.set_ylim(-60000,20000)
+        #ax.yaxis.set_major_formatter(MagnitudeFormatter(4))
     else:
-        circ_o = [circ1, circ2, circ3]
-    circ = []
-    for i in circ_o:
-        if type(i)==matplotlib.patches.Patch:
-            circ.append(i)
-    # make colorbar
-    bar = fig.colorbar(pos, ax=ax, label=zlabel, format=ax_multipl)
-    # set limis and formatting for axes
-    #ax.set_xlim(0,1)
-    #ax.set_xlim(100,400)
-    #ax.set_ylim(7,11)
-    #ax.set_ylim(-60000,20000)
-    #ax.yaxis.set_major_formatter(MagnitudeFormatter(4))
+        circ = None
+        print(ZPARAM + ' has no values and can not be plotted')
     return circ
+
 def plot_1(XPARAM, YPARAM, ZPARAM, tick_length, tick_space, line_space, data, shape, PATH, norm, ax_multipl):
     # define name for output file
     if ZPARAM in file_out_name_dict.keys():
@@ -392,6 +425,7 @@ def plot_1(XPARAM, YPARAM, ZPARAM, tick_length, tick_space, line_space, data, sh
     ax.legend(handles=circ, loc="upper right", framealpha=1)
     plt.savefig(FILE_OUT, format="png")
     return
+
 def plot_2(XPARAM, YPARAM, ZPARAM1, ZPARAM2, tick_length, tick_space, line_space, data,
            shape, PATH, norm, ax_multipl):
     # define name for output file
@@ -435,6 +469,7 @@ def plot_2(XPARAM, YPARAM, ZPARAM1, ZPARAM2, tick_length, tick_space, line_space
     ax1.legend(handles=circ2, loc="upper right", framealpha=1)
     plt.savefig(FILE_OUT, format="png")
     return
+
 def plot_3(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZPARAM3, tick_length,
            tick_space, line_space, data, shape, PATH, norm, ax_multipl):
     # define name for output file
@@ -489,6 +524,7 @@ def plot_3(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZPARAM3, tick_length,
     ax1.legend(handles=circ1, loc="upper right", framealpha=1)
     plt.savefig(FILE_OUT, format="png")
     return
+
 def plot_all_constr_s1(XPARAM, YPARAM, tick_length, tick_space,
                     line_space, data, shape, PATH, norm, ax_multipl):
     # define name for output file
@@ -537,6 +573,7 @@ def plot_all_constr_s1(XPARAM, YPARAM, tick_length, tick_space,
     ax.set_ylabel(ylabel)
     plt.savefig(FILE_OUT, format="png")
     return
+
 def plot_all_constr_s2(XPARAM, YPARAM, tick_length, tick_space,
                     line_space, data, shape, PATH, norm, ax_multipl):
     # define name for output file
@@ -589,6 +626,7 @@ def plot_all_constr_s2(XPARAM, YPARAM, tick_length, tick_space,
     ax.set_ylabel(ylabel)
     plt.savefig(FILE_OUT, format="png")
     return
+
 def plot_all_constr_s3(XPARAM, YPARAM, tick_length, tick_space,
                     line_space, data, shape, PATH, norm, ax_multipl):
     # define name for output file
@@ -638,7 +676,17 @@ def plot_all_constr_s3(XPARAM, YPARAM, tick_length, tick_space,
     plt.savefig(FILE_OUT, format="png")
     return
 
+def main():
+    # get path and name of input file from command line with sys
+    PATH = sys.argv[1]
+    FILE = sys.argv[2]
+    FILE_IN = PATH + '/' + FILE
+    # read input file with pandas
+    data=pd.read_csv(FILE_IN)
+    # run plot function
+    plot_all(data, PATH)
+    return
+
+
 if __name__=='__main__':
-    FILE_IN = "output/pyplot_in.csv"
-    inp_file = read_csv(FILE_IN)
-    plot_all(inp_file)
+    main()

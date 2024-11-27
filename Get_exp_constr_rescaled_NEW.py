@@ -51,7 +51,7 @@ def get_results(data):
     FERMIconstr_qq = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_qq'][0])
     FERMIconstr_tt = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_tt'][0])
     FERMIconstr_ZZ = get_interp_constr(data["mAS"][0], constr_dict['INDDCS_ZZ'][0])
-    PLconstr = 0.1202
+    PLconstr = 0.1202 # 0.1191 +- 0.0009 (used a slightly hihger bound 0.1192 +- 0.0010 here)
 
     # calculate rescaled parameters
     Rel_f = data["RelDen"][0]/PLconstr

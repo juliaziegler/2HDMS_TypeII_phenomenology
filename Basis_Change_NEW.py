@@ -37,9 +37,10 @@ def calc_basis_change(data):
         a2 = calc_a2(data)
         a3 = calc_a3(data, a1, a2)
         # check whether a1 and a2 are in the allowed range (as in Cheng Li's)
-        STOP_1 = check_1(data)
-        STOP_2 = check_2(a2)
-        STOP = STOP_1 + STOP_2
+        #STOP_1 = check_1(data)
+        #STOP_2 = check_2(a2)
+        #STOP = STOP_1 + STOP_2
+        STOP = 0
     # if the checks are passed calculation goes on
     if STOP == 0:
         R = calc_R(a1, a2, a3)
