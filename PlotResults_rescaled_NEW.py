@@ -46,14 +46,15 @@ labels_dict = {"dl14p": "$\delta_{14}'$",
                "INDDCS_tt": "$\sigma_{A_S A_S → t t} \, [cm^3/s]$",
                "INDDCS_tautau": "$\sigma_{A_S A_S → τ τ} \, [cm^3/s]$",
                "INDDCS_WW": "$\sigma_{A_S A_S → W W} \, [cm^3/s]$",
+               "INDDCS_h1h1": "$\sigma_{A_S A_S → h_1 h_1} \, [cm^3/s]$",
                "INDDCS_h2h2": "$\sigma_{A_S A_S → h_2 h_2} \, [cm^3/s]$",
                "INDDCS_h1h2": "$\sigma_{A_S A_S → h_1 h_2} \, [cm^3/s]$",
                "INDDCS_hihj": "$\sum_{i,j} \sigma_{A_S A_S → h_i h_j} \, [cm^3/s]$",
                "mu_the_LEP": "$\mu_{LEP}$",
                "mu_the_CMS": "$\mu_{CMS}$",
-               "l1m24p": "$\lambda_1' - 2\lambda_4'$",
-               "l2m25p": "$\lambda_2' - 2\lambda_5'$",
-               "l1ml3pp": "$\lambda_1'' - \lambda_3''$",
+               "l1m24p": "$\lambda_{14}' = \lambda_1' - 2\lambda_4'$",
+               "l2m25p": "$\lambda_{25}' = \lambda_2' - 2\lambda_5'$",
+               "l1ml3pp": "$\lambda_{13}'' = \lambda_1'' - \lambda_3''$",
                "l1": "$\lambda_{1}$",
                "l2": "$\lambda_{2}$",
                "l3": "$\lambda_{3}$",
@@ -97,9 +98,12 @@ file_out_name_dict = {"RelDen": "RelDen",
                "lh1ss_norm": "lh1",
                "lh2ss_norm": "lh2",
                "lh3ss_norm": "lh3",
-               "INDDCS_bb": "InddCSbb", "INDDCS_tt": "InddCStt",
+               "INDDCS_bb": "InddCSbb", 
+               "INDDCS_tt": "InddCStt",
                "INDDCS_tautau": "InddCStautau",
-               "INDDCS_WW": "InddCSWW", "INDDCS_h2h2": "InddCShh",
+               "INDDCS_WW": "InddCSWW", 
+               "INDDCS_h1h1": "InddCSh1h1",
+               "INDDCS_h2h2": "InddCShh",
                "INDDCS_h1h2": "InddCSh1h2",
                "INDDCS_hihj": "InddCShihj"}
 legend_hatch_dict = {"/": "////",
@@ -134,7 +138,7 @@ def plot_all(data, PATH):
     # plot the data
 
     plot_1(XPARAM, YPARAM, "RelDen", tick_length, tick_space, line_space, data,
-           shape, PATH, matplotlib.colors.LogNorm(), None)
+           shape, PATH, matplotlib.colors.LogNorm(vmin=np.nanmin(data["RelDen"]), vmax=np.nanmax([np.nanmax(data["RelDen"]), 0.13])), None)
     #plot_1(XPARAM, YPARAM, "INDDCS_hihj", tick_length, tick_space, line_space, data,
     #       shape, PATH, matplotlib.colors.LogNorm(), None)
     plot_1(XPARAM, YPARAM, "BR_h3SS", tick_length, tick_space, line_space, data,
@@ -148,6 +152,8 @@ def plot_all(data, PATH):
     plot_3(XPARAM, YPARAM, "INDDCS_h2h2", "INDDCS_WW", "INDDCS_bb", tick_length, tick_space,
            line_space, data, shape, PATH, matplotlib.colors.LogNorm(), None)
     plot_3(XPARAM, YPARAM, "INDDCS_bb", "INDDCS_tt", "INDDCS_h1h2", tick_length, tick_space,
+           line_space, data, shape, PATH, matplotlib.colors.LogNorm(), None)
+    plot_3(XPARAM, YPARAM, "INDDCS_bb", "INDDCS_WW", "INDDCS_h1h1", tick_length, tick_space,
            line_space, data, shape, PATH, matplotlib.colors.LogNorm(), None)
     #plot_3(XPARAM, YPARAM, "INDDCS_bb", "INDDCS_INDDCS_tautau", "INDDCS_WW",
     #       tick_length, tick_space, line_space, data, shape, PATH, None, MagnitudeFormatter(-25))
@@ -192,6 +198,7 @@ def get_shape(START_VAL, STOP_VAL, STEP_SIZE, START_VAL2, STOP_VAL2, STEP_SIZE2)
     X=np.floor(1 + (STOP_VAL-START_VAL)/STEP_SIZE)
     Y=np.floor(1 + (STOP_VAL2-START_VAL2)/STEP_SIZE2)
     shape = (int(X),int(Y))
+    shape = (55,51)
     return shape
 
 def get_factor(PARAM, data, shape):
@@ -199,7 +206,7 @@ def get_factor(PARAM, data, shape):
         FACTOR = 1e-36 * np.array(data["Rel_f"]).reshape(shape)
     elif (PARAM == "INDDCS_bb" or PARAM == "INDDCS_tt" or PARAM == "INDDCS_tautau"
           or PARAM == "INDDCS_WW" or PARAM == "INDDCS_h2h2" or PARAM == "INDDCS_h1h2"
-          or PARAM == "INDDCS_hihj"):
+          or PARAM == "INDDCS_hihj" or PARAM == "INDDCS_h1h1"):
         FACTOR = np.array(data["INDDCS_res_cm3_over_s"]).reshape(shape)
     else:
         FACTOR = 1
@@ -325,8 +332,10 @@ def plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps):
     #BP_FILE = "results.csv"
     #BP_PATH = "~/SyncandShare/Master/FILES/benchmark_points/new_BPs/BP3_95.4_3x700"
     #BP_FILE = "BP3_95.4_3x700_new_notation.csv"
-    BP_PATH = "~/SyncandShare/2HDMS/FILES/benchmark_points/mucoll_BP2_new_basis"
-    BP_FILE = "results_mAS-tanbeta.csv"
+    #BP_PATH = "~/SyncandShare/2HDMS/FILES/benchmark_points/mucoll_BP2_new_basis"
+    #BP_FILE = "results_mAS-tanbeta.csv"
+    BP_PATH = "~/SyncandShare/2HDMS-Z2breaking_mucoll_paper/benchmark_points/mucoll_BP3"
+    BP_FILE = "results_BP3_newbasis.csv"
     BP_data=pd.read_csv(BP_PATH+"/"+BP_FILE)
     #ZFACTOR = get_factor(ZPARAM, BP_data, (1))
     if XPARAM == "m122":
@@ -346,14 +355,16 @@ def plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps):
 
 def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
                  tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl):
-    ps = 45
+    ps = 50
     if np.isnan(Z).all()==False:
         # if the values does not change, set some arbitrary limits for the axes
         if (np.max(Z)-np.min(Z)) == 0:
             pos=ax.scatter(X, Y, s=ps, c=Z, vmin=np.max(Z)-1, vmax=np.max(Z)+1)
         # if plotting relic density make sure that Planck limit is covered by the axis
-        elif ZPARAM == 'RelDen':
-            pos=ax.scatter(X, Y, s=ps, c=Z, vmin=np.min(Z), vmax=np.max([np.max(Z), 0.1201]))
+        # removed this part again because we can not use lognorm with it
+        # the limits are set in the main plotting function
+        #elif ZPARAM == 'RelDen':
+        #    pos=ax.scatter(X, Y, s=ps, c=Z, vmin=np.nanmin(Z), vmax=np.nanmax([np.max(Z), 0.1201]))
         # or just set the limits automatically
         else:
             pos=ax.scatter(X, Y, s=ps, c=Z, norm=norm)
@@ -369,8 +380,29 @@ def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
             add_constr_data = np.array(data[add_constr_name]).reshape(shape)
             circ4 = plot_constr(X, Y, add_constr_data, add_constr_name, "solid",
                                                 tick_length, tick_space, line_space, ax, "..")
+        # make second x axis to show mass of other particles (if mAS is on x axis)
+        # NOTE: this part is not finished to work automatically for every
+        #       possible setup, it might have to be adjusted by hand
+        #if XPARAM=='mAS':
+        #    if data['mh3'][0]==data['mHm'][0] and data['mh3'][0]==data['mA'][0]:
+        #        def linear_func(x):
+        #            return x
+        #        ax2 = ax.secondary_xaxis('top', functions=(linear_func, linear_func))
+                #ax2.set_xlabel('$m$ [GeV]')
+        #        ticks = [data['mh2'][0]/2, data['mh1'][0], data['mh2'][0], data['mh3'][0]/2]
+                #labels = [r'$\frac{m_{h_2}}{2}$     ', '$m_{h_1}$', '     $m_{h_2}$', r'$\frac{m_{h_3}, m_{A}, m_{H^\pm}}{2}$']
+        #        labels = [r'$\frac{m_{h2}}{2}$    ', '$m_{h1}$', '     $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
+                #labels = ['$m_{h2}/2$        ', '$m_{h1}$', '     $m_{h2}$', '$(m_{h3}, m_{A}, m_{H\pm})/2$']
+        #        ax2.set_xticks(ticks=ticks, labels=labels, fontsize=12)
+
+                #arrowprops = dict(arrowstyle="-",
+                #              connectionstyle="angle,angleA=0,angleB=90,rad=10")
+                #ax.annotate('$m_{h_2}/2$', (data['mh2'][0]/2,20), (data['mh2'][0]/2-50,22), arrowprops=arrowprops)
+                #ax.annotate('$m_{h_1}$', (data['mh1'][0],20), (data['mh1'][0]-20,23), arrowprops=arrowprops)
+                #ax.annotate('$m_{h_2}$', (data['mh2'][0],20), (data['mh2'][0]-20,22), arrowprops=arrowprops)
+                #ax.annotate('$(m_{h_3}, m_{A}, m_{H^\pm})/2$', (data['mh3'][0]/2,20), (data['mh3'][0]/2-50,23), arrowprops=arrowprops)
         # plot BP
-        #plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps)
+        plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps)
         # make legend
         if ZPARAM in constr_dict.keys():
             circ_o = [circ1, circ2, circ3, circ4]
@@ -385,9 +417,21 @@ def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
         # if plotting relic density make a red mark on the color bar at 0.1191 (desired relic density)
         if ZPARAM == 'RelDen':
             bar.ax.axhspan(0.1181, 0.1201, color='red') # 0.1191 +- 0.001
+            # NOTE the label for the Planck limit needs to be adjusted by hand
+            # one option is to add the labela s text
+            plt.text(np.nanmax(X)-20 , np.nanmax(Y)-0,'Planck\nlimit', color='red', fontsize=8)
+            # another option is to add it to the ticks
+            #bar_ticks = bar.get_ticks()
+            #bar_labels = bar_ticks
+            #print(bar_ticks)
+            #new_ticks = np.append(bar_ticks[2:-2], 1.191e-01)
+            #print(new_ticks)
+            #print([bar_ticks, 0,19])
+            #new_labels = np.append(bar_ticks[2:-2], 'Planck\nlimit')
+            #bar.set_ticks(ticks=bar_ticks, labels=bar_ticks)
         # set limis and formatting for axes
         #ax.set_xlim(0,1)
-        #ax.set_xlim(100,400)
+        ax.set_xlim(np.nanmin(X),600)
         #ax.set_ylim(7,11)
         #ax.set_ylim(-60000,20000)
         #ax.yaxis.set_major_formatter(MagnitudeFormatter(4))
@@ -420,6 +464,17 @@ def plot_1(XPARAM, YPARAM, ZPARAM, tick_length, tick_space, line_space, data, sh
     fig, ax = plt.subplots()
     circ = make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
                  tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
+    if XPARAM=='mAS':
+        if data['mh3'][0]==data['mHm'][0] and data['mh3'][0]==data['mA'][0]:
+            def linear_func(x):
+                return x
+            axsec = ax.secondary_xaxis('top', functions=(linear_func, linear_func))
+            #ax2.set_xlabel('$m$ [GeV]')
+            ticks = [data['mh2'][0]/2, data['mh1'][0], data['mh2'][0], data['mh3'][0]/2]
+            #labels = [r'$\frac{m_{h_2}}{2}$     ', '$m_{h_1}$', '     $m_{h_2}$', r'$\frac{m_{h_3}, m_{A}, m_{H^\pm}}{2}$']
+            labels = [r'$\frac{m_{h2}}{2}$    ', '$m_{h1}$', '     $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
+            #labels = ['$m_{h2}/2$        ', '$m_{h1}$', '     $m_{h2}$', '$(m_{h3}, m_{A}, m_{H\pm})/2$']
+            axsec.set_xticks(ticks=ticks, labels=labels, fontsize=12)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     ax.legend(handles=circ, loc="upper right", framealpha=1)
@@ -463,6 +518,17 @@ def plot_2(XPARAM, YPARAM, ZPARAM1, ZPARAM2, tick_length, tick_space, line_space
                  tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
     circ2 = make_subplot(ax2, X, Y, Z2, bfb, unitarity, HB, ZPARAM2, data, zlabel2, shape,
                  tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
+    if XPARAM=='mAS':
+        if data['mh3'][0]==data['mHm'][0] and data['mh3'][0]==data['mA'][0]:
+            def linear_func(x):
+                return x
+            axsec = ax1.secondary_xaxis('top', functions=(linear_func, linear_func))
+            #ax2.set_xlabel('$m$ [GeV]')
+            ticks = [data['mh2'][0]/2, data['mh1'][0], data['mh2'][0], data['mh3'][0]/2]
+            #labels = [r'$\frac{m_{h_2}}{2}$     ', '$m_{h_1}$', '     $m_{h_2}$', r'$\frac{m_{h_3}, m_{A}, m_{H^\pm}}{2}$']
+            labels = [r'$\frac{m_{h2}}{2}$    ', '$m_{h1}$', '     $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
+            #labels = ['$m_{h2}/2$        ', '$m_{h1}$', '     $m_{h2}$', '$(m_{h3}, m_{A}, m_{H\pm})/2$']
+            axsec.set_xticks(ticks=ticks, labels=labels, fontsize=12)
     ax2.set_xlabel(xlabel)
     ax1.set_ylabel(ylabel)
     ax2.set_ylabel(ylabel)
@@ -519,6 +585,17 @@ def plot_3(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZPARAM3, tick_length,
                  tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
     circ3 = make_subplot(ax3, X, Y, Z3, bfb, unitarity, HB, ZPARAM3, data, zlabel3, shape,
                  tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
+    if XPARAM=='mAS':
+        if data['mh3'][0]==data['mHm'][0] and data['mh3'][0]==data['mA'][0]:
+            def linear_func(x):
+                return x
+            axsec = ax1.secondary_xaxis('top', functions=(linear_func, linear_func))
+            #ax2.set_xlabel('$m$ [GeV]')
+            ticks = [data['mh2'][0]/2, data['mh1'][0], data['mh2'][0], data['mh3'][0]/2]
+            #labels = [r'$\frac{m_{h_2}}{2}$     ', '$m_{h_1}$', '     $m_{h_2}$', r'$\frac{m_{h_3}, m_{A}, m_{H^\pm}}{2}$']
+            labels = [r'$\frac{m_{h2}}{2}$    ', '$m_{h1}$', '     $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
+            #labels = ['$m_{h2}/2$        ', '$m_{h1}$', '     $m_{h2}$', '$(m_{h3}, m_{A}, m_{H\pm})/2$']
+            axsec.set_xticks(ticks=ticks, labels=labels, fontsize=12)
     ax3.set_xlabel(xlabel)
     ax2.set_ylabel(ylabel)
     ax1.legend(handles=circ1, loc="upper right", framealpha=1)
@@ -557,7 +634,7 @@ def plot_all_constr_s1(XPARAM, YPARAM, tick_length, tick_space,
     circ6 = plot_constr(X, Y, fermi, "FERMIallowed", "solid", tick_length,
                                         tick_space, line_space, ax, "o")
     # plot BP
-    #plot_bp(XPARAM, YPARAM, None, ax, None)
+    plot_bp(XPARAM, YPARAM, None, ax, None)
     # make legend
     circ_o = [circ0, circ1, circ2, circ3, circ4,
                circ5, circ6]
@@ -605,8 +682,19 @@ def plot_all_constr_s2(XPARAM, YPARAM, tick_length, tick_space,
                                         tick_space, line_space, ax, "-", color="gold")
     circ6 = plot_constr(X, Y, fermi, "FERMIallowed", "solid", tick_length,
                                         tick_space, line_space, ax, "\\", color="darkturquoise")
+    if XPARAM=='mAS':
+        if data['mh3'][0]==data['mHm'][0] and data['mh3'][0]==data['mA'][0]:
+            def linear_func(x):
+                return x
+            axsec = ax.secondary_xaxis('top', functions=(linear_func, linear_func))
+            #ax2.set_xlabel('$m$ [GeV]')
+            ticks = [data['mh2'][0]/2, data['mh1'][0], data['mh2'][0], data['mh3'][0]/2]
+            #labels = [r'$\frac{m_{h_2}}{2}$     ', '$m_{h_1}$', '     $m_{h_2}$', r'$\frac{m_{h_3}, m_{A}, m_{H^\pm}}{2}$']
+            labels = [r'$\frac{m_{h2}}{2}$    ', '$m_{h1}$', '     $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
+            #labels = ['$m_{h2}/2$        ', '$m_{h1}$', '     $m_{h2}$', '$(m_{h3}, m_{A}, m_{H\pm})/2$']
+            axsec.set_xticks(ticks=ticks, labels=labels, fontsize=12)
     # plot BP
-    #plot_bp(XPARAM, YPARAM, None, ax, None)
+    plot_bp(XPARAM, YPARAM, None, ax, None)
     # make legend
     circ_o = [circ0, circ1, circ2, circ3, circ4,
                circ5, circ6]
@@ -659,7 +747,7 @@ def plot_all_constr_s3(XPARAM, YPARAM, tick_length, tick_space,
     circ6 = plot_constr_s3(X, Y, fermi, "FERMIallowed", "dotted", tick_length,
                                         tick_space, line_space, ax, "O", color="dodgerblue", alpha=0.2)
     # plot BP
-    #plot_bp(XPARAM, YPARAM, None, ax, None)
+    plot_bp(XPARAM, YPARAM, None, ax, None)
     # make legend
     circ_o = [circ0, circ1, circ2, circ3, circ4,
                circ5, circ6]
