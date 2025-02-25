@@ -230,8 +230,8 @@ def calc_chisq_cms_lep(data):
         mu_the_CMS (float): the predicted CMS signal strength
     """
     # predicted SM BR(H -> bb / yy) taken from arxiv:1107.5909
-    BR_SM_Hbb = 0.802 # (for 125 GeV: 5.77E-01)
-    BR_SM_Hyy = 0.00139 # (for 125 GeV: 2.28E-03)
+    BR_SM_Hbb = 0.802 # (for 95 GeV: 5.77E-01)
+    BR_SM_Hyy = 0.00139 # (for 95 GeV: 2.28E-03)
     # predicted 2HDSM BR and reduced couplings
     BR_h1bb = data["BR_h1bb"][0]
     BR_h1yy = data["BR_h1yy"][0]
@@ -257,6 +257,26 @@ def calc_chisq_cms_lep(data):
     else:
         chisq = ((mu_the_LEP - mu_exp_LEP)/sigma_mu_exp_LEP)**2 + \
                 ((mu_the_CMS - mu_exp_ATLAS_CMS)/sigma_mu_exp_ATLAS_CMS_lower)**2
+    
+    # in case we want to use the individual excesses instead of CMS-ATLAS-combined:
+    """
+    mu_exp_LEP = 0.117
+    sigma_mu_exp_LEP = 0.057
+    mu_exp_ATLAS = 0.18
+    sigma_mu_exp_ATLAS = 0.1
+    mu_exp_CMS = 0.33
+    sigma_mu_exp_CMS_upper = 0.19
+    sigma_mu_exp_CMS_lower = 0.12
+
+    if mu_the_CMS >= mu_exp_CMS:
+        chisq = ((mu_the_LEP - mu_exp_LEP)/sigma_mu_exp_LEP)**2 + \
+                ((mu_the_CMS - mu_exp_ATLAS)/sigma_mu_exp_ATLAS)**2 + \
+                ((mu_the_CMS - mu_exp_CMS)/sigma_mu_exp_CMS_upper)**2
+    else:
+        chisq = ((mu_the_LEP - mu_exp_LEP)/sigma_mu_exp_LEP)**2 + \
+                ((mu_the_CMS - mu_exp_ATLAS)/sigma_mu_exp_ATLAS)**2 + \
+                ((mu_the_CMS - mu_exp_CMS)/sigma_mu_exp_CMS_lower)**2
+    """
     return chisq, mu_the_LEP, mu_the_CMS
 
 def get_interp_constr(DM_mass, FILE):
