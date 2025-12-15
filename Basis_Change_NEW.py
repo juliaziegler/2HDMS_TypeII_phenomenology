@@ -382,21 +382,21 @@ def calc_DM_coup(mass_b, inte_b, R):
     lh3h3ss_times_i = calc_lhjhkss_times_i(inte_b, R, 3, 3)
 
     # add DM couplings to inte_b
-    inte_b["lh1ss_times_i"] = lh1ss_times_i
-    inte_b["lh2ss_times_i"] = lh2ss_times_i
-    inte_b["lh3ss_times_i"] = lh3ss_times_i
+    #inte_b["lh1ss_times_i"] = lh1ss_times_i
+    #inte_b["lh2ss_times_i"] = lh2ss_times_i
+    #inte_b["lh3ss_times_i"] = lh3ss_times_i
     inte_b["lh1ss_norm"] = lh1ss_norm
     inte_b["lh2ss_norm"] = lh2ss_norm
     inte_b["lh3ss_norm"] = lh3ss_norm
-    inte_b["lh1h1ss_times_i"] = lh1h1ss_times_i
-    inte_b["lh1h2ss_times_i"] = lh1h2ss_times_i
-    inte_b["lh1h3ss_times_i"] = lh1h3ss_times_i
-    inte_b["lh2h1ss_times_i"] = lh2h1ss_times_i
-    inte_b["lh2h2ss_times_i"] = lh2h2ss_times_i
-    inte_b["lh2h3ss_times_i"] = lh2h3ss_times_i
-    inte_b["lh3h1ss_times_i"] = lh3h1ss_times_i
-    inte_b["lh3h2ss_times_i"] = lh3h2ss_times_i
-    inte_b["lh3h3ss_times_i"] = lh3h3ss_times_i
+    inte_b["lh1h1ss"] = lh1h1ss_times_i
+    inte_b["lh1h2ss"] = lh1h2ss_times_i
+    inte_b["lh1h3ss"] = lh1h3ss_times_i
+    inte_b["lh2h1ss"] = lh2h1ss_times_i
+    inte_b["lh2h2ss"] = lh2h2ss_times_i
+    inte_b["lh2h3ss"] = lh2h3ss_times_i
+    inte_b["lh3h1ss"] = lh3h1ss_times_i
+    inte_b["lh3h2ss"] = lh3h2ss_times_i
+    inte_b["lh3h3ss"] = lh3h3ss_times_i
 
     return inte_b
 
@@ -419,6 +419,131 @@ def calc_lhjhkss_times_i(inte_b, R, j, k):
                      -(1/4)*(2*inte_b["l1pp"] - 2*inte_b["l3pp"])*R[J,2]*R[K,2]
     return lhjhkss_times_i
 
+def calc_trilinear_couplings(inte_b, R):
+    R11 = R[0,0]
+    R12 = R[0,1]
+    R13 = R[0,2]
+    R21 = R[1,0]
+    R22 = R[1,1]
+    R23 = R[1,2]
+    R31 = R[2,0]
+    R32 = R[2,1]
+    R33 = R[2,2]
+    vS = inte_b["vS"]
+    l1 = inte_b["l1"]
+    l2 = inte_b["l2"]
+    l3 = inte_b["l3"]
+    l4 = inte_b["l4"]
+    l5 = inte_b["l5"]
+    l1p = inte_b["l1p"]
+    l2p = inte_b["l2p"]
+    l4p = inte_b["l4p"]
+    l5p = inte_b["l5p"]
+    l1pp = inte_b["l1pp"]
+    l3pp = inte_b["l3pp"]
+    tanbeta = inte_b["tanbeta"]
+    v = inte_b["v"]
+    beta = np.arctan(tanbeta)
+    v2 = np.sin(beta)*v
+    v1 = np.cos(beta)*v
+    vu = v2
+    vd = v1
+    ZA11 = -np.sin(beta)
+    ZA12 = np.cos(beta)
+    ZA21 = np.cos(beta)
+    ZA22 = np.sin(beta)
+    ZP11 = -np.sin(beta)
+    ZP12 = np.cos(beta)
+    ZP21 = np.cos(beta)
+    ZP22 = np.sin(beta)
+
+    h111_times_i = -1./4.*(-2*R11*(2*R13*(vS*R11 + vd*R13)*(l4p + l1p + l4p) + R12*(vu*R11 + vd*R12)*(l5 + 2*l3 + 2*l4 + l5) + R11*(6*vd*R11*l1 + 2*vS*R13*(l4p + l1p + l4p) + vu*R12*(l5 + 2*l3 + 2*l4 + l5))) - R13*(4*R11*(vS*R11 + vd*R13)*(l4p + l1p + l4p) + 4*R12*(vS*R12 + vu*R13)*(l5p + l2p + l5p) + R13*(vS*R13*(5*l1pp + 5*l1pp + 6*l3pp) + 4*vd*R11*(l4p + l1p + l4p) + 4*vu*R12*(l5p + l2p + l5p))) - 2*R12*(R11*(vu*R11 + vd*R12)*(l5 + 2*l3 + 2*l4 + l5) + 2*R13*(vS*R12 + vu*R13)*(l5p + l2p + l5p) + R12*(6*vu*R12*l2 + vd*R11*(l5 + 2*l3 + 2*l4 + l5) + 2*vS*R13*(l5p + l2p + l5p))))
+ 
+    h112_times_i = -1./4.*(-2*R11*(2*R13*(vS*R21 + vd*R23)*(l4p + l1p + l4p) + R12*(vu*R21 + vd*R22)*(l5 + 2*l3 + 2*l4 + l5) + R11*(6*vd*R21*l1 + 2*vS*R23*(l4p + l1p + l4p) + vu*R22*(l5 + 2*l3 + 2*l4 + l5))) - R13*(4*R11*(vS*R21 + vd*R23)*(l4p + l1p + l4p) + 4*R12*(vS*R22 + vu*R23)*(l5p + l2p + l5p) + R13*(vS*R23*(5*l1pp + 5*l1pp + 6*l3pp) + 4*vd*R21*(l4p + l1p + l4p) + 4*vu*R22*(l5p + l2p + l5p))) - 2*R12*(R11*(vu*R21 + vd*R22)*(l5 + 2*l3 + 2*l4 + l5) + 2*R13*(vS*R22 + vu*R23)*(l5p + l2p + l5p) + R12*(6*vu*R22*l2 + vd*R21*(l5 + 2*l3 + 2*l4 + l5) + 2*vS*R23*(l5p + l2p + l5p))))
+
+    h113_times_i = -1./4.*(-2*R11*(2*R13*(vS*R31 + vd*R33)*(l4p + l1p + l4p) + R12*(vu*R31 + vd*R32)*(l5 + 2*l3 + 2*l4 + l5) + R11*(6*vd*R31*l1 + 2*vS*R33*(l4p + l1p + l4p) + vu*R32*(l5 + 2*l3 + 2*l4 + l5))) - R13*(4*R11*(vS*R31 + vd*R33)*(l4p + l1p + l4p) + 4*R12*(vS*R32 + vu*R33)*(l5p + l2p + l5p) + R13*(vS*R33*(5*l1pp + 5*l1pp + 6*l3pp) + 4*vd*R31*(l4p + l1p + l4p) + 4*vu*R32*(l5p + l2p + l5p))) - 2*R12*(R11*(vu*R31 + vd*R32)*(l5 + 2*l3 + 2*l4 + l5) + 2*R13*(vS*R32 + vu*R33)*(l5p + l2p + l5p) + R12*(6*vu*R32*l2 + vd*R31*(l5 + 2*l3 + 2*l4 + l5) + 2*vS*R33*(l5p + l2p + l5p))))
+ 
+    h122_times_i = -1./4.*(-2*R11*(2*R23*(vS*R21 + vd*R23)*(l4p + l1p + l4p) + R22*(vu*R21 + vd*R22)*(l5 + 2*l3 + 2*l4 + l5) + R21*(6*vd*R21*l1 + 2*vS*R23*(l4p + l1p + l4p) + vu*R22*(l5 + 2*l3 + 2*l4 + l5))) - R13*(4*R21*(vS*R21 + vd*R23)*(l4p + l1p + l4p) + 4*R22*(vS*R22 + vu*R23)*(l5p + l2p + l5p) + R23*(vS*R23*(5*l1pp + 5*l1pp + 6*l3pp) + 4*vd*R21*(l4p + l1p + l4p) + 4*vu*R22*(l5p + l2p + l5p))) - 2*R12*(R21*(vu*R21 + vd*R22)*(l5 + 2*l3 + 2*l4 + l5) + 2*R23*(vS*R22 + vu*R23)*(l5p + l2p + l5p) + R22*(6*vu*R22*l2 + vd*R21*(l5 + 2*l3 + 2*l4 + l5) + 2*vS*R23*(l5p + l2p + l5p))))
+ 
+    h123_times_i = -1./4.*(-2*R11*(2*R23*(vS*R31 + vd*R33)*(l4p + l1p + l4p) + R22*(vu*R31 + vd*R32)*(l5 + 2*l3 + 2*l4 + l5) + R21*(6*vd*R31*l1 + 2*vS*R33*(l4p + l1p + l4p) + vu*R32*(l5 + 2*l3 + 2*l4 + l5))) - R13*(4*R21*(vS*R31 + vd*R33)*(l4p + l1p + l4p) + 4*R22*(vS*R32 + vu*R33)*(l5p + l2p + l5p) + R23*(vS*R33*(5*l1pp + 5*l1pp + 6*l3pp) + 4*vd*R31*(l4p + l1p + l4p) + 4*vu*R32*(l5p + l2p + l5p))) - 2*R12*(R21*(vu*R31 + vd*R32)*(l5 + 2*l3 + 2*l4 + l5) + 2*R23*(vS*R32 + vu*R33)*(l5p + l2p + l5p) + R22*(6*vu*R32*l2 + vd*R31*(l5 + 2*l3 + 2*l4 + l5) + 2*vS*R33*(l5p + l2p + l5p))))
+ 
+    h133_times_i = -1./4.*(-2*R11*(2*R33*(vS*R31 + vd*R33)*(l4p + l1p + l4p) + R32*(vu*R31 + vd*R32)*(l5 + 2*l3 + 2*l4 + l5) + R31*(6*vd*R31*l1 + 2*vS*R33*(l4p + l1p + l4p) + vu*R32*(l5 + 2*l3 + 2*l4 + l5))) - R13*(4*R31*(vS*R31 + vd*R33)*(l4p + l1p + l4p) + 4*R32*(vS*R32 + vu*R33)*(l5p + l2p + l5p) + R33*(vS*R33*(5*l1pp + 5*l1pp + 6*l3pp) + 4*vd*R31*(l4p + l1p + l4p) + 4*vu*R32*(l5p + l2p + l5p))) - 2*R12*(R31*(vu*R31 + vd*R32)*(l5 + 2*l3 + 2*l4 + l5) + 2*R33*(vS*R32 + vu*R33)*(l5p + l2p + l5p) + R32*(6*vu*R32*l2 + vd*R31*(l5 + 2*l3 + 2*l4 + l5) + 2*vS*R33*(l5p + l2p + l5p))))
+ 
+    h222_times_i = -1./4.*(-2*R21*(2*R23*(vS*R21 + vd*R23)*(l4p + l1p + l4p) + R22*(vu*R21 + vd*R22)*(l5 + 2*l3 + 2*l4 + l5) + R21*(6*vd*R21*l1 + 2*vS*R23*(l4p + l1p + l4p) + vu*R22*(l5 + 2*l3 + 2*l4 + l5))) - R23*(4*R21*(vS*R21 + vd*R23)*(l4p + l1p + l4p) + 4*R22*(vS*R22 + vu*R23)*(l5p + l2p + l5p) + R23*(vS*R23*(5*l1pp + 5*l1pp + 6*l3pp) + 4*vd*R21*(l4p + l1p + l4p) + 4*vu*R22*(l5p + l2p + l5p))) - 2*R22*(R21*(vu*R21 + vd*R22)*(l5 + 2*l3 + 2*l4 + l5) + 2*R23*(vS*R22 + vu*R23)*(l5p + l2p + l5p) + R22*(6*vu*R22*l2 + vd*R21*(l5 + 2*l3 + 2*l4 + l5) + 2*vS*R23*(l5p + l2p + l5p))))
+ 
+    h223_times_i = -1./4.*(-2*R21*(2*R23*(vS*R31 + vd*R33)*(l4p + l1p + l4p) + R22*(vu*R31 + vd*R32)*(l5 + 2*l3 + 2*l4 + l5) + R21*(6*vd*R31*l1 + 2*vS*R33*(l4p + l1p + l4p) + vu*R32*(l5 + 2*l3 + 2*l4 + l5))) - R23*(4*R21*(vS*R31 + vd*R33)*(l4p + l1p + l4p) + 4*R22*(vS*R32 + vu*R33)*(l5p + l2p + l5p) + R23*(vS*R33*(5*l1pp + 5*l1pp + 6*l3pp) + 4*vd*R31*(l4p + l1p + l4p) + 4*vu*R32*(l5p + l2p + l5p))) - 2*R22*(R21*(vu*R31 + vd*R32)*(l5 + 2*l3 + 2*l4 + l5) + 2*R23*(vS*R32 + vu*R33)*(l5p + l2p + l5p) + R22*(6*vu*R32*l2 + vd*R31*(l5 + 2*l3 + 2*l4 + l5) + 2*vS*R33*(l5p + l2p + l5p))))
+ 
+    h233_times_i = -1./4.*(-2*R21*(2*R33*(vS*R31 + vd*R33)*(l4p + l1p + l4p) + R32*(vu*R31 + vd*R32)*(l5 + 2*l3 + 2*l4 + l5) + R31*(6*vd*R31*l1 + 2*vS*R33*(l4p + l1p + l4p) + vu*R32*(l5 + 2*l3 + 2*l4 + l5))) - R23*(4*R31*(vS*R31 + vd*R33)*(l4p + l1p + l4p) + 4*R32*(vS*R32 + vu*R33)*(l5p + l2p + l5p) + R33*(vS*R33*(5*l1pp + 5*l1pp + 6*l3pp) + 4*vd*R31*(l4p + l1p + l4p) + 4*vu*R32*(l5p + l2p + l5p))) - 2*R22*(R31*(vu*R31 + vd*R32)*(l5 + 2*l3 + 2*l4 + l5) + 2*R33*(vS*R32 + vu*R33)*(l5p + l2p + l5p) + R32*(6*vu*R32*l2 + vd*R31*(l5 + 2*l3 + 2*l4 + l5) + 2*vS*R33*(l5p + l2p + l5p))))
+ 
+    h333_times_i = -1./4.*(-2*R31*(2*R33*(vS*R31 + vd*R33)*(l4p + l1p + l4p) + R32*(vu*R31 + vd*R32)*(l5 + 2*l3 + 2*l4 + l5) + R31*(6*vd*R31*l1 + 2*vS*R33*(l4p + l1p + l4p) + vu*R32*(l5 + 2*l3 + 2*l4 + l5))) - R33*(4*R31*(vS*R31 + vd*R33)*(l4p + l1p + l4p) + 4*R32*(vS*R32 + vu*R33)*(l5p + l2p + l5p) + R33*(vS*R33*(5*l1pp + 5*l1pp + 6*l3pp) + 4*vd*R31*(l4p + l1p + l4p) + 4*vu*R32*(l5p + l2p + l5p))) - 2*R32*(R31*(vu*R31 + vd*R32)*(l5 + 2*l3 + 2*l4 + l5) + 2*R33*(vS*R32 + vu*R33)*(l5p + l2p + l5p) + R32*(6*vu*R32*l2 + vd*R31*(l5 + 2*l3 + 2*l4 + l5) + 2*vS*R33*(l5p + l2p + l5p))))
+
+    h1A1A1_times_i = -1./2.*(-(ZA11*(ZA11*(2*vd*R11*l1 + 2*vS*R13*(l4p + l1p + l4p) + vu*R12*(-l5 + 2*l3 + 2*l4 - l5)) + ZA12*(vu*R11 + vd*R12)*(l5 + l5))) - ZA12*(ZA11*(vu*R11 + vd*R12)*(l5 + l5) + ZA12*(2*vu*R12*l2 + vd*R11*(-l5 + 2*l3 + 2*l4 - l5) + 2*vS*R13*(l5p + l2p + l5p))))
+
+    h2A1A1_times_i = -1./2.*(-(ZA11*(ZA11*(2*vd*R21*l1 + 2*vS*R23*(l4p + l1p + l4p) + vu*R22*(-l5 + 2*l3 + 2*l4 - l5)) + ZA12*(vu*R21 + vd*R22)*(l5 + l5))) - ZA12*(ZA11*(vu*R21 + vd*R22)*(l5 + l5) + ZA12*(2*vu*R22*l2 + vd*R21*(-l5 + 2*l3 + 2*l4 - l5) + 2*vS*R23*(l5p + l2p + l5p))))
+
+    h3A1A1_times_i = -1./2.*(-(ZA11*(ZA11*(2*vd*R31*l1 + 2*vS*R33*(l4p + l1p + l4p) + vu*R32*(-l5 + 2*l3 + 2*l4 - l5)) + ZA12*(vu*R31 + vd*R32)*(l5 + l5))) - ZA12*(ZA11*(vu*R31 + vd*R32)*(l5 + l5) + ZA12*(2*vu*R32*l2 + vd*R31*(-l5 + 2*l3 + 2*l4 - l5) + 2*vS*R33*(l5p + l2p + l5p))))
+
+    #h1A2A2_times_i = -1./2.*(-(ZA21*(ZA21*(2*vd*R11*l1 + 2*vS*R13*(l4p + l1p + l4p) + vu*R12*(-l5 + 2*l3 + 2*l4 - l5)) + ZA22*(vu*R11 + vd*R12)*(l5 + l5))) - ZA22*(ZA21*(vu*R11 + vd*R12)*(l5 + l5) + ZA22*(2*vu*R12*l2 + vd*R11*(-l5 + 2*l3 + 2*l4 - l5) + 2*vS*R13*(l5p + l2p + l5p))))
+
+    #h2A2A2_times_i = -1./2.*(-(ZA21*(ZA21*(2*vd*R21*l1 + 2*vS*R23*(l4p + l1p + l4p) + vu*R22*(-l5 + 2*l3 + 2*l4 - l5)) + ZA22*(vu*R21 + vd*R22)*(l5 + l5))) - ZA22*(ZA21*(vu*R21 + vd*R22)*(l5 + l5) + ZA22*(2*vu*R22*l2 + vd*R21*(-l5 + 2*l3 + 2*l4 - l5) + 2*vS*R23*(l5p + l2p + l5p))))
+
+    #h3A2A2_times_i = -1./2.*(-(ZA21*(ZA21*(2*vd*R31*l1 + 2*vS*R33*(l4p + l1p + l4p) + vu*R32*(-l5 + 2*l3 + 2*l4 - l5)) + ZA22*(vu*R31 + vd*R32)*(l5 + l5))) - ZA22*(ZA21*(vu*R31 + vd*R32)*(l5 + l5) + ZA22*(2*vu*R32*l2 + vd*R31*(-l5 + 2*l3 + 2*l4 - l5) + 2*vS*R33*(l5p + l2p + l5p))))
+
+    h1Hm1Hm1c_times_i = -1./2.*(-(R12*(ZP11*(2*vu*ZP11*l3 + vd*ZP12*(l5 + l4)) + ZP12*(2*vu*ZP12*l2 + vd*ZP11*(l4 + l5)))) - R11*(ZP11*(2*vd*ZP11*l1 + vu*ZP12*(l5 + l4)) + ZP12*(2*vd*ZP12*l3 + vu*ZP11*(l4 + l5))) - 2*vS*R13*(ZP11**2*(l4p + l1p + l4p) + ZP12**2*(l5p + l2p + l5p)))
+
+    #h1Hm1Hm2c_times_i = -1./2.*(-(R12*(ZP11*(2*vu*ZP21*l3 + vd*ZP22*(l5 + l4)) + ZP12*(2*vu*ZP22*l2 + vd*ZP21*(l4 + l5)))) - R11*(ZP11*(2*vd*ZP21*l1 + vu*ZP22*(l5 + l4)) + ZP12*(2*vd*ZP22*l3 + vu*ZP21*(l4 + l5))) - 2*vS*R13*(ZP11*ZP21*(l4p + l1p + l4p) + ZP12*ZP22*(l5p + l2p + l5p)))
+
+    #h1Hm2Hm1c_times_i = -1./2.*(-(R12*(ZP21*(2*vu*ZP11*l3 + vd*ZP12*(l5 + l4)) + ZP22*(2*vu*ZP12*l2 + vd*ZP11*(l4 + l5)))) - R11*(ZP21*(2*vd*ZP11*l1 + vu*ZP12*(l5 + l4)) + ZP22*(2*vd*ZP12*l3 + vu*ZP11*(l4 + l5))) - 2*vS*R13*(ZP11*ZP21*(l4p + l1p + l4p) + ZP12*ZP22*(l5p + l2p + l5p)))
+
+    #h1Hm2Hm2c_times_i = -1./2.*(-(R12*(ZP21*(2*vu*ZP21*l3 + vd*ZP22*(l5 + l4)) + ZP22*(2*vu*ZP22*l2 + vd*ZP21*(l4 + l5)))) - R11*(ZP21*(2*vd*ZP21*l1 + vu*ZP22*(l5 + l4)) + ZP22*(2*vd*ZP22*l3 + vu*ZP21*(l4 + l5))) - 2*vS*R13*(ZP21**2*(l4p + l1p + l4p) + ZP22**2*(l5p + l2p + l5p)))
+
+    h2Hm1Hm1c_times_i = -1./2.*(-(R22*(ZP11*(2*vu*ZP11*l3 + vd*ZP12*(l5 + l4)) + ZP12*(2*vu*ZP12*l2 + vd*ZP11*(l4 + l5)))) - R21*(ZP11*(2*vd*ZP11*l1 + vu*ZP12*(l5 + l4)) + ZP12*(2*vd*ZP12*l3 + vu*ZP11*(l4 + l5))) - 2*vS*R23*(ZP11**2*(l4p + l1p + l4p) + ZP12**2*(l5p + l2p + l5p)))
+
+    #h2Hm1Hm2c_times_i = -1./2.*(-(R22*(ZP11*(2*vu*ZP21*l3 + vd*ZP22*(l5 + l4)) + ZP12*(2*vu*ZP22*l2 + vd*ZP21*(l4 + l5)))) - R21*(ZP11*(2*vd*ZP21*l1 + vu*ZP22*(l5 + l4)) + ZP12*(2*vd*ZP22*l3 + vu*ZP21*(l4 + l5))) - 2*vS*R23*(ZP11*ZP21*(l4p + l1p + l4p) + ZP12*ZP22*(l5p + l2p + l5p)))
+
+    #h2Hm2Hm1c_times_i = -1./2.*(-(R22*(ZP21*(2*vu*ZP11*l3 + vd*ZP12*(l5 + l4)) + ZP22*(2*vu*ZP12*l2 + vd*ZP11*(l4 + l5)))) - R21*(ZP21*(2*vd*ZP11*l1 + vu*ZP12*(l5 + l4)) + ZP22*(2*vd*ZP12*l3 + vu*ZP11*(l4 + l5))) - 2*vS*R23*(ZP11*ZP21*(l4p + l1p + l4p) + ZP12*ZP22*(l5p + l2p + l5p)))
+
+    #h2Hm2Hm2c_times_i = -1./2.*(-(R22*(ZP21*(2*vu*ZP21*l3 + vd*ZP22*(l5 + l4)) + ZP22*(2*vu*ZP22*l2 + vd*ZP21*(l4 + l5)))) - R21*(ZP21*(2*vd*ZP21*l1 + vu*ZP22*(l5 + l4)) + ZP22*(2*vd*ZP22*l3 + vu*ZP21*(l4 + l5))) - 2*vS*R23*(ZP21**2*(l4p + l1p + l4p) + ZP22**2*(l5p + l2p + l5p)))
+
+    h3Hm1Hm1c_times_i = -1./2.*(-(R32*(ZP11*(2*vu*ZP11*l3 + vd*ZP12*(l5 + l4)) + ZP12*(2*vu*ZP12*l2 + vd*ZP11*(l4 + l5)))) - R31*(ZP11*(2*vd*ZP11*l1 + vu*ZP12*(l5 + l4)) + ZP12*(2*vd*ZP12*l3 + vu*ZP11*(l4 + l5))) - 2*vS*R33*(ZP11**2*(l4p + l1p + l4p) + ZP12**2*(l5p + l2p + l5p)))
+
+    #h3Hm1Hm2c_times_i = -1./2.*(-(R32*(ZP11*(2*vu*ZP21*l3 + vd*ZP22*(l5 + l4)) + ZP12*(2*vu*ZP22*l2 + vd*ZP21*(l4 + l5)))) - R31*(ZP11*(2*vd*ZP21*l1 + vu*ZP22*(l5 + l4)) + ZP12*(2*vd*ZP22*l3 + vu*ZP21*(l4 + l5))) - 2*vS*R33*(ZP11*ZP21*(l4p + l1p + l4p) + ZP12*ZP22*(l5p + l2p + l5p)))
+
+    #h3Hm2Hm1c_times_i = -1./2.*(-(R32*(ZP21*(2*vu*ZP11*l3 + vd*ZP12*(l5 + l4)) + ZP22*(2*vu*ZP12*l2 + vd*ZP11*(l4 + l5)))) - R31*(ZP21*(2*vd*ZP11*l1 + vu*ZP12*(l5 + l4)) + ZP22*(2*vd*ZP12*l3 + vu*ZP11*(l4 + l5))) - 2*vS*R33*(ZP11*ZP21*(l4p + l1p + l4p) + ZP12*ZP22*(l5p + l2p + l5p)))
+
+    #h3Hm2Hm2c_times_i = -1./2.*(-(R32*(ZP21*(2*vu*ZP21*l3 + vd*ZP22*(l5 + l4)) + ZP22*(2*vu*ZP22*l2 + vd*ZP21*(l4 + l5)))) - R31*(ZP21*(2*vd*ZP21*l1 + vu*ZP22*(l5 + l4)) + ZP22*(2*vd*ZP22*l3 + vu*ZP21*(l4 + l5))) - 2*vS*R33*(ZP21**2*(l4p + l1p + l4p) + ZP22**2*(l5p + l2p + l5p)))
+
+    inte_b["lh111_norm"] = h111_times_i/v
+    inte_b["lh112_norm"] = h112_times_i/v
+    inte_b["lh113_norm"] = h113_times_i/v
+    inte_b["lh122_norm"] = h122_times_i/v
+    inte_b["lh123_norm"] = h123_times_i/v
+    inte_b["lh133_norm"] = h133_times_i/v
+    inte_b["lh222_norm"] = h222_times_i/v
+    inte_b["lh223_norm"] = h223_times_i/v
+    inte_b["lh233_norm"] = h233_times_i/v
+    inte_b["lh333_norm"] = h333_times_i/v
+    inte_b["lh1A1A1_norm"] = h1A1A1_times_i/v
+    inte_b["lh2A1A1_norm"] = h2A1A1_times_i/v
+    inte_b["lh3A1A1_norm"] = h3A1A1_times_i/v
+    #inte_b["lh1A2A2_norm"] = h1A2A2_times_i/v
+    #inte_b["lh2A2A2_norm"] = h2A2A2_times_i/v
+    #inte_b["lh3A2A2_norm"] = h3A2A2_times_i/v
+    inte_b["lh1Hm1Hm1c_norm"] = h1Hm1Hm1c_times_i/v
+    #inte_b["lh1Hm1Hm2c_norm"] = h1Hm1Hm2c_times_i/v
+    #inte_b["lh1Hm2Hm1c_norm"] = h1Hm2Hm1c_times_i/v
+    #inte_b["lh1Hm2Hm2c_norm"] = h1Hm2Hm2c_times_i/v
+    inte_b["lh2Hm1Hm1c_norm"] = h2Hm1Hm1c_times_i/v
+    #inte_b["lh2Hm1Hm2c_norm"] = h2Hm1Hm2c_times_i/v
+    #inte_b["lh2Hm2Hm1c_norm"] = h2Hm2Hm1c_times_i/v
+    #inte_b["lh2Hm2Hm2c_norm"] = h2Hm2Hm2c_times_i/v
+    inte_b["lh3Hm1Hm1c_norm"] = h3Hm1Hm1c_times_i/v
+    #inte_b["lh3Hm1Hm2c_norm"] = h3Hm1Hm2c_times_i/v
+    #inte_b["lh3Hm2Hm1c_norm"] = h3Hm2Hm1c_times_i/v
+    #inte_b["lh3Hm2Hm2c_norm"] = h3Hm2Hm2c_times_i/v
+
+    return inte_b
+
 def calc_red_coup(inte_b, R):
     """calculate reduced couplings (later needed in Chi^2 calculation)
     and add to inte_b
@@ -432,7 +557,8 @@ def calc_ch1VV(inte_b, R):
     """
     cosbeta = np.sqrt(1/(1 + inte_b["tanbeta"]**2))
     sinbeta = np.sqrt(1/(1 + 1/inte_b["tanbeta"]**2))
-    ch1VV = cosbeta*R[1,1] + sinbeta*R[1,2]
+    #ch1VV = cosbeta*R[1,1] + sinbeta*R[1,2]
+    ch1VV = cosbeta*R[0,0] + sinbeta*R[0,1]
     return ch1VV
 
 def calc_ch1tt(a1, a2, tanbeta):
@@ -670,7 +796,8 @@ def main_func(mass_b, FILE_OUT):
     inte_b, R = calc_basis_change(mass_b)
     inte_b_w_DM_coup = calc_DM_coup(mass_b, inte_b, R)
     inte_b_w_red_coup = calc_red_coup(inte_b_w_DM_coup, R)
-    save_csv(FILE_OUT, inte_b_w_red_coup)
+    inte_b_w_trilin_coup = calc_trilinear_couplings(inte_b_w_red_coup, R)
+    save_csv(FILE_OUT, inte_b_w_trilin_coup)
     return
 
 if __name__=='__main__':
@@ -678,4 +805,7 @@ if __name__=='__main__':
     FILE_OUT = "output/inte_basis.csv"
     data = read_csv(FILE_IN)
     mass_b = prep_csv(data)
+    # TODO REMOVE THIS
+    mass_b['mHm']=mass_b['mA']
+    mass_b['mutil2']=mass_b['mh1']**2
     main_func(mass_b, FILE_OUT)

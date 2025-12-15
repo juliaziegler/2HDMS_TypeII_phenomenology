@@ -1,3 +1,4 @@
+# Python 3.8.10
 # make scans changing parameters in mass and reduced coupling basis
 # (with constraints as in Cheng Li's)
 #!/bin/bash
@@ -9,7 +10,7 @@ ITERATIONS=1000
 
 # define names of output file and folder
 F=results.csv
-FOLDER=random_scan_find_BP_390_800_900_no95_scan5
+FOLDER=random_scan_25_12_06
 ########################################################
 # main working directory:
 MAIN_DIR=~/Applications/do_scan
@@ -30,6 +31,13 @@ MICROMEGAS_EXE=CalcOmega_with_DDetection_MOv52
 # in which directory are your HiggsTools data sets:
 HB_DIR=~/Applications/hbdataset-master
 HS_DIR=~/Applications/hsdataset-main
+# BSMPT output_folder, template, json file, input file, output file, executable:
+BSMPT_OUT_DIR=~/Applications/do_scan/output_bsmpt
+BSMPT_DIR=~/Applications/BSMPT-3.0.6/build/linux-x86_64-release/bin
+bsmpt_templ=$MAIN_DIR/BSMPT_input.dat_THDMS_Template
+bsmpt_json=$MAIN_DIR/BSMPT_jmod.json
+bsmpt_in=$BSMPT_OUT_DIR/BSMPT_input.dat_THDMS
+bsmpt_out=$BSMPT_OUT_DIR/BSMPT_out.tsv
 ########################################################
 # use this basis change:
 b_change=Basis_Change_NEW_random_scan.py
@@ -149,15 +157,33 @@ do
  # run micrOMEGAs
  $MICROMEGAS_DIR/./$MICROMEGAS_EXE > out.dat
 
- # 4. HiggsTools and other experimental constraints
+ # 4. BSMPT
+ # remove old input and output
+ cd $MAIN_DIR
+ rm $bsmpt_in
+ rm $bsmpt_out
+ # write new input
+ sed -e "s#L1INPUT#$(l1)#" -e "s#L2INPUT#$(l2)#" -e "s#L3INPUT#$(l3)#" \
+      -e "s#L4INPUT#$(l4)#" -e "s#L5INPUT#$(l5)#" -e "s#M122INPUT#$(m122)#" \
+      -e "s#TANBINPUT#$(tanbeta)#" -e "s#MSP2INPUT#$(mSp2)#" \
+      -e "s#L1PINPUT#$(l1p)#" -e "s#L2PINPUT#$(l2p)#" \
+      -e "s#L3PPINPUT#$(l3pp)#" -e "s#L4PINPUT#$(l4p)#" \
+      -e "s#L5PINPUT#$(l5p)#" -e "s#L1PPINPUT#$(l1pp)#" \
+      -e "s#VSINPUT#$(vS)#" \
+     $bsmpt_templ \
+     > $bsmpt_in
+ # run BSMPT
+ $BSMPT_DIR/./BSMPT --json=$bsmpt_json
+
+ # 5. HiggsTools and other experimental constraints
  cd $MAIN_DIR
  # removing old and creating new input file for HiggsTools
  rm $h_tools_in_filenames
  rm $h_tools_in
  rm $h_tools_out
  rm $h_tools_out_print
- head="HB_DIR","HS_DIR","HT_INP","FILE_OUT","FILE_OUT_allowed"
- line1=$HB_DIR,$HS_DIR,$SPHENO_OUT_DIR/SPheno.spc.complexZ2b,$OUTPUT/$F,$OUTPUT/results_allowed.csv
+ head="OUT_DIR","HB_DIR","HS_DIR","HT_INP","FILE_OUT","FILE_OUT_allowed"
+ line1=$OUTPUT,$HB_DIR,$HS_DIR,$SPHENO_OUT_DIR/SPheno.spc.complexZ2b,$OUTPUT/$F,$OUTPUT/results_allowed.csv
  echo $head >> $h_tools_in_filenames
  echo $line1 >> $h_tools_in_filenames
  head1="RelDen","PCS_pb","NCS_pb","BR_h1SS","BR_h2SS","BR_h3SS","BR_h1bb","BR_h1yy"
@@ -181,7 +207,7 @@ do
  # run python HiggsTools
  python3 $h_tools
 
- # 5. save complete SPheno, MicrOMEGAs and HiggsTools output
+ # 6. save complete SPheno, MicrOMEGAs and HiggsTools output
  cp $SPHENO_OUT_DIR/SPheno.spc.complexZ2b $OUTPUT/SPheno_out/SPheno.spc.complexZ2b_$i
  cp $MICROMEGAS_OUT_DIR/out.dat $OUTPUT/Micromegas_out/out_$i.dat
  cp $MICROMEGAS_OUT_DIR/channels2.out $OUTPUT/Micromegas_out/channels2_$i.out

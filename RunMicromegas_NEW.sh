@@ -1,3 +1,4 @@
+# Python 3.8.10
 # 3D version (changing two parameters)
 # make scans changing parameters in mass and reduced coupling basis
 # MASS BASIS params: mh1, mh2, mh3, mA, mAS, mHm, v, vS, tanbeta,
@@ -9,45 +10,45 @@
 LC_NUMERIC=en_US.UTF-8 # changing separator for seq command
 
 ##### start values # {scan range as in Cheng Li's} #####
-mh1=95.4 #96         # {95, 98}
-mh2=125.09 #125.09     # SM Higgs
-mh3=2900               # {800, 1200}
-mA=2900          # {800, 1200}
-mAS=1000         # {200, 500} DM candidate (>62.5 as by ATLAS and CMS)
-mHm=2900         # {800, 1200}
-v=246.220569
-vS=1000  # {100, 2000}
-tanbeta=5          # {1, 10}
-#ch1tt=0.477 #0.36394218991840976 #0.27     # > 0.267, >= ch1bb (<=0.583 but not sure)
-#ch1bb=0.396 #0.12737976647144644 #0.05     # < 0.581
-mutil2=8410000 #812804.1983308262 # m122/(sinbeta*cosbeta)
-#mSp2=-48087.901620072 #-48088.7561783789 #475.490545912366 #-10000.0000
-l1ml3pp=-0.463186776
-#alignm=0.99946 #0.9999986246982658 #1       # {0.98, 1}
-l1m24p=7.61588083 #0             # = l1p - 2*l4p
-l2m25p=-1.9999999920083944e-11 #0              # = l2p - 2*l5p
+mh1=1500              # {95, 98}
+mh2=125.09            # SM Higgs = 125.09
+mh3=100               # {800, 1200}
+mA=1600                # {800, 1200}
+mAS=100        # {200, 500} DM candidate (>62.5 as by ATLAS and CMS)
+mHm=1600               # {800, 1200}
+v=246.220569          # fixed
+vS=10                # {100, 2000}
+tanbeta=1             # {1, 10}
+#ch1tt=0.27           # > 0.267, >= ch1bb (<=0.583 but not sure)
+#ch1bb=0.05           # < 0.581
+mutil2=2250000         # m122/(sinbeta*cosbeta)
+#mSp2=-48088.7561783789
+l1ml3pp=0.5
+#alignm=0.99946       # {0.98, 1}
+l1m24p=1   # = l1p - 2*l4p
+l2m25p=1   # = l2p - 2*l5p
 #lh1=0
 #lh2=7
 #dl14p=-9.69379358278573 # = l4p - l1p
 #dl25p=0.2474516683463732 # = l2p - l5p
-a1=1.3578075872013375
-a2=-1.223439724166791
-a3=1.554271553267687
+a1=0.7853981633974483
+a2=0
+a3=0
 ##### change these params ##############################
-PARAM=mA
-mA=i
-START_VAL=2900
-STOP_VAL=2901
-STEP_SIZE=100
+PARAM=a2
+a2=i
+START_VAL=-0.8
+STOP_VAL=0.8
+STEP_SIZE=0.16
 
-PARAM2=mHm
-mHm=j
-START_VAL2=2900
-STOP_VAL2=2901
-STEP_SIZE2=100
+PARAM2=l1m24p
+l1m24p=j
+START_VAL2=-1
+STOP_VAL2=1
+STEP_SIZE2=0.2
 
 F=results_$PARAM-$PARAM2.csv
-FOLDER=varying_$PARAM-$PARAM2-DM1000_w95
+FOLDER=varying_$PARAM-$PARAM2-CxSM_point
 ########################################################
 # main working directory:
 MAIN_DIR=~/Applications/do_scan
@@ -68,6 +69,13 @@ MICROMEGAS_EXE=CalcOmega_with_DDetection_MOv52
 # in which directory are your HiggsTools data sets:
 HB_DIR=~/Applications/hbdataset-master
 HS_DIR=~/Applications/hsdataset-main
+# BSMPT output_folder, template, json file, input file, output file, executable:
+BSMPT_OUT_DIR=~/Applications/do_scan/output_bsmpt
+BSMPT_DIR=~/Applications/BSMPT-3.0.6/build/linux-x86_64-release/bin
+bsmpt_templ=$MAIN_DIR/BSMPT_input.dat_THDMS_Template
+bsmpt_json=$MAIN_DIR/BSMPT_jmod.json
+bsmpt_in=$BSMPT_OUT_DIR/BSMPT_input.dat_THDMS
+bsmpt_out=$BSMPT_OUT_DIR/BSMPT_out.tsv
 ########################################################
 # use this basis change:
 b_change=Basis_Change_NEW.py
@@ -152,6 +160,7 @@ INDDCS_ZZ() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "Z Z"  | awk '{print 
 INDDCS_gg() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "g g"  | awk '{print $5}'; }
 INDDCS_gammagamma() { cat $MICROMEGAS_OUT_DIR/channels2.out | grep "A A"  | awk '{print $5}'; }
 INDDCS_hihj() { INDDCS_hihj=$(python -c "print($(INDDCS_h1h1)+$(INDDCS_h2h2)+$(INDDCS_h3h3)+$(INDDCS_h1h2)+$(INDDCS_h2h3)+$(INDDCS_h2h1)+$(INDDCS_h3h2)+0)"); echo $INDDCS_hihj; }
+# extract BSMPT output
 
 
 # start scan, iterating over different values for PARAM and PARAM2
@@ -159,7 +168,6 @@ for i in $(seq $START_VAL $STEP_SIZE $STOP_VAL)
 do
  for j in $(seq $START_VAL2 $STEP_SIZE2 $STOP_VAL2);
  do
-
  # 1. Python basis change:
  # remove old and create new bases
  rm $mass_b
@@ -206,15 +214,34 @@ do
  # run micrOMEGAs
  $MICROMEGAS_DIR/./$MICROMEGAS_EXE > out.dat
 
- # 4. HiggsTools and other experimental constraints
+ # 4. BSMPT
+ # remove old input and output
+ cd $MAIN_DIR
+ rm $bsmpt_in
+ rm $bsmpt_out
+ # write new input
+ sed -e "s#L1INPUT#$(l1)#" -e "s#L2INPUT#$(l2)#" -e "s#L3INPUT#$(l3)#" \
+      -e "s#L4INPUT#$(l4)#" -e "s#L5INPUT#$(l5)#" -e "s#M122INPUT#$(m122)#" \
+      -e "s#TANBINPUT#$(tanbeta)#" -e "s#MSP2INPUT#$(mSp2)#" \
+      -e "s#L1PINPUT#$(l1p)#" -e "s#L2PINPUT#$(l2p)#" \
+      -e "s#L3PPINPUT#$(l3pp)#" -e "s#L4PINPUT#$(l4p)#" \
+      -e "s#L5PINPUT#$(l5p)#" -e "s#L1PPINPUT#$(l1pp)#" \
+      -e "s#VSINPUT#$(vS)#" \
+     $bsmpt_templ \
+     > $bsmpt_in
+ # run BSMPT
+ $BSMPT_DIR/./BSMPT --json=$bsmpt_json
+ # ?run CalcTems, CalcGw, ...
+
+ # 5. HiggsTools and other experimental constraints
  cd $MAIN_DIR
  # removing old and creating new input file for HiggsTools
  rm $h_tools_in_filenames
  rm $h_tools_in
  rm $h_tools_out
  rm $h_tools_out_print
- head="HB_DIR","HS_DIR","HT_INP","FILE_OUT","FILE_OUT_allowed"
- line1=$HB_DIR,$HS_DIR,$SPHENO_OUT_DIR/SPheno.spc.complexZ2b,$OUTPUT/$F,$OUTPUT/results_allowed.csv
+ head="OUT_DIR","HB_DIR","HS_DIR","HT_INP","FILE_OUT","FILE_OUT_allowed"
+ line1=$OUTPUT,$HB_DIR,$HS_DIR,$SPHENO_OUT_DIR/SPheno.spc.complexZ2b,$OUTPUT/$F,$OUTPUT/results_allowed.csv
  echo $head >> $h_tools_in_filenames
  echo $line1 >> $h_tools_in_filenames
  head1="RelDen","PCS_pb","NCS_pb","BR_h1SS","BR_h2SS","BR_h3SS","BR_h1bb","BR_h1yy"
@@ -238,7 +265,7 @@ do
  # run python HiggsTools
  python3 $h_tools
 
- # 5. save complete SPheno, MicrOMEGAs and HiggsTools output
+ # 6. save complete SPheno, MicrOMEGAs, and HiggsTools output
  cp $SPHENO_OUT_DIR/SPheno.spc.complexZ2b $OUTPUT/SPheno_out/SPheno.spc.complexZ2b_$i-$j
  cp $MICROMEGAS_OUT_DIR/out.dat $OUTPUT/Micromegas_out/out_$i-$j.dat
  cp $MICROMEGAS_OUT_DIR/channels2.out $OUTPUT/Micromegas_out/channels2_$i-$j.out
@@ -246,5 +273,5 @@ do
  done
 done
 
-# 6. plot results
+# 7. plot results
 python3 $plot_results_py $OUTPUT $F

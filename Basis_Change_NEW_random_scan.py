@@ -11,33 +11,33 @@ def random_bp_generation():
     # TODO this part has to be adapted: define the ranges of variation below
     # NOTE currently the ch1tt and ch1bb checks are turned off
     # choose a bp by random selection of values in the ranges given above
-    mAS = 390 #random_number_gen_w_bounds(np.array([70-5, 70+5]))
-    mh1 = 800 #random_number_gen_w_bounds(np.array([95.4, 95.4]))
+    vS = random_number_gen_w_bounds(np.array([400, 1900]))
+    mAS = random_number_gen_w_bounds(np.array([np.max([vS-900,50]), np.max([vS-400,100])]))
+    mh1 = random_number_gen_w_bounds(np.array([np.max([vS-1400,50]), np.max([vS-400,100])]))
     mh2 = 125.09 #random_number_gen_w_bounds(np.array([125.09, 125.09]))
-    mh3 = 900 #random_number_gen_w_bounds(np.array([150-5, 150+15])) #np.array([2*mAS, 1200])
-    mA = 800 #random_number_gen_w_bounds(np.array([900, 900])) #np.array([mh3-50, mh3+50])
-    mHm = 800 #random_number_gen_w_bounds(np.array([900, 900])) #np.array([mh3-50, mh3+50])
+    mh3 = random_number_gen_w_bounds(np.array([100, 2000])) #np.array([2*mAS, 1200])
+    mA = random_number_gen_w_bounds(np.array([mh1+100, mh1+500])) #np.array([mh3-50, mh3+50])
+    mHm = random_number_gen_w_bounds(np.array([mA-100, mA+50])) #np.array([mh3-50, mh3+50])
     v = 246.220569 #random_number_gen_w_bounds(np.array([246.220569, 246.220569]))
-    tanbeta = random_number_gen_w_bounds(np.array([2.130902-0.5, 2.130902+0.5])) #2.130902
+    tanbeta = random_number_gen_w_bounds(np.array([1, 10])) #2.130902
     #ch1bb = random_number_gen_w_bounds(np.array([-1, 1])) #[0, 0.581]))
     #ch1tt = random_number_gen_w_bounds(np.array([-1, 1])) #[np.max([0.267, ch1bb]), 0.583])) #np.array([0.267, 0.583])
-    mutil2_low, mutil2_up = get_range_for_mutil2_red(v, mA, mHm)
-    mutil2 = random_number_gen_w_bounds(np.array([mutil2_low, mutil2_up]))
+    #mutil2_low, mutil2_up = get_range_for_mutil2_red(v, mA, mHm)
+    mutil2 = random_number_gen_w_bounds(np.array([(mh1-50)**2, (mh1+50)**2]))
     #mSp2 = random_number_gen_w_bounds(np.array([-80000, 600000]))
     #alignm = random_number_gen_w_bounds(np.array([0.998, 1]))
-    l1ml3pp = random_number_gen_w_bounds(np.array([-0.427248-0.01, -0.427248+0.02])) #-0.427248
-    l1m24p = random_number_gen_w_bounds(np.array([0.077784-0.01, 0.077784+0.08])) #0.077784
-    l2m25p = random_number_gen_w_bounds(np.array([0.036923-0.08, 0.036923+0.01])) #0.036923
+    l1ml3pp =  random_number_gen_w_bounds(np.array([0.5, 1])) #-0.427248
+    l1m24p =  random_number_gen_w_bounds(np.array([-1, -0.5])) #0.077784
+    l2m25p =  random_number_gen_w_bounds(np.array([-1, -0.5])) #0.036923
     #lh1 = random_number_gen_w_bounds(np.array([-3, 3]))
     #lh2 = random_number_gen_w_bounds(np.array([-3, 3]))
-    a1 = random_number_gen_w_bounds(np.array([-0.5, -0.2])) #-0.421942
-    a2 = random_number_gen_w_bounds(np.array([-0.01, 0.02])) #-0.014232
-    a3 = random_number_gen_w_bounds(np.array([-0.02, 0.01])) #-0.007314
-    #cosbeta_a1 = random_number_gen_w_bounds(np.array([-1, 1])) # cos(beta-a1)
-    #a1 = -np.arccos(cosbeta_a1) + np.arctan(tanbeta)
+    #a1 = random_number_gen_w_bounds(np.array([-0.54916666427365*0.95, -0.54916666427365*1.05])) #-0.421942
+    a2 = random_number_gen_w_bounds(np.array([-np.pi/2, np.pi/2])) #-0.014232
+    a3 = random_number_gen_w_bounds(np.array([-np.pi/2, np.pi/2])) #-0.007314
+    cosbeta_a1 = random_number_gen_w_bounds(np.array([-0.5, 0.5])) # cos(beta-a1)
+    a1 = -np.arccos(cosbeta_a1) + np.arctan(tanbeta)
     #vS_low, vS_up = get_range_for_vS_red_2(mh1, mh2, mh3, a1, a2, a3, l1ml3pp)
     #vS = random_number_gen_w_bounds(np.array([vS_low, vS_up]))
-    vS = random_number_gen_w_bounds(np.array([587.168152-50, 587.168152+50])) #587.168152
 
     # put into a data frame
     #data = np.array([[mh1, mh2, mh3, mA, mAS, mHm, v, vS, tanbeta,

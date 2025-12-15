@@ -30,8 +30,11 @@ labels_dict = {"dl14p": "$\delta_{14}'$",
                "ch1tt": "$c_{h_1 t t}$",
                "ch1bb": "$c_{h_1 b b}$",
                "mSp2": "$m_{S}'^2 \, [GeV^2]$",
+               "mh1": "$m_{h_1}\, [GeV]$",
                "mh3": "$m_{h_3}\, [GeV]$",
-               "mutil2": "$μ̃2^2 \, [GeV^2]$",
+               "mA": "$m_{A}\, [GeV]$",
+               "mHm": "$m_{H^\pm}\, [GeV]$",
+               "mutil2": "$μ̃^2 \, [GeV^2]$",
                "m122": "$m_{12}^2 \, [GeV^2]$",
                "RelDen": "$\Omega h^2$",
                "PCS_pb": "$\sigma_{proton \, A_S} \, [cm^2]$",
@@ -42,14 +45,14 @@ labels_dict = {"dl14p": "$\delta_{14}'$",
                "BR_h3SS": "$BR(h_3 → A_S A_S)$",
                "Chisq_red": "$\chi^2_{red}$",
                "Chisq_CMS-LEP": "$\chi^2_{CMS-LEP}$",
-               "INDDCS_bb": "$\sigma_{A_S A_S → b b} \, [cm^3/s]$",
-               "INDDCS_tt": "$\sigma_{A_S A_S → t t} \, [cm^3/s]$",
-               "INDDCS_tautau": "$\sigma_{A_S A_S → τ τ} \, [cm^3/s]$",
-               "INDDCS_WW": "$\sigma_{A_S A_S → W W} \, [cm^3/s]$",
-               "INDDCS_h1h1": "$\sigma_{A_S A_S → h_1 h_1} \, [cm^3/s]$",
-               "INDDCS_h2h2": "$\sigma_{A_S A_S → h_2 h_2} \, [cm^3/s]$",
-               "INDDCS_h1h2": "$\sigma_{A_S A_S → h_1 h_2} \, [cm^3/s]$",
-               "INDDCS_hihj": "$\sum_{i,j} \sigma_{A_S A_S → h_i h_j} \, [cm^3/s]$",
+               "INDDCS_bb": "$\sigma_{A_S A_S → b b}$\n$[cm^3/s]$",
+               "INDDCS_tt": "$\sigma_{A_S A_S → t t}$\n$[cm^3/s]$",
+               "INDDCS_tautau": "$\sigma_{A_S A_S → τ τ}$\n$[cm^3/s]$",
+               "INDDCS_WW": "$\sigma_{A_S A_S → W W}$\n$[cm^3/s]$",
+               "INDDCS_h1h1": "$\sigma_{A_S A_S → h_1 h_1}$\n$[cm^3/s]$",
+               "INDDCS_h2h2": "$\sigma_{A_S A_S → h_2 h_2}$\n$[cm^3/s]$",
+               "INDDCS_h1h2": "$\sigma_{A_S A_S → h_1 h_2}$\n$[cm^3/s]$",
+               "INDDCS_hihj": "$\sum_{i,j} \sigma_{A_S A_S → h_i h_j}$\n$[cm^3/s]$",
                "mu_the_LEP": "$\mu_{LEP}$",
                "mu_the_CMS": "$\mu_{CMS}$",
                "l1m24p": "$\lambda_{14}' = \lambda_1' - 2\lambda_4'$",
@@ -67,7 +70,21 @@ labels_dict = {"dl14p": "$\delta_{14}'$",
                "l1pp": "$\lambda_{1}''$",
                "l3pp": "$\lambda_{3}''$",
                "lh1": "$\lambda_{h_1 A_S A_S}/v$",
-               "lh2": "$\lambda_{h_2 A_S A_S}/v$"}
+               "lh2": "$\lambda_{h_2 A_S A_S}/v$",
+               "a1": "$α_1$",
+               "a2": "$α_2$",
+               "a3": "$α_3$",
+               "cosbetaa1": "cos(β-$α_1$)",
+               "v_c/T_c": "$v_c$ / $T_c$",
+               "R11": "$R_{11}$",
+               "R12": "$R_{12}$",
+               "R13": "$R_{13}$",
+               "R21": "$R_{21}$",
+               "R22": "$R_{22}$",
+               "R23": "$R_{23}$",
+               "R31": "$R_{31}$",
+               "R32": "$R_{32}$",
+               "R33": "$R_{33}$"}
 constr_dict = {"RelDen": "Planckallowed",
                "PCS_pb": "LZallowed_p",
                "NCS_pb": "LZallowed_n",
@@ -334,7 +351,7 @@ def plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps):
     #BP_FILE = "BP3_95.4_3x700_new_notation.csv"
     #BP_PATH = "~/SyncandShare/2HDMS/FILES/benchmark_points/mucoll_BP2_new_basis"
     #BP_FILE = "results_mAS-tanbeta.csv"
-    BP_PATH = "~/SyncandShare/2HDMS-Z2breaking_mucoll_paper/benchmark_points/mucoll_BP3"
+    BP_PATH = "~/SyncandShare/2HDMS-Z2breaking_mucoll_paper/benchmark_points/mucoll_DM156_w95"
     BP_FILE = "results_BP3_newbasis.csv"
     BP_data=pd.read_csv(BP_PATH+"/"+BP_FILE)
     #ZFACTOR = get_factor(ZPARAM, BP_data, (1))
@@ -413,13 +430,15 @@ def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
             if type(i)==matplotlib.patches.Patch:
                 circ.append(i)
         # make colorbar
-        bar = fig.colorbar(pos, ax=ax, label=zlabel, format=ax_multipl)
+        bar = fig.colorbar(pos, ax=ax, format=ax_multipl)
+        bar.set_label(label=zlabel, size=fs)
+        #bar.tick_params(labelsize=fsticks)
         # if plotting relic density make a red mark on the color bar at 0.1191 (desired relic density)
         if ZPARAM == 'RelDen':
             bar.ax.axhspan(0.1181, 0.1201, color='red') # 0.1191 +- 0.001
             # NOTE the label for the Planck limit needs to be adjusted by hand
             # one option is to add the labela s text
-            plt.text(np.nanmax(X)-20 , np.nanmax(Y)-0,'Planck\nlimit', color='red', fontsize=8)
+            plt.text(np.nanmax(X)-20 , np.nanmax(Y)+0.5,'Planck\nlimit', color='red', fontsize=fsticks)
             # another option is to add it to the ticks
             #bar_ticks = bar.get_ticks()
             #bar_labels = bar_ticks
@@ -474,11 +493,14 @@ def plot_1(XPARAM, YPARAM, ZPARAM, tick_length, tick_space, line_space, data, sh
             #labels = [r'$\frac{m_{h_2}}{2}$     ', '$m_{h_1}$', '     $m_{h_2}$', r'$\frac{m_{h_3}, m_{A}, m_{H^\pm}}{2}$']
             labels = [r'$\frac{m_{h2}}{2}$    ', '$m_{h1}$', '     $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
             #labels = ['$m_{h2}/2$        ', '$m_{h1}$', '     $m_{h2}$', '$(m_{h3}, m_{A}, m_{H\pm})/2$']
-            axsec.set_xticks(ticks=ticks, labels=labels, fontsize=12)
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-    ax.legend(handles=circ, loc="upper right", framealpha=1)
-    plt.savefig(FILE_OUT, format="png")
+            axsec.set_xticks(ticks=ticks, labels=labels, fontsize=fsticks)
+    ax.set_xlabel(xlabel, fontsize=fs)
+    ax.set_ylabel(ylabel, fontsize=fs)
+    ax.xaxis.set_tick_params(labelsize=fsticks)
+    ax.yaxis.set_tick_params(labelsize=fsticks)
+    fig.axes[1].tick_params(axis="y", labelsize=fsticks)
+    ax.legend(handles=circ, loc="upper right", framealpha=1, fontsize=fsticks)
+    plt.savefig(FILE_OUT, format="png", dpi=300)
     return
 
 def plot_2(XPARAM, YPARAM, ZPARAM1, ZPARAM2, tick_length, tick_space, line_space, data,
@@ -528,12 +550,19 @@ def plot_2(XPARAM, YPARAM, ZPARAM1, ZPARAM2, tick_length, tick_space, line_space
             #labels = [r'$\frac{m_{h_2}}{2}$     ', '$m_{h_1}$', '     $m_{h_2}$', r'$\frac{m_{h_3}, m_{A}, m_{H^\pm}}{2}$']
             labels = [r'$\frac{m_{h2}}{2}$    ', '$m_{h1}$', '     $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
             #labels = ['$m_{h2}/2$        ', '$m_{h1}$', '     $m_{h2}$', '$(m_{h3}, m_{A}, m_{H\pm})/2$']
-            axsec.set_xticks(ticks=ticks, labels=labels, fontsize=12)
-    ax2.set_xlabel(xlabel)
-    ax1.set_ylabel(ylabel)
-    ax2.set_ylabel(ylabel)
-    ax1.legend(handles=circ2, loc="upper right", framealpha=1)
-    plt.savefig(FILE_OUT, format="png")
+            axsec.set_xticks(ticks=ticks, labels=labels, fontsize=fsticks)
+    ax2.set_xlabel(xlabel, fontsize=fs)
+    ax1.set_ylabel(ylabel, fontsize=fs)
+    ax2.set_ylabel(ylabel, fontsize=fs)
+    ax1.xaxis.set_tick_params(labelsize=fsticks)
+    ax1.yaxis.set_tick_params(labelsize=fsticks)
+    ax2.xaxis.set_tick_params(labelsize=fsticks)
+    ax2.yaxis.set_tick_params(labelsize=fsticks)
+    fig.axes[1].tick_params(axis="y", labelsize=fsticks)
+    fig.axes[2].tick_params(axis="y", labelsize=fsticks)
+    fig.axes[3].tick_params(axis="y", labelsize=fsticks)
+    ax1.legend(handles=circ2, loc="upper right", framealpha=1, fontsize=fsticks)
+    plt.savefig(FILE_OUT, format="png", dpi=300)
     return
 
 def plot_3(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZPARAM3, tick_length,
@@ -595,11 +624,22 @@ def plot_3(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZPARAM3, tick_length,
             #labels = [r'$\frac{m_{h_2}}{2}$     ', '$m_{h_1}$', '     $m_{h_2}$', r'$\frac{m_{h_3}, m_{A}, m_{H^\pm}}{2}$']
             labels = [r'$\frac{m_{h2}}{2}$    ', '$m_{h1}$', '     $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
             #labels = ['$m_{h2}/2$        ', '$m_{h1}$', '     $m_{h2}$', '$(m_{h3}, m_{A}, m_{H\pm})/2$']
-            axsec.set_xticks(ticks=ticks, labels=labels, fontsize=12)
-    ax3.set_xlabel(xlabel)
-    ax2.set_ylabel(ylabel)
-    ax1.legend(handles=circ1, loc="upper right", framealpha=1)
-    plt.savefig(FILE_OUT, format="png")
+            axsec.set_xticks(ticks=ticks, labels=labels, fontsize=fsticks)
+    ax3.set_xlabel(xlabel, fontsize=fs)
+    ax2.set_ylabel(ylabel, fontsize=fs)
+    ax1.xaxis.set_tick_params(labelsize=fsticks)
+    ax1.yaxis.set_tick_params(labelsize=fsticks)
+    ax2.xaxis.set_tick_params(labelsize=fsticks)
+    ax2.yaxis.set_tick_params(labelsize=fsticks)
+    ax3.xaxis.set_tick_params(labelsize=fsticks)
+    ax3.yaxis.set_tick_params(labelsize=fsticks)
+    fig.axes[1].tick_params(axis="y", labelsize=fsticks)
+    fig.axes[2].tick_params(axis="y", labelsize=fsticks)
+    fig.axes[3].tick_params(axis="y", labelsize=fsticks)
+    fig.axes[4].tick_params(axis="y", labelsize=fsticks)
+    fig.axes[5].tick_params(axis="y", labelsize=fsticks)
+    ax1.legend(handles=circ1, loc="upper right", framealpha=1, fontsize=fsticks)
+    plt.savefig(FILE_OUT, format="png", dpi=300)
     return
 
 def plot_all_constr_s1(XPARAM, YPARAM, tick_length, tick_space,
@@ -646,8 +686,8 @@ def plot_all_constr_s1(XPARAM, YPARAM, tick_length, tick_space,
     #ax.set_xlim(0,1)
     #ax.set_ylim(-60000,20000)
     #ax.yaxis.set_major_formatter(MagnitudeFormatter(4))
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
+    ax.set_xlabel(xlabel, fontsize=fs)
+    ax.set_ylabel(ylabel, fontsize=fs)
     plt.savefig(FILE_OUT, format="png")
     return
 
@@ -666,10 +706,10 @@ def plot_all_constr_s2(XPARAM, YPARAM, tick_length, tick_space,
     xlabel = labels_dict[XPARAM]
     ylabel = labels_dict[YPARAM]
     # plot the data with constraint lines
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots() #figsize=(6, 5)
     CS=ax.contourf(X,Y,all_allowed, levels=1,
                    colors=["none", "green"])
-    circ0 = mpatches.Patch(edgecolor="green", facecolor="green", label="allowed by all constraints")
+    circ0 = mpatches.Patch(edgecolor="green", facecolor="green", label="allowed region")
     circ1 = plot_constr(X, Y, bfb, "bfb", "solid", tick_length, tick_space,
                                         line_space, ax, "//")
     circ2 = plot_constr(X, Y, unitarity, "unitarity", "solid", tick_length,
@@ -692,7 +732,7 @@ def plot_all_constr_s2(XPARAM, YPARAM, tick_length, tick_space,
             #labels = [r'$\frac{m_{h_2}}{2}$     ', '$m_{h_1}$', '     $m_{h_2}$', r'$\frac{m_{h_3}, m_{A}, m_{H^\pm}}{2}$']
             labels = [r'$\frac{m_{h2}}{2}$    ', '$m_{h1}$', '     $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
             #labels = ['$m_{h2}/2$        ', '$m_{h1}$', '     $m_{h2}$', '$(m_{h3}, m_{A}, m_{H\pm})/2$']
-            axsec.set_xticks(ticks=ticks, labels=labels, fontsize=12)
+            axsec.set_xticks(ticks=ticks, labels=labels, fontsize=fsticks)
     # plot BP
     plot_bp(XPARAM, YPARAM, None, ax, None)
     # make legend
@@ -702,7 +742,7 @@ def plot_all_constr_s2(XPARAM, YPARAM, tick_length, tick_space,
     for i in circ_o:
         if type(i)==matplotlib.patches.Patch:
             circ.append(i)
-    ax.legend(handles=circ, loc="upper right", framealpha=1)
+    ax.legend(handles=circ, loc="upper right", framealpha=1, fontsize=fsticks)
     #ax.set_xlim(0,1)
     #ax.set_ylim(0.015,0.165)
     #ax.set_xlim(100,400)
@@ -710,9 +750,11 @@ def plot_all_constr_s2(XPARAM, YPARAM, tick_length, tick_space,
     #ax.set_xlim(100,500)
     #ax.set_ylim(-60000,20000)
     #ax.yaxis.set_major_formatter(MagnitudeFormatter(4))
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-    plt.savefig(FILE_OUT, format="png")
+    ax.set_xlabel(xlabel, fontsize=fs)
+    ax.set_ylabel(ylabel, fontsize=fs)
+    ax.xaxis.set_tick_params(labelsize=fsticks)
+    ax.yaxis.set_tick_params(labelsize=fsticks)
+    plt.savefig(FILE_OUT, format="png", dpi=300) #bbox_inches='tight'
     return
 
 def plot_all_constr_s3(XPARAM, YPARAM, tick_length, tick_space,
@@ -764,6 +806,194 @@ def plot_all_constr_s3(XPARAM, YPARAM, tick_length, tick_space,
     plt.savefig(FILE_OUT, format="png")
     return
 
+def test_plot(data, param1, param2):
+    fs = 12 # font size
+    factor = 0.5 # rescaling factor for figures
+    ps = 50 # point size for scatter plot
+    figs = (6.4*factor, 4.8*factor)
+
+    #param1="l5"
+    #param2="l4"
+
+    #PATH = "/home/julia/Applications/do_scan/output/random_scan_DM1000_vary_10percent_mutil2constr"
+    #PATH = "/home/julia/Applications/do_scan/output/varying_mh1-mA-2HDMpoint_02"
+    #PATH = "/home/julia/Applications/do_scan/output/random_scan_25_11_24_2HDMpoint_vary_angles"
+    #FILE = "/results_mh1-mA.csv"
+    #FILE = "/results.csv"
+    #data = pd.read_csv(PATH+FILE, sep=",", header=0)
+
+    fig, ax = plt.subplots(1,1, figsize=figs)
+    #IND = np.where(data["allallowed"]>0)[0]
+    IND = np.where(data["v_c/T_c"]>-1)[0]
+    #IND = np.where(data["v_c/T_c"]>1)[0]
+    # plotting cos(beta-a1)
+    beta = np.arctan(data['tanbeta'])
+    a1 = data['a1']
+    cosbetaa1 = np.cos(beta-a1)
+    # plotting signlet admixture
+    h1singletadmix=data['R13']**2
+    h2singletadmix=data['R23']**2
+    h3singletadmix=data['R33']**2
+
+    pos = ax.scatter(data[param1], data[param2], c='gray', s=ps) 
+    pos = ax.scatter(data[param1][IND], data[param2][IND], c=data['v_c/T_c'][IND], s=ps) #allallowed
+    bar = fig.colorbar(pos)
+    bar.set_label(labels_dict['v_c/T_c'], size=fs) #allowed by all constr.
+    ax.set_xlabel(labels_dict[param1], fontsize=fs)
+    ax.set_ylabel(labels_dict[param2], fontsize=fs)
+    #ax.set_title("2HDM point, random scan, $m_{A_S}$ = 1000 GeV, \n$μ̃ = m_{h_1}$ = 500 GeV, $m_{h_3}$ = 1500 GeV, $m_A$ = $m_{H^\pm}$ = varied, \n$v_S$ = varied, $\lambda_{13}''$ = varied, $\lambda_{14}'$ = varied, $\lambda_{25}'$ = varied, \n$α_1$ = varied, $α_2$ = varied, $α_3$ = varied, tan$β$ = 1.5 \n allowed points", fontsize=fs)
+    ax.xaxis.set_tick_params(labelsize=fs-2)
+    ax.yaxis.set_tick_params(labelsize=fs-2)
+    fig.axes[1].tick_params(axis="y", labelsize=fs-2)
+    plt.show()
+    return
+
+def load_all_old_scans():
+    PATH = "/home/julia/Applications/do_scan/output"
+
+    RANDOM = []
+    RANDOM.append("/random_scan_25_10_22_01/results.csv")
+    RANDOM.append("/random_scan_25_10_22_02/results.csv")
+    RANDOM.append("/random_scan_25_11_05/results.csv")
+    RANDOM.append("/random_scan_25_11_06/results.csv")
+    RANDOM.append("/random_scan_25_11_07/results.csv")
+    RANDOM.append("/random_scan_25_11_10/results.csv")
+    RANDOM.append("/random_scan_25_11_13/results.csv")
+    RANDOM.append("/random_scan_25_11_17_BP2HDM/results.csv")
+    RANDOM.append("/random_scan_25_11_19_TEST/results.csv")
+    RANDOM.append("/random_scan_25_11_24_2HDMpoint_vary_angles/results.csv")
+    RANDOM.append("/random_scan_25_12_01_open_angles/results.csv")
+    RANDOM.append("/random_scan_25_12_05/results.csv")
+    RANDOM.append("/random_scan_25_12_06/results.csv")
+    RANDOM.append("/random_scan_DM1000_vary_10percent_mutil2constr/results.csv")
+    RANDOM.append("/random_scan_DM1000_vary_5percent/results.csv")
+    RANDOM.append("/random_scan_DM1000_vary_heavy_masses_vs_tb_a123/results.csv")
+    RANDOM.append("/random_scan_DM1000_vary_heavy_masses_vs_tb_coupl_a123/results.csv")
+    RANDOM.append("/random_scan_DM1000_vary_new/results.csv")
+    RANDOM.append("/random_scan_DM1000_vary_new2/results.csv")
+    RANDOM.append("/random_scan_DM1000_vary_new3/results.csv")
+    RANDOM.append("/random_scan_DM1000_vary_new4/results.csv")
+    RANDOM.append("/random_scan_DM55_w95_vary_10percent/results.csv")
+    RANDOM.append("/random_scan_DM55_w95_vary_5percent/results.csv")
+    RANDOM.append("/random_scan_DM55_w95_vary_5percent_mutil2constr/results.csv")
+    RANDOM.append("/random_scan_DM55_w95_vary_heavy_masses/results.csv")
+    RANDOM.append("/random_scan_DM55_w95_vary_heavy_masses_vs_tb_coupl/results.csv")
+    RANDOM.append("/random_scan_DM55_w95_vary_heavy_masses_vs_tb_coupl_a123/results.csv")
+    RANDOM.append("/random_scan_test/results.csv")
+    
+    VARY = []
+    VARY.append("/varying_a1-a3-best_point_from_scan/results_a1-a3.csv")
+    VARY.append("/varying_a2-a3-best_point_from_scan/results_a2-a3.csv")
+    VARY.append("/varying_l1m24p-l2m25p-best_point_from_scan/results_l1m24p-l2m25p.csv")
+    VARY.append("/varying_l1ml3pp-mutil2-best_point_from_scan/results_l1ml3pp-mutil2.csv")
+    VARY.append("/varying_mh1-mA-2HDMpoint_02/results_mh1-mA.csv")
+    VARY.append("/varying_mh1-mA-2HDMpoint_03/results_mh1-mA.csv")
+    VARY.append("/varying_mh1-mA-best_point_from_scan/results_mh1-mA.csv")
+    VARY.append("/varying_mh1-mh3-best_point_from_scan/results_mh1-mh3.csv")
+    VARY.append("/varying_mh3-mA-best_point_from_scan/results_mh3-mA.csv")
+    VARY.append("/varying_mutil2-vS-DM1000/results_mutil2-vS.csv")
+    VARY.append("/varying_vS-tanbeta-best_point_from_scan/results_vS-tanbeta.csv")
+
+    dataRANDOM = []
+    for i in range(len(RANDOM)):
+        dataRANDOM.append(pd.read_csv(PATH+RANDOM[i], sep=",", header=0))
+    
+    dataVARY = []
+    for i in range(len(VARY)):
+        dataVARY.append(pd.read_csv(PATH+VARY[i], sep=",", header=0))
+    
+    dataRANDOMconcat = pd.concat(dataRANDOM, ignore_index=True)
+    dataVARYconcat = pd.concat(dataVARY, ignore_index=True)
+    dataall = pd.concat([dataRANDOMconcat, dataVARYconcat], ignore_index=True)
+    
+    return dataall
+
+def find_correlation_one(data, param):
+    data_comp = data["v_c/T_c"]
+    data_diff = data[param]
+    x_label = labels_dict[param]
+    find_correlation(data_comp, data_diff, x_label)
+
+def find_correlation_two(data, param1, param2):
+    data_comp = data["v_c/T_c"]
+    data_diff = data[param1]-data[param2]
+    x_label = labels_dict[param1] + " - " + labels_dict[param2]
+    find_correlation(data_comp, data_diff, x_label)
+
+def find_correlation(data_comp, data_diff, x_label):
+    data_diff_min = np.nanmin(data_diff)
+    data_diff_max = np.nanmax(data_diff)
+    bins, bin_size = make_bins_around_0(data_diff_min, data_diff_max, 100)
+
+    IND_w_cond = np.where(data_comp > 0)[0]
+    IND_corr = np.where(data_comp < -1)[0] # correct these (values < -1 should be counted as -1)
+    data_comp[IND_corr] = -1 # corrected
+    bin_center = []
+    pt_average_norm = []
+    pt_strength_norm = []
+    total_in_bin_count = []
+    for i in range(len(bins)-1):
+        #bin_borders.append([bins[i],bins[i+1]])
+        bin_center.append(bins[i]+bin_size/2)
+        IND_greater = np.where(data_diff > bins[i])[0]
+        IND_lower = np.where(data_diff < bins[i+1])[0]
+        IND_in_bin = np.intersect1d(IND_greater, IND_lower)
+        
+        IND_in_bin_w_cond = np.intersect1d(IND_in_bin, IND_w_cond)
+        total_in_bin = len(IND_in_bin)
+        total_in_bin_count.append(total_in_bin)
+        pt_sum_in_bin = np.sum(data_comp[IND_in_bin])
+        pt_average_norm.append(pt_sum_in_bin / total_in_bin)
+        pt_strength_in_bin = np.sum(data_comp[IND_in_bin_w_cond])
+        pt_strength_norm.append(pt_strength_in_bin / total_in_bin)
+    
+    label_strength = 'strength of PT / counts in bin'
+    label_count = 'total counts in bin'
+    label_average = 'sum of $v_c / T_c$ / counts in bin'
+    make_plot_double_y_axis(bin_center, pt_strength_norm, total_in_bin_count, x_label, label_strength, label_count)
+    #make_plot_double_y_axis(bin_center, pt_average_norm, total_in_bin_count, x_label, label_average, label_count)
+    return pt_strength_norm, pt_sum_in_bin, bin_center
+
+def make_plot_double_y_axis(x_vals, y1_vals, y2_vals, x_label, y1_label, y2_label):
+    fig, ax1 = plt.subplots()
+    ax1.plot(x_vals, y1_vals, 'blue')
+    ax1.set_xlabel(x_label)
+    ax1.set_ylabel(y1_label, color='blue')
+    ax1.tick_params(axis='y', labelcolor='blue')
+    ax2 = ax1.twinx()
+    ax2.plot(x_vals, y2_vals, 'orange')
+    ax2.set_ylabel(y2_label, color='orange')
+    ax2.set_yscale('log')
+    ax2.tick_params(axis='y', labelcolor='orange')
+    plt.show()
+    return
+
+def get_indices_of_viable_points(data):
+    IND_sfopt = np.where(data["v_c/T_c"] > 1)[0]
+    IND_allallowed = np.where(data["allallowed"] == 1)[0]
+
+    IND_viable = np.intersect1d(IND_sfopt, IND_allallowed)
+    return IND_viable
+
+def make_bins_around_0(min, max, steps):
+    interval_size = (max - min) / steps
+    array_lower = -np.flip(np.arange(interval_size/2, -min, interval_size))
+    array_upper = np.arange(interval_size/2, max, interval_size)
+    bins = np.append(array_lower, array_upper)
+    return bins, interval_size
+
+def remove_high_values_lambdas(data):
+    params_list = ["l1", "l2", "l3", "l4", "l5", "l1p", "l2p", "l4p", "l5p", "l1pp", "l3pp"]
+    threshold = 4*np.pi
+    for i in params_list:
+        data = remove_high_values(data, i, threshold)
+    return data
+
+def remove_high_values(data, param, threshold):
+    IND_trash = np.where(np.abs(data[param]) > threshold)[0]
+    data[param][IND_trash] = np.NaN
+    return data
+
 def main():
     # get path and name of input file from command line with sys
     PATH = sys.argv[1]
@@ -775,6 +1005,9 @@ def main():
     plot_all(data, PATH)
     return
 
-
 if __name__=='__main__':
-    main()
+    fs = 14 # font size
+    fsticks = 12 # font size  for tick labels
+    #main()
+
+# TODO JZ: put a few plots on collab and explain

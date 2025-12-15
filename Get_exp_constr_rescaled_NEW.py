@@ -8,6 +8,9 @@ import numpy as np
 def read_csv(FILE):
     data = pd.read_csv(FILE, sep=",", header=0)
     return data
+def read_tsv(FILE):
+    data = pd.read_csv(FILE, sep="\t", header=0)
+    return data
 def read_dat(FILE):
     data = pd.read_csv(FILE, sep="\n", header=None)
     return data
@@ -198,6 +201,10 @@ def get_higgstools(data):
         hsChisq (float): Chi^2 value from HiggsSignals
         hsChisq_red (float): reduced Chi^2 value from HiggsSignals
     """
+    import pylha
+    from collections import defaultdict
+
+    HT_INP = data["HT_INP"][0]
     # IDs of the particles for 2HDMStypeII
     neutralIds=[25, 35, 45, 36]
     neutralIds2=["25", "35", "45", "36"]
@@ -206,12 +213,40 @@ def get_higgstools(data):
     doublechargedIds=[]
     doublechargedIds2=[]
 
-    HT_INP = data["HT_INP"][0]
-    bounds = HB.Bounds(data["HB_DIR"][0])
-    signals = HS.Signals(data["HS_DIR"][0])
-    OUT=hinput.readHB5SLHA(HT_INP, neutralIds, chargedIds)
+    try:
+        OUT=hinput.readHB5SLHA(HT_INP, neutralIds, chargedIds)
+    except ValueError:
+        neutralIds=[]
+        neutralIds2=[]
+        chargedIds=[]
+        chargedIds2=[]
+        # checking that decays of all particles are in Spheno.spc
+        # Note: it can happen that a decoupled particle has no decays,
+        # in that case we only include the remaining particles in the HB check
+        with open(HT_INP,'r') as slhafile:
+            lines = slhafile.read()
+            slha = pylha.load(lines)
+        if "25" in slha['DECAY'].keys():
+            neutralIds.append(25)
+            neutralIds2.append("25")   
+        if "35" in slha['DECAY'].keys():
+            neutralIds.append(35)
+            neutralIds2.append("35")
+        if "45" in slha['DECAY'].keys():
+            neutralIds.append(45)
+            neutralIds2.append("45")   
+        if "36" in slha['DECAY'].keys():
+            neutralIds.append(36)
+            neutralIds2.append("36")   
+        if "37" in slha['DECAY'].keys():
+            chargedIds.append(37)
+            chargedIds2.append("37")   
+        OUT=hinput.readHB5SLHA(HT_INP, neutralIds, chargedIds)
+
     PRED=hinput.predictionsFromDict(OUT, neutralIds2, chargedIds2,
                                 doublechargedIds2)
+    bounds = HB.Bounds(data["HB_DIR"][0])
+    signals = HS.Signals(data["HS_DIR"][0])
     hbResult = bounds(PRED)
     hsChisq = signals(PRED)
     hsChisq_red = hsChisq / signals.observableCount()
@@ -346,11 +381,26 @@ def main_func(data, mass_b, inte_b, microm_spheno, FILE_OUT_h_tools, FILE_OUT_h_
         print(hbResult, file=f)
     return
 
+def read_concat_and_save_bsmpt(data, FILE_new):
+    data['OUT_DIR'][0]
+    FILE_old = data['OUT_DIR'][0]+"/bsmpt_out_all.csv"
+    try:
+        data_old = pd.read_csv(FILE_old, sep=",", header=0)
+        data_new = pd.read_csv(FILE_new, sep="\t", header=0)
+        data_concat = pd.concat([data_old,data_new])
+        save_csv(FILE_old,data_concat)
+    except:
+        data_new = pd.read_csv(FILE_new, sep="\t", header=0)
+        save_csv(FILE_old,data_new)
+    return data_new
+
+
 if __name__=='__main__':
     FILE_IN = "output/h_tools_in_filenames.csv"
     FILE_IN_mass_b = "output/mass_basis.csv"
     FILE_IN_inte_b = "output/inte_basis.csv"
     FILE_IN_microm_spheno = "output/h_tools_in.csv"
+    FILE_IN_bsmpt = "output_bsmpt/BSMPT_out.tsv"
     FILE_OUT_h_tools = "output/h_tools_out.csv"
     FILE_OUT_h_tools_print = "output/h_tools_out_print.txt"
     data = read_csv(FILE_IN)
@@ -359,4 +409,6 @@ if __name__=='__main__':
     inte_b = read_csv(FILE_IN_inte_b)
     inte_b_prep = prep_csv(inte_b)
     microm_spheno = read_csv(FILE_IN_microm_spheno)
-    main_func(data, mass_b_prep, inte_b_prep, microm_spheno, FILE_OUT_h_tools, FILE_OUT_h_tools_print)
+    bsmpt = read_concat_and_save_bsmpt(data, FILE_IN_bsmpt)
+    microm_spheno_bsmpt = pd.concat([microm_spheno,bsmpt['v_c/T_c']],axis=1) # adding v_c/T_c to the data frame
+    main_func(data, mass_b_prep, inte_b_prep, microm_spheno_bsmpt, FILE_OUT_h_tools, FILE_OUT_h_tools_print)

@@ -1,0 +1,235 @@
+# random scan from 25_10_22
+# random scan from 25_11_05 has variation of angles:
+#    a2 = random_number_gen_w_bounds(np.array([-np.pi/4, np.pi/4])) #-0.014232
+#    a3 = random_number_gen_w_bounds(np.array([-np.pi/4, np.pi/4])) #-0.007314
+#    cosbeta_a1 = random_number_gen_w_bounds(np.array([-0.5, 0.5])) # cos(beta-a1)
+#    a1 = -np.arccos(cosbeta_a1) + np.arctan(tanbeta)
+# random scan from 25_11_13 has variation mutil=[mA-100,mA+100]
+# random scan from 25_12_01 has variation mutil=[mh1-50,mh1+50] and opened angles
+    mAS = random_number_gen_w_bounds(np.array([100, 1500]))
+    mh1 = random_number_gen_w_bounds(np.array([700, 1500]))
+    mh2 = 125.09 #random_number_gen_w_bounds(np.array([125.09, 125.09]))
+    mh3 = random_number_gen_w_bounds(np.array([100, 2000])) #np.array([2*mAS, 1200])
+    mA = random_number_gen_w_bounds(np.array([mh1-100, mh1+100])) #np.array([mh3-50, mh3+50])
+    mHm = random_number_gen_w_bounds(np.array([mh1-100, mh1+100])) #np.array([mh3-50, mh3+50])
+    v = 246.220569 #random_number_gen_w_bounds(np.array([246.220569, 246.220569]))
+    tanbeta = random_number_gen_w_bounds(np.array([1, 10])) #2.130902
+    #ch1bb = random_number_gen_w_bounds(np.array([-1, 1])) #[0, 0.581]))
+    #ch1tt = random_number_gen_w_bounds(np.array([-1, 1])) #[np.max([0.267, ch1bb]), 0.583])) #np.array([0.267, 0.583])
+    mutil2_low, mutil2_up = get_range_for_mutil2_red(v, mA, mHm)
+    mutil2 = random_number_gen_w_bounds(np.array([mutil2_low, mutil2_up]))
+    #mSp2 = random_number_gen_w_bounds(np.array([-80000, 600000]))
+    #alignm = random_number_gen_w_bounds(np.array([0.998, 1]))
+    l1ml3pp =  random_number_gen_w_bounds(np.array([-3, 3])) #-0.427248
+    l1m24p =  random_number_gen_w_bounds(np.array([-3, 3])) #0.077784
+    l2m25p =  random_number_gen_w_bounds(np.array([-3, 3])) #0.036923
+    #lh1 = random_number_gen_w_bounds(np.array([-3, 3]))
+    #lh2 = random_number_gen_w_bounds(np.array([-3, 3]))
+    #a1 = random_number_gen_w_bounds(np.array([-0.54916666427365*0.95, -0.54916666427365*1.05])) #-0.421942
+    a2 = 0 #random_number_gen_w_bounds(np.array([-np.pi/4, np.pi/4])) #-0.014232
+    a3 = 0 #random_number_gen_w_bounds(np.array([-np.pi/4, np.pi/4])) #-0.007314
+    cosbeta_a1 = 0 #random_number_gen_w_bounds(np.array([-0.1, 0.1])) # cos(beta-a1)
+    a1 = -np.arccos(cosbeta_a1) + np.arctan(tanbeta)
+    vS_low, vS_up = get_range_for_vS_red_2(mh1, mh2, mh3, a1, a2, a3, l1ml3pp)
+    vS = random_number_gen_w_bounds(np.array([vS_low, vS_up]))
+    #vS = random_number_gen_w_bounds(np.array([2271.32341760004*0.95, 2271.32341760004*1.05])) #587.168152
+
+# random scan from 25_11_07 masses from JL
+    mutil2 = random_number_gen_w_bounds(np.array([500**2, 1800**2]))
+    mutil = np.sqrt(mutil2)
+    mAS = random_number_gen_w_bounds(np.array([100, 1500]))
+    mh1 = random_number_gen_w_bounds(np.array([0.937786*mutil+17, 0.937786*mutil+157]))
+    mh2 = 125.09 #random_number_gen_w_bounds(np.array([125.09, 125.09]))
+    mh3 = random_number_gen_w_bounds(np.array([100, 2000])) #np.array([2*mAS, 1200])
+    mA = random_number_gen_w_bounds(np.array([1.0348354430379745*mutil-135, 1.0348354430379745*mutil+75])) #np.array([mh3-50, mh3+50])
+    mHm = random_number_gen_w_bounds(np.array([0.97541*mutil-52, 0.97541*mutil+167])) #np.array([mh3-50, mh3+50])
+    v = 246.220569 #random_number_gen_w_bounds(np.array([246.220569, 246.220569]))
+    tanbeta = random_number_gen_w_bounds(np.array([1, 10])) #2.130902
+    #ch1bb = random_number_gen_w_bounds(np.array([-1, 1])) #[0, 0.581]))
+    #ch1tt = random_number_gen_w_bounds(np.array([-1, 1])) #[np.max([0.267, ch1bb]), 0.583])) #np.array([0.267, 0.583])
+    #mutil2_low, mutil2_up = get_range_for_mutil2_red(v, mA, mHm)
+    #mutil2 = random_number_gen_w_bounds(np.array([mutil2_low, mutil2_up]))
+    #mSp2 = random_number_gen_w_bounds(np.array([-80000, 600000]))
+    #alignm = random_number_gen_w_bounds(np.array([0.998, 1]))
+    l1ml3pp =  random_number_gen_w_bounds(np.array([-3, 3])) #-0.427248
+    l1m24p =  random_number_gen_w_bounds(np.array([-3, 3])) #0.077784
+    l2m25p =  random_number_gen_w_bounds(np.array([-3, 3])) #0.036923
+    #lh1 = random_number_gen_w_bounds(np.array([-3, 3]))
+    #lh2 = random_number_gen_w_bounds(np.array([-3, 3]))
+    #a1 = random_number_gen_w_bounds(np.array([-0.54916666427365*0.95, -0.54916666427365*1.05])) #-0.421942
+    a2 = random_number_gen_w_bounds(np.array([-np.pi/4, np.pi/4])) #-0.014232
+    a3 = random_number_gen_w_bounds(np.array([-np.pi/4, np.pi/4])) #-0.007314
+    cosbeta_a1 = random_number_gen_w_bounds(np.array([-0.5, 0.5])) # cos(beta-a1)
+    a1 = -np.arccos(cosbeta_a1) + np.arctan(tanbeta)
+    vS_low, vS_up = get_range_for_vS_red_2(mh1, mh2, mh3, a1, a2, a3, l1ml3pp)
+    vS = random_number_gen_w_bounds(np.array([vS_low, vS_up]))
+    #vS = random_number_gen_w_bounds(np.array([2271.32341760004*0.95, 2271.32341760004*1.05])) #587.168152
+
+#random scan from 25_11_17 (2HDM point, DM decoupled)
+#random scan from 25_11_24 has variation opening angles a1, a2, a3
+    mAS = 1000 #random_number_gen_w_bounds(np.array([100, 1500]))
+    mh1 = 500 #random_number_gen_w_bounds(np.array([700, 1500]))
+    mh2 = 125.09 #random_number_gen_w_bounds(np.array([125.09, 125.09]))
+    mh3 = 1500 #random_number_gen_w_bounds(np.array([100, 2000])) #np.array([2*mAS, 1200])
+    mA = random_number_gen_w_bounds(np.array([680, 750])) #np.array([mh3-50, mh3+50])
+    mHm = mA #random_number_gen_w_bounds(np.array([mh1-100, mh1+100])) #np.array([mh3-50, mh3+50])
+    v = 246.220569 #random_number_gen_w_bounds(np.array([246.220569, 246.220569]))
+    tanbeta = 1.5 #random_number_gen_w_bounds(np.array([1, 10])) #2.130902
+    #ch1bb = random_number_gen_w_bounds(np.array([-1, 1])) #[0, 0.581]))
+    #ch1tt = random_number_gen_w_bounds(np.array([-1, 1])) #[np.max([0.267, ch1bb]), 0.583])) #np.array([0.267, 0.583])
+    #mutil2_low, mutil2_up = get_range_for_mutil2_red(v, mA, mHm)
+    #mutil2 = random_number_gen_w_bounds(np.array([mutil2_low, mutil2_up]))
+    mutil2 = mh1**2 #random_number_gen_w_bounds(np.array([(mA-100)**2, (mA+100)**2]))
+    #mSp2 = random_number_gen_w_bounds(np.array([-80000, 600000]))
+    #alignm = random_number_gen_w_bounds(np.array([0.998, 1]))
+    l1ml3pp =  random_number_gen_w_bounds(np.array([-1, 1])) #-0.427248
+    l1m24p =  random_number_gen_w_bounds(np.array([-1, 1])) #0.077784
+    l2m25p =  random_number_gen_w_bounds(np.array([-1, 1])) #0.036923
+    #lh1 = random_number_gen_w_bounds(np.array([-3, 3]))
+    #lh2 = random_number_gen_w_bounds(np.array([-3, 3]))
+    #a1 = random_number_gen_w_bounds(np.array([-0.54916666427365*0.95, -0.54916666427365*1.05])) #-0.421942
+    a2 = 0 #random_number_gen_w_bounds(np.array([-np.pi/4, np.pi/4])) #-0.014232
+    a3 = 0 #random_number_gen_w_bounds(np.array([-np.pi/4, np.pi/4])) #-0.007314
+    cosbeta_a1 = 0 #random_number_gen_w_bounds(np.array([-0.1, 0.1])) # cos(beta-a1)
+    a1 = -np.arccos(cosbeta_a1) + np.arctan(tanbeta)
+    vS_low, vS_up = get_range_for_vS_red_2(mh1, mh2, mh3, a1, a2, a3, l1ml3pp)
+    vS = random_number_gen_w_bounds(np.array([vS_low, vS_up]))
+    #vS = random_number_gen_w_bounds(np.array([2271.32341760004*0.95, 2271.32341760004*1.05])) #587.168152
+
+
+#random scan DM55_w95, \pm 5%, mutil2=[300000, 500000]
+    mAS = random_number_gen_w_bounds(np.array([55.5961128*0.95, 55.5961128*1.05]))
+    mh1 = random_number_gen_w_bounds(np.array([95.4*0.95, 95.4*1.05]))
+    mh2 = 125.09 #random_number_gen_w_bounds(np.array([125.09, 125.09]))
+    mh3 = random_number_gen_w_bounds(np.array([650*0.95, 650*1.05])) #np.array([2*mAS, 1200])
+    mA = random_number_gen_w_bounds(np.array([800*0.95, 800*1.05])) #np.array([mh3-50, mh3+50])
+    mHm = random_number_gen_w_bounds(np.array([800*0.95, 800*1.05])) #np.array([mh3-50, mh3+50])
+    v = 246.220569 #random_number_gen_w_bounds(np.array([246.220569, 246.220569]))
+    tanbeta = random_number_gen_w_bounds(np.array([2*0.95, 2*1.05])) #2.130902
+    #ch1bb = random_number_gen_w_bounds(np.array([-1, 1])) #[0, 0.581]))
+    #ch1tt = random_number_gen_w_bounds(np.array([-1, 1])) #[np.max([0.267, ch1bb]), 0.583])) #np.array([0.267, 0.583])
+    #mutil2_low, mutil2_up = get_range_for_mutil2_red(v, mA, mHm)
+    #mutil2 = random_number_gen_w_bounds(np.array([mutil2_low, mutil2_up]))
+    mutil2 = random_number_gen_w_bounds(np.array([300000, 500000]))
+    #mSp2 = random_number_gen_w_bounds(np.array([-80000, 600000]))
+    #alignm = random_number_gen_w_bounds(np.array([0.998, 1]))
+    l1ml3pp =  random_number_gen_w_bounds(np.array([-0.0257350607*0.95, -0.0257350607*1.05])) #-0.427248
+    l1m24p =  random_number_gen_w_bounds(np.array([0.0020912398*0.95, 0.0020912398*1.05])) #0.077784
+    l2m25p =  random_number_gen_w_bounds(np.array([0.0007461144*0.95, 0.0007461144*1.05])) #0.036923
+    #lh1 = random_number_gen_w_bounds(np.array([-3, 3]))
+    #lh2 = random_number_gen_w_bounds(np.array([-3, 3]))
+    a1 = random_number_gen_w_bounds(np.array([1.21278589371893*0.95, 1.21278589371893*1.05])) #-0.421942
+    a2 = random_number_gen_w_bounds(np.array([-1.26978779568142*0.95, -1.26978779568142*1.05])) #-0.014232
+    a3 = random_number_gen_w_bounds(np.array([-1.48638316563495*0.95, -1.48638316563495*1.05])) #-0.007314
+    #cosbeta_a1 = 0 #random_number_gen_w_bounds(np.array([-0.1, 0.1])) # cos(beta-a1)
+    #a1 = -np.arccos(cosbeta_a1) + np.arctan(tanbeta)
+    #vS_low, vS_up = get_range_for_vS_red_2(mh1, mh2, mh3, a1, a2, a3, l1ml3pp)
+    #vS = random_number_gen_w_bounds(np.array([vS_low, vS_up]))
+    vS = random_number_gen_w_bounds(np.array([300*0.95, 300*1.05])) #587.168152
+
+#random scan DM1000, \pm 10%, mutil2=[400000,800000]
+    mAS = random_number_gen_w_bounds(np.array([1000*0.9, 1000*1.1]))
+    mh1 = random_number_gen_w_bounds(np.array([800*0.9, 800*1.1]))
+    mh2 = 125.09 #random_number_gen_w_bounds(np.array([125.09, 125.09]))
+    mh3 = random_number_gen_w_bounds(np.array([2900*0.9, 2900*1.1])) #np.array([2*mAS, 1200])
+    mA = random_number_gen_w_bounds(np.array([800*0.9, 800*1.1])) #np.array([mh3-50, mh3+50])
+    mHm = random_number_gen_w_bounds(np.array([800*0.9, 800*1.1])) #np.array([mh3-50, mh3+50])
+    v = 246.220569 #random_number_gen_w_bounds(np.array([246.220569, 246.220569]))
+    tanbeta = random_number_gen_w_bounds(np.array([1.34136253458193*0.9, 1.34136253458193*1.1])) #2.130902
+    #ch1bb = random_number_gen_w_bounds(np.array([-1, 1])) #[0, 0.581]))
+    #ch1tt = random_number_gen_w_bounds(np.array([-1, 1])) #[np.max([0.267, ch1bb]), 0.583])) #np.array([0.267, 0.583])
+    #mutil2_low, mutil2_up = get_range_for_mutil2_red(v, mA, mHm)
+    #mutil2 = random_number_gen_w_bounds(np.array([mutil2_low, mutil2_up]))
+    mutil2 = random_number_gen_w_bounds(np.array([562500, 765625]))
+    #mSp2 = random_number_gen_w_bounds(np.array([-80000, 600000]))
+    #alignm = random_number_gen_w_bounds(np.array([0.998, 1]))
+    l1ml3pp =  random_number_gen_w_bounds(np.array([-0.415408383211457*0.9, -0.415408383211457*1.1])) #-0.427248
+    l1m24p =  random_number_gen_w_bounds(np.array([0.328727667351931*0.9, 0.328727667351931*1.1])) #0.077784
+    l2m25p =  random_number_gen_w_bounds(np.array([0.213200105718739*0.9, 0.213200105718739*1.1])) #0.036923
+    #lh1 = random_number_gen_w_bounds(np.array([-3, 3]))
+    #lh2 = random_number_gen_w_bounds(np.array([-3, 3]))
+    a1 = random_number_gen_w_bounds(np.array([-0.54916666427365*0.9, -0.54916666427365*1.1])) #-0.421942
+    a2 = random_number_gen_w_bounds(np.array([0.036530244646533*0.9, 0.036530244646533*1.1])) #-0.014232
+    a3 = random_number_gen_w_bounds(np.array([-0.056095044927956*0.9, -0.056095044927956*1.1])) #-0.007314
+    #cosbeta_a1 = 0 #random_number_gen_w_bounds(np.array([-0.1, 0.1])) # cos(beta-a1)
+    #a1 = -np.arccos(cosbeta_a1) + np.arctan(tanbeta)
+    #vS_low, vS_up = get_range_for_vS_red_2(mh1, mh2, mh3, a1, a2, a3, l1ml3pp)
+    #vS = random_number_gen_w_bounds(np.array([vS_low, vS_up]))
+    vS = random_number_gen_w_bounds(np.array([2271.32341760004*0.9, 2271.32341760004*1.1])) #587.168152
+
+# random scan from 25_12_05 after correlation analysis
+# random scan from 25_12_06 has variation of angles:
+#    a2 = random_number_gen_w_bounds(np.array([-np.pi/2, np.pi/2])) #-0.014232
+#    a3 = random_number_gen_w_bounds(np.array([-np.pi/2, np.pi/2])) #-0.007314
+#    cosbeta_a1 = random_number_gen_w_bounds(np.array([-0.5, 0.5])) # cos(beta-a1)
+    vS = random_number_gen_w_bounds(np.array([400, 1900]))
+    mAS = random_number_gen_w_bounds(np.array([np.max([vS-900,50]), np.max([vS-400,100])]))
+    mh1 = random_number_gen_w_bounds(np.array([np.max([vS-1400,50]), np.max([vS-400,100])]))
+    mh2 = 125.09 #random_number_gen_w_bounds(np.array([125.09, 125.09]))
+    mh3 = random_number_gen_w_bounds(np.array([100, 2000])) #np.array([2*mAS, 1200])
+    mA = random_number_gen_w_bounds(np.array([mh1+100, mh1+500])) #np.array([mh3-50, mh3+50])
+    mHm = random_number_gen_w_bounds(np.array([mA-100, mA+50])) #np.array([mh3-50, mh3+50])
+    v = 246.220569 #random_number_gen_w_bounds(np.array([246.220569, 246.220569]))
+    tanbeta = random_number_gen_w_bounds(np.array([1, 10])) #2.130902
+    #ch1bb = random_number_gen_w_bounds(np.array([-1, 1])) #[0, 0.581]))
+    #ch1tt = random_number_gen_w_bounds(np.array([-1, 1])) #[np.max([0.267, ch1bb]), 0.583])) #np.array([0.267, 0.583])
+    #mutil2_low, mutil2_up = get_range_for_mutil2_red(v, mA, mHm)
+    mutil2 = random_number_gen_w_bounds(np.array([(mh1-50)**2, (mh1+50)**2]))
+    #mSp2 = random_number_gen_w_bounds(np.array([-80000, 600000]))
+    #alignm = random_number_gen_w_bounds(np.array([0.998, 1]))
+    l1ml3pp =  random_number_gen_w_bounds(np.array([0.5, 1])) #-0.427248
+    l1m24p =  random_number_gen_w_bounds(np.array([-1, -0.5])) #0.077784
+    l2m25p =  random_number_gen_w_bounds(np.array([-1, -0.5])) #0.036923
+    #lh1 = random_number_gen_w_bounds(np.array([-3, 3]))
+    #lh2 = random_number_gen_w_bounds(np.array([-3, 3]))
+    #a1 = random_number_gen_w_bounds(np.array([-0.54916666427365*0.95, -0.54916666427365*1.05])) #-0.421942
+    a2 = random_number_gen_w_bounds(np.array([-0.5, 0.5])) #-0.014232
+    a3 = random_number_gen_w_bounds(np.array([-0.5, 0.5])) #-0.007314
+    cosbeta_a1 = random_number_gen_w_bounds(np.array([-0.1, 0])) # cos(beta-a1)
+    a1 = -np.arccos(cosbeta_a1) + np.arctan(tanbeta)
+    #vS_low, vS_up = get_range_for_vS_red_2(mh1, mh2, mh3, a1, a2, a3, l1ml3pp)
+    #vS = random_number_gen_w_bounds(np.array([vS_low, vS_up]))
+
+# variation scan 2HDM point
+    mh1=500              # {95, 98}
+    mh2=125.09            # SM Higgs = 125.09
+    mh3=1500               # {800, 1200}
+    mA=740                # {800, 1200}
+    mAS=1000        # {200, 500} DM candidate (>62.5 as by ATLAS and CMS)
+    mHm=740               # {800, 1200}
+    v=246.220569          # fixed
+    vS=1400                # {100, 2000}
+    tanbeta=1.5             # {1, 10}
+    #ch1tt=0.27           # > 0.267, >= ch1bb (<=0.583 but not sure)
+    #ch1bb=0.05           # < 0.581
+    mutil2=250000         # m122/(sinbeta*cosbeta)
+    #mSp2=-48088.7561783789
+    l1ml3pp=-0.75
+    #alignm=0.99946       # {0.98, 1}
+    l1m24p=0.25   # = l1p - 2*l4p
+    l2m25p=0.25   # = l2p - 2*l5p
+    #lh1=0
+    #lh2=7
+    #dl14p=-9.69379358278573 # = l4p - l1p
+    #dl25p=0.2474516683463732 # = l2p - l5p
+    a1=-0.5880026035475675
+    a2=0
+    a3=0
+# variation scan CxSM limit
+    mh1=1500
+    mh2=125.09
+    mh3=100
+    mA=1600
+    mAS=100
+    mHm=1600
+    v=246.220569
+    vS=0 # 10
+    tanbeta=whatever
+    mutil2=0 # mh1**2
+    l1ml3pp=0.5 # 12/5
+    l1m24p=1
+    l2m25p=whatever # 1
+    cosbetaa1=0
+    a2=whatever # 0
+    a3=0
+    
