@@ -205,17 +205,17 @@ def prep_get_shape_from_data(data):
     START_VAL2 = min(data['j'])
     STOP_VAL2 = max(data['j'])
     # step size of y parameter (can be extracted directly)
-    STEP_SIZE2 = data['j'][1] - data['j'][0]
+    STEP_SIZE2 = round(data['j'][1] - data['j'][0], 10)
     # calculatin step size of x parameter (first need to find index, where x changes)
     STEPS_NUM_2 = round((STOP_VAL2 - START_VAL2) / STEP_SIZE2)
-    STEP_SIZE = data['i'][STEPS_NUM_2 + 1] - data['i'][STEPS_NUM_2]
+    STEP_SIZE = round(data['i'][STEPS_NUM_2 + 1] - data['i'][STEPS_NUM_2], 10)
     return START_VAL, STOP_VAL, STEP_SIZE, START_VAL2, STOP_VAL2, STEP_SIZE2
 
 def get_shape(START_VAL, STOP_VAL, STEP_SIZE, START_VAL2, STOP_VAL2, STEP_SIZE2):
     X=np.floor(1 + (STOP_VAL-START_VAL)/STEP_SIZE)
     Y=np.floor(1 + (STOP_VAL2-START_VAL2)/STEP_SIZE2)
     shape = (int(X),int(Y))
-    shape = (55,51)
+    #shape = (51,51)
     return shape
 
 def get_factor(PARAM, data, shape):
@@ -437,8 +437,9 @@ def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
         if ZPARAM == 'RelDen':
             bar.ax.axhspan(0.1181, 0.1201, color='red') # 0.1191 +- 0.001
             # NOTE the label for the Planck limit needs to be adjusted by hand
-            # one option is to add the labela s text
-            plt.text(np.nanmax(X)-20 , np.nanmax(Y)+0.5,'Planck\nlimit', color='red', fontsize=fsticks)
+            # one option is to add the label as text
+            #plt.text(np.nanmax(X)-20 , np.nanmax(Y)+0.5,'Planck\nlimit', color='red', fontsize=fsticks)
+            plt.text(1.06 , 1.01, 'Planck\nlimit', color='red', fontsize=fsticks, transform=ax.transAxes)
             # another option is to add it to the ticks
             #bar_ticks = bar.get_ticks()
             #bar_labels = bar_ticks
@@ -450,7 +451,7 @@ def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
             #bar.set_ticks(ticks=bar_ticks, labels=bar_ticks)
         # set limis and formatting for axes
         #ax.set_xlim(0,1)
-        ax.set_xlim(np.nanmin(X),600)
+        #ax.set_xlim(np.nanmin(X),600)
         #ax.set_ylim(7,11)
         #ax.set_ylim(-60000,20000)
         #ax.yaxis.set_major_formatter(MagnitudeFormatter(4))
@@ -1008,6 +1009,4 @@ def main():
 if __name__=='__main__':
     fs = 14 # font size
     fsticks = 12 # font size  for tick labels
-    #main()
-
-# TODO JZ: put a few plots on collab and explain
+    main()
