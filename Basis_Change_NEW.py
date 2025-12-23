@@ -806,6 +806,6 @@ if __name__=='__main__':
     data = read_csv(FILE_IN)
     mass_b = prep_csv(data)
     # TODO REMOVE THIS
-    mass_b['mHm']=mass_b['mA']
-    mass_b['mutil2']=mass_b['mh1']**2
+    #mass_b['mHm']=mass_b['mA']
+    #mass_b['mutil2']=mass_b['mh1']**2
     main_func(mass_b, FILE_OUT)
