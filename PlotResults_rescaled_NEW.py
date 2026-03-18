@@ -122,7 +122,8 @@ file_out_name_dict = {"RelDen": "RelDen",
                "INDDCS_h1h1": "InddCSh1h1",
                "INDDCS_h2h2": "InddCShh",
                "INDDCS_h1h2": "InddCSh1h2",
-               "INDDCS_hihj": "InddCShihj"}
+               "INDDCS_hihj": "InddCShihj",
+               "v_c/T_c": "vc_over_Tc"}
 legend_hatch_dict = {"/": "////",
                "//": "////",
                "///": "////",
@@ -154,12 +155,18 @@ def plot_all(data, PATH):
     line_space = 11
     # plot the data
 
+    plot_1(XPARAM, YPARAM, "v_c/T_c", tick_length, tick_space, line_space, data,
+           shape, PATH, None, None)
+    #plot_1(XPARAM, 'R33', "v_c/T_c", tick_length, tick_space, line_space, data,
+    #       shape, PATH, None, None)
     plot_1(XPARAM, YPARAM, "RelDen", tick_length, tick_space, line_space, data,
            shape, PATH, matplotlib.colors.LogNorm(vmin=np.nanmin(data["RelDen"]), vmax=np.nanmax([np.nanmax(data["RelDen"]), 0.13])), None)
     #plot_1(XPARAM, YPARAM, "INDDCS_hihj", tick_length, tick_space, line_space, data,
     #       shape, PATH, matplotlib.colors.LogNorm(), None)
     plot_1(XPARAM, YPARAM, "BR_h3SS", tick_length, tick_space, line_space, data,
            shape, PATH, None, None)
+    plot_1(XPARAM, YPARAM, "Chisq_red", tick_length, tick_space, line_space, data,
+           shape, PATH, matplotlib.colors.LogNorm(), None)
     plot_2(XPARAM, YPARAM, "PCS_pb", "NCS_pb",
            tick_length, tick_space, line_space, data, shape, PATH, matplotlib.colors.LogNorm(), None)
     plot_2(XPARAM, YPARAM, "Chisq_red", "Chisq_CMS-LEP",
@@ -351,8 +358,12 @@ def plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps):
     #BP_FILE = "BP3_95.4_3x700_new_notation.csv"
     #BP_PATH = "~/SyncandShare/2HDMS/FILES/benchmark_points/mucoll_BP2_new_basis"
     #BP_FILE = "results_mAS-tanbeta.csv"
-    BP_PATH = "~/SyncandShare/2HDMS-Z2breaking_mucoll_paper/benchmark_points/mucoll_DM156_w95"
-    BP_FILE = "results_BP3_newbasis.csv"
+    #BP_PATH = "/home/julia/SyncandShare/2HDMS/FILES/benchmark_points_old/new_BP1"
+    #BP_FILE = "results_newbasis.csv"
+    #BP_PATH = "~/SyncandShare/2HDMS-Z2breaking_mucoll_paper/benchmark_points/mucoll_DM156_w95"
+    #BP_FILE = "results_BP3_newbasis.csv"
+    BP_PATH = "~/SyncandShare/2HDMS-Z2breaking_mucoll_paper/benchmark_points"
+    BP_FILE = "BP_N2HDM_Fig7_comparison.csv"
     BP_data=pd.read_csv(BP_PATH+"/"+BP_FILE)
     #ZFACTOR = get_factor(ZPARAM, BP_data, (1))
     if XPARAM == "m122":
@@ -372,7 +383,7 @@ def plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps):
 
 def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
                  tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl):
-    ps = 50
+    ps = 60
     if np.isnan(Z).all()==False:
         # if the values does not change, set some arbitrary limits for the axes
         if (np.max(Z)-np.min(Z)) == 0:
@@ -384,7 +395,12 @@ def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
         #    pos=ax.scatter(X, Y, s=ps, c=Z, vmin=np.nanmin(Z), vmax=np.nanmax([np.max(Z), 0.1201]))
         # or just set the limits automatically
         else:
-            pos=ax.scatter(X, Y, s=ps, c=Z, norm=norm)
+            if ZPARAM == 'v_c/T_c':
+                IND = np.where(Z>-1)
+                pos = ax.scatter(X, Y, c='gray', s=ps, norm=norm)
+                pos = ax.scatter(X[IND], Y[IND], c=Z[IND], s=ps, norm=norm)
+            else:
+                pos=ax.scatter(X, Y, s=ps, c=Z, norm=norm)
         circ1 = plot_constr(X, Y, bfb, "bfb", "solid", tick_length, tick_space,
                                             line_space, ax, "//")
         circ2 = plot_constr(X, Y, unitarity, "unitarity", "solid", tick_length,
@@ -461,47 +477,49 @@ def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
     return circ
 
 def plot_1(XPARAM, YPARAM, ZPARAM, tick_length, tick_space, line_space, data, shape, PATH, norm, ax_multipl):
-    # define name for output file
-    if ZPARAM in file_out_name_dict.keys():
-        OUTNAME = file_out_name_dict[ZPARAM]
-    else:
-        OUTNAME = ZPARAM
-    FILE_OUT = PATH+"/plots_"+OUTNAME+".png"
-    # define all needed data
-    ZFACTOR = get_factor(ZPARAM, data, shape)
-    X=np.array(data[XPARAM]).reshape(shape)
-    Y=np.array(data[YPARAM]).reshape(shape)
-    Z=np.array(data[ZPARAM]).reshape(shape) * ZFACTOR
-    xlabel = labels_dict[XPARAM]
-    ylabel = labels_dict[YPARAM]
-    if ZPARAM in labels_dict.keys():
-        zlabel = labels_dict[ZPARAM]
-    else:
-        zlabel = ZPARAM
-    # get the constraints
-    bfb, unitarity, HB = get_general_constr(data, shape)
-    # plot the data with constraint lines
-    fig, ax = plt.subplots()
-    circ = make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
-                 tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
-    if XPARAM=='mAS':
-        if data['mh3'][0]==data['mHm'][0] and data['mh3'][0]==data['mA'][0]:
-            def linear_func(x):
-                return x
-            axsec = ax.secondary_xaxis('top', functions=(linear_func, linear_func))
-            #ax2.set_xlabel('$m$ [GeV]')
-            ticks = [data['mh2'][0]/2, data['mh1'][0], data['mh2'][0], data['mh3'][0]/2]
-            #labels = [r'$\frac{m_{h_2}}{2}$     ', '$m_{h_1}$', '     $m_{h_2}$', r'$\frac{m_{h_3}, m_{A}, m_{H^\pm}}{2}$']
-            labels = [r'$\frac{m_{h2}}{2}$    ', '$m_{h1}$', '     $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
-            #labels = ['$m_{h2}/2$        ', '$m_{h1}$', '     $m_{h2}$', '$(m_{h3}, m_{A}, m_{H\pm})/2$']
-            axsec.set_xticks(ticks=ticks, labels=labels, fontsize=fsticks)
-    ax.set_xlabel(xlabel, fontsize=fs)
-    ax.set_ylabel(ylabel, fontsize=fs)
-    ax.xaxis.set_tick_params(labelsize=fsticks)
-    ax.yaxis.set_tick_params(labelsize=fsticks)
-    fig.axes[1].tick_params(axis="y", labelsize=fsticks)
-    ax.legend(handles=circ, loc="upper right", framealpha=1, fontsize=fsticks)
-    plt.savefig(FILE_OUT, format="png", dpi=300)
+    if np.isnan(data[ZPARAM]).all()==False:
+        # define name for output file
+        if ZPARAM in file_out_name_dict.keys():
+            OUTNAME = file_out_name_dict[ZPARAM]
+        else:
+            OUTNAME = ZPARAM
+        FILE_OUT = PATH+"/plots_"+OUTNAME+".png"
+        # define all needed data
+        ZFACTOR = get_factor(ZPARAM, data, shape)
+        X=np.array(data[XPARAM]).reshape(shape)
+        Y=np.array(data[YPARAM]).reshape(shape)
+        Z=np.array(data[ZPARAM]).reshape(shape) * ZFACTOR
+        xlabel = labels_dict[XPARAM]
+        ylabel = labels_dict[YPARAM]
+        if ZPARAM in labels_dict.keys():
+            zlabel = labels_dict[ZPARAM]
+        else:
+            zlabel = ZPARAM
+        # get the constraints
+        bfb, unitarity, HB = get_general_constr(data, shape)
+        # plot the data with constraint lines
+        fig, ax = plt.subplots()
+        circ = make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
+                    tick_length, tick_space, line_space, fig, XPARAM, YPARAM, norm, ax_multipl)
+        if XPARAM=='mAS':
+            if data['mh3'][0]==data['mHm'][0] and data['mh3'][0]==data['mA'][0]:
+                def linear_func(x):
+                    return x
+                axsec = ax.secondary_xaxis('top', functions=(linear_func, linear_func))
+                #ax2.set_xlabel('$m$ [GeV]')
+                ticks = [data['mh2'][0]/2, data['mh1'][0], data['mh2'][0], data['mh3'][0]/2]
+                #labels = [r'$\frac{m_{h_2}}{2}$     ', '$m_{h_1}$', '     $m_{h_2}$', r'$\frac{m_{h_3}, m_{A}, m_{H^\pm}}{2}$']
+                #labels = [r'$\frac{m_{h2}}{2}$    ', '$m_{h1}$', '     $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
+                labels = [r'$\frac{m_{h2}}{2}$       ', '$m_{h1}$', '        $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
+                #labels = ['$m_{h2}/2$        ', '$m_{h1}$', '     $m_{h2}$', '$(m_{h3}, m_{A}, m_{H\pm})/2$']
+                axsec.set_xticks(ticks=ticks, labels=labels, fontsize=fsticks)
+        ax.set_xlabel(xlabel, fontsize=fs)
+        ax.set_ylabel(ylabel, fontsize=fs)
+        ax.xaxis.set_tick_params(labelsize=fsticks)
+        ax.yaxis.set_tick_params(labelsize=fsticks)
+        fig.axes[1].tick_params(axis="y", labelsize=fsticks)
+        ax.legend(handles=circ, loc="upper right", framealpha=1, fontsize=fsticks)
+        plt.savefig(FILE_OUT, format="png", dpi=600)
     return
 
 def plot_2(XPARAM, YPARAM, ZPARAM1, ZPARAM2, tick_length, tick_space, line_space, data,
@@ -549,7 +567,8 @@ def plot_2(XPARAM, YPARAM, ZPARAM1, ZPARAM2, tick_length, tick_space, line_space
             #ax2.set_xlabel('$m$ [GeV]')
             ticks = [data['mh2'][0]/2, data['mh1'][0], data['mh2'][0], data['mh3'][0]/2]
             #labels = [r'$\frac{m_{h_2}}{2}$     ', '$m_{h_1}$', '     $m_{h_2}$', r'$\frac{m_{h_3}, m_{A}, m_{H^\pm}}{2}$']
-            labels = [r'$\frac{m_{h2}}{2}$    ', '$m_{h1}$', '     $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
+            #labels = [r'$\frac{m_{h2}}{2}$    ', '$m_{h1}$', '     $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
+            labels = [r'$\frac{m_{h2}}{2}$       ', '$m_{h1}$', '        $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
             #labels = ['$m_{h2}/2$        ', '$m_{h1}$', '     $m_{h2}$', '$(m_{h3}, m_{A}, m_{H\pm})/2$']
             axsec.set_xticks(ticks=ticks, labels=labels, fontsize=fsticks)
     ax2.set_xlabel(xlabel, fontsize=fs)
@@ -563,7 +582,7 @@ def plot_2(XPARAM, YPARAM, ZPARAM1, ZPARAM2, tick_length, tick_space, line_space
     fig.axes[2].tick_params(axis="y", labelsize=fsticks)
     fig.axes[3].tick_params(axis="y", labelsize=fsticks)
     ax1.legend(handles=circ2, loc="upper right", framealpha=1, fontsize=fsticks)
-    plt.savefig(FILE_OUT, format="png", dpi=300)
+    plt.savefig(FILE_OUT, format="png", dpi=600)
     return
 
 def plot_3(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZPARAM3, tick_length,
@@ -623,7 +642,8 @@ def plot_3(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZPARAM3, tick_length,
             #ax2.set_xlabel('$m$ [GeV]')
             ticks = [data['mh2'][0]/2, data['mh1'][0], data['mh2'][0], data['mh3'][0]/2]
             #labels = [r'$\frac{m_{h_2}}{2}$     ', '$m_{h_1}$', '     $m_{h_2}$', r'$\frac{m_{h_3}, m_{A}, m_{H^\pm}}{2}$']
-            labels = [r'$\frac{m_{h2}}{2}$    ', '$m_{h1}$', '     $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
+            #labels = [r'$\frac{m_{h2}}{2}$    ', '$m_{h1}$', '     $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
+            labels = [r'$\frac{m_{h2}}{2}$       ', '$m_{h1}$', '        $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
             #labels = ['$m_{h2}/2$        ', '$m_{h1}$', '     $m_{h2}$', '$(m_{h3}, m_{A}, m_{H\pm})/2$']
             axsec.set_xticks(ticks=ticks, labels=labels, fontsize=fsticks)
     ax3.set_xlabel(xlabel, fontsize=fs)
@@ -640,7 +660,7 @@ def plot_3(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZPARAM3, tick_length,
     fig.axes[4].tick_params(axis="y", labelsize=fsticks)
     fig.axes[5].tick_params(axis="y", labelsize=fsticks)
     ax1.legend(handles=circ1, loc="upper right", framealpha=1, fontsize=fsticks)
-    plt.savefig(FILE_OUT, format="png", dpi=300)
+    plt.savefig(FILE_OUT, format="png", dpi=600)
     return
 
 def plot_all_constr_s1(XPARAM, YPARAM, tick_length, tick_space,
@@ -731,7 +751,7 @@ def plot_all_constr_s2(XPARAM, YPARAM, tick_length, tick_space,
             #ax2.set_xlabel('$m$ [GeV]')
             ticks = [data['mh2'][0]/2, data['mh1'][0], data['mh2'][0], data['mh3'][0]/2]
             #labels = [r'$\frac{m_{h_2}}{2}$     ', '$m_{h_1}$', '     $m_{h_2}$', r'$\frac{m_{h_3}, m_{A}, m_{H^\pm}}{2}$']
-            labels = [r'$\frac{m_{h2}}{2}$    ', '$m_{h1}$', '     $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
+            labels = [r'$\frac{m_{h2}}{2}$     ', '$m_{h1}$', '      $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
             #labels = ['$m_{h2}/2$        ', '$m_{h1}$', '     $m_{h2}$', '$(m_{h3}, m_{A}, m_{H\pm})/2$']
             axsec.set_xticks(ticks=ticks, labels=labels, fontsize=fsticks)
     # plot BP
@@ -755,7 +775,7 @@ def plot_all_constr_s2(XPARAM, YPARAM, tick_length, tick_space,
     ax.set_ylabel(ylabel, fontsize=fs)
     ax.xaxis.set_tick_params(labelsize=fsticks)
     ax.yaxis.set_tick_params(labelsize=fsticks)
-    plt.savefig(FILE_OUT, format="png", dpi=300) #bbox_inches='tight'
+    plt.savefig(FILE_OUT, format="png", dpi=600) #bbox_inches='tight'
     return
 
 def plot_all_constr_s3(XPARAM, YPARAM, tick_length, tick_space,

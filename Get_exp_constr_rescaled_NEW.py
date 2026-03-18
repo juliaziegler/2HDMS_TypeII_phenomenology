@@ -396,13 +396,13 @@ def read_concat_and_save_bsmpt(data, FILE_new):
 
 
 if __name__=='__main__':
-    FILE_IN = "output/h_tools_in_filenames.csv"
-    FILE_IN_mass_b = "output/mass_basis.csv"
-    FILE_IN_inte_b = "output/inte_basis.csv"
-    FILE_IN_microm_spheno = "output/h_tools_in.csv"
-    FILE_IN_bsmpt = "output_bsmpt/BSMPT_out.tsv"
-    FILE_OUT_h_tools = "output/h_tools_out.csv"
-    FILE_OUT_h_tools_print = "output/h_tools_out_print.txt"
+    FILE_IN = 'output/h_tools_in_filenames.csv'
+    FILE_IN_mass_b = 'output/mass_basis.csv'
+    FILE_IN_inte_b = 'output/inte_basis.csv'
+    FILE_IN_microm_spheno = 'output/h_tools_in.csv'
+    FILE_IN_bsmpt = 'output_bsmpt/BSMPT_out.tsv'
+    FILE_OUT_h_tools = 'output/h_tools_out.csv'
+    FILE_OUT_h_tools_print = 'output/h_tools_out_print.txt'
     data = read_csv(FILE_IN)
     mass_b = read_csv(FILE_IN_mass_b)
     mass_b_prep = prep_csv(mass_b)
@@ -410,5 +410,5 @@ if __name__=='__main__':
     inte_b_prep = prep_csv(inte_b)
     microm_spheno = read_csv(FILE_IN_microm_spheno)
     bsmpt = read_concat_and_save_bsmpt(data, FILE_IN_bsmpt)
-    microm_spheno_bsmpt = pd.concat([microm_spheno,bsmpt['v_c/T_c']],axis=1) # adding v_c/T_c to the data frame
+    microm_spheno_bsmpt = pd.concat([microm_spheno,bsmpt['v_c/T_c'],bsmpt['v_c'],bsmpt['T_c']],axis=1) # adding v_c/T_c to the data frame
     main_func(data, mass_b_prep, inte_b_prep, microm_spheno_bsmpt, FILE_OUT_h_tools, FILE_OUT_h_tools_print)

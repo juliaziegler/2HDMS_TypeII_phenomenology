@@ -67,10 +67,11 @@
 
 #random scan from 25_11_17 (2HDM point, DM decoupled)
 #random scan from 25_11_24 has variation opening angles a1, a2, a3
-    mAS = 1000 #random_number_gen_w_bounds(np.array([100, 1500]))
+#random scan from 26_02_09 has variation opening angles a1, a2, a3 and variation of mAS and mh3
+    mAS = 1000 #random_number_gen_w_bounds(np.array([50, 1000]))
     mh1 = 500 #random_number_gen_w_bounds(np.array([700, 1500]))
     mh2 = 125.09 #random_number_gen_w_bounds(np.array([125.09, 125.09]))
-    mh3 = 1500 #random_number_gen_w_bounds(np.array([100, 2000])) #np.array([2*mAS, 1200])
+    mh3 = 1500 #random_number_gen_w_bounds(np.array([mh1-50, mh1+50])) #np.array([2*mAS, 1200])
     mA = random_number_gen_w_bounds(np.array([680, 750])) #np.array([mh3-50, mh3+50])
     mHm = mA #random_number_gen_w_bounds(np.array([mh1-100, mh1+100])) #np.array([mh3-50, mh3+50])
     v = 246.220569 #random_number_gen_w_bounds(np.array([246.220569, 246.220569]))

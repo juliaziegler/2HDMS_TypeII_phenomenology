@@ -10,45 +10,45 @@
 LC_NUMERIC=en_US.UTF-8 # changing separator for seq command
 
 ##### start values # {scan range as in Cheng Li's} #####
-mh1=1500              # {95, 98}
+mh1=400              # {95, 98}
 mh2=125.09            # SM Higgs = 125.09
-mh3=100               # {800, 1200}
-mA=1600                # {800, 1200}
-mAS=100        # {200, 500} DM candidate (>62.5 as by ATLAS and CMS)
-mHm=1600               # {800, 1200}
+mh3=370.646139650745              # {800, 1200}
+mA=650                # {800, 1200}
+mAS=1000        # {200, 500} DM candidate (>62.5 as by ATLAS and CMS)
+mHm=650               # {800, 1200}
 v=246.220569          # fixed
-vS=10                # {100, 2000}
-tanbeta=1             # {1, 10}
-#ch1tt=0.27           # > 0.267, >= ch1bb (<=0.583 but not sure)
-#ch1bb=0.05           # < 0.581
-mutil2=2250000         # m122/(sinbeta*cosbeta)
-#mSp2=-48088.7561783789
-l1ml3pp=0.5
-#alignm=0.99946       # {0.98, 1}
-l1m24p=1   # = l1p - 2*l4p
-l2m25p=1   # = l2p - 2*l5p
+vS=103.241214819512                # {100, 2000}
+tanbeta=2         # {1, 10}
+#ch1tt=0.41915366745531 #0.372           # > 0.267, >= ch1bb (<=0.583 but not sure)
+#ch1bb=0.209576833727671 #0.258           # < 0.581
+mutil2=162500         # m122/(sinbeta*cosbeta)
+#mSp2=-48087.901620072 #4800
+l1ml3pp=-0.08185535955894
+#alignm=0.99984508928614 #0.99984508928614       # {0.98, 1}
+l1m24p=0.949738259640291   # = l1p - 2*l4p
+l2m25p=0.384416000908706   # = l2p - 2*l5p
 #lh1=0
 #lh2=7
-#dl14p=-9.69379358278573 # = l4p - l1p
-#dl25p=0.2474516683463732 # = l2p - l5p
-a1=0.7853981633974483
-a2=0
-a3=0
+#dl14p=-9.69576710546982 # = l4p - l1p
+#dl25p=0.247462632541 # = l2p - l5p
+a1=-0.392630538142153
+a2=-0.483724228019728
+a3=0.046885333344851
 ##### change these params ##############################
-PARAM=a2
-a2=i
-START_VAL=-0.8
-STOP_VAL=0.8
-STEP_SIZE=0.16
+PARAM=mh3
+mh3=i
+START_VAL=30
+STOP_VAL=1000
+STEP_SIZE=24.25
 
-PARAM2=l1m24p
-l1m24p=j
-START_VAL2=-1
-STOP_VAL2=1
-STEP_SIZE2=0.2
+PARAM2=a2
+a2=j
+START_VAL2=-1.57
+STOP_VAL2=1.57
+STEP_SIZE2=0.075
 
 F=results_$PARAM-$PARAM2.csv
-FOLDER=varying_$PARAM-$PARAM2-CxSM_point
+FOLDER=varying_$PARAM-$PARAM2-26_03_11_N2HDM_Fig7_comparison_DM1000_sFOPT
 ########################################################
 # main working directory:
 MAIN_DIR=~/Applications/do_scan

@@ -10,7 +10,7 @@ ITERATIONS=1000
 
 # define names of output file and folder
 F=results.csv
-FOLDER=random_scan_25_12_06
+FOLDER=random_scan_26_03_02_N2HDM_Fig7_comparison
 ########################################################
 # main working directory:
 MAIN_DIR=~/Applications/do_scan
