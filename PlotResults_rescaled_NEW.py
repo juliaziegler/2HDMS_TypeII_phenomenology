@@ -27,11 +27,11 @@ labels_dict = {"dl14p": "$\delta_{14}'$",
                "mAS": "$m_{A_S} \, [GeV]$",
                "vS": "$v_S \, [GeV]$",
                "tanbeta": "tan$β$",
-               "ch1tt": "$c_{h_1 t t}$",
-               "ch1bb": "$c_{h_1 b b}$",
+               "ch1tt": "$c_{H_a t t}$",
+               "ch1bb": "$c_{H_a b b}$",
                "mSp2": "$m_{S}'^2 \, [GeV^2]$",
-               "mh1": "$m_{h_1}\, [GeV]$",
-               "mh3": "$m_{h_3}\, [GeV]$",
+               "mh1": "$m_{H_a}\, [GeV]$",
+               "mh3": "$m_{H_b}\, [GeV]$",
                "mA": "$m_{A}\, [GeV]$",
                "mHm": "$m_{H^\pm}\, [GeV]$",
                "mutil2": "$μ̃^2 \, [GeV^2]$",
@@ -39,20 +39,20 @@ labels_dict = {"dl14p": "$\delta_{14}'$",
                "RelDen": "$\Omega h^2$",
                "PCS_pb": "$\sigma_{proton \, A_S} \, [cm^2]$",
                "NCS_pb": "$\sigma_{neutron \, A_S} \, [cm^2]$",
-               "lh1ss_norm": "$\lambda_{h_1 A_S A_S}/v$",
-               "lh2ss_norm": "$\lambda_{h_2 A_S A_S}/v$",
-               "lh3ss_norm": "$\lambda_{h_3 A_S A_S}/v$",
-               "BR_h3SS": "$BR(h_3 → A_S A_S)$",
+               "lh1ss_norm": "$\lambda_{H_a A_S A_S}/v$",
+               "lh2ss_norm": "$\lambda_{h A_S A_S}/v$",
+               "lh3ss_norm": "$\lambda_{H_b A_S A_S}/v$",
+               "BR_h3SS": "$BR(H_b → A_S A_S)$",
                "Chisq_red": "$\chi^2_{red}$",
                "Chisq_CMS-LEP": "$\chi^2_{CMS-LEP}$",
                "INDDCS_bb": "$\sigma_{A_S A_S → b b}$\n$[cm^3/s]$",
                "INDDCS_tt": "$\sigma_{A_S A_S → t t}$\n$[cm^3/s]$",
                "INDDCS_tautau": "$\sigma_{A_S A_S → τ τ}$\n$[cm^3/s]$",
                "INDDCS_WW": "$\sigma_{A_S A_S → W W}$\n$[cm^3/s]$",
-               "INDDCS_h1h1": "$\sigma_{A_S A_S → h_1 h_1}$\n$[cm^3/s]$",
-               "INDDCS_h2h2": "$\sigma_{A_S A_S → h_2 h_2}$\n$[cm^3/s]$",
-               "INDDCS_h1h2": "$\sigma_{A_S A_S → h_1 h_2}$\n$[cm^3/s]$",
-               "INDDCS_hihj": "$\sum_{i,j} \sigma_{A_S A_S → h_i h_j}$\n$[cm^3/s]$",
+               "INDDCS_h1h1": "$\sigma_{A_S A_S → H_a H_a}$\n$[cm^3/s]$",
+               "INDDCS_h2h2": "$\sigma_{A_S A_S → h h}$\n$[cm^3/s]$",
+               "INDDCS_h1h2": "$\sigma_{A_S A_S → H_a h}$\n$[cm^3/s]$",
+               "INDDCS_hihj": "$\sum_{i,j} \sigma_{A_S A_S → H_i H_j}$\n$[cm^3/s]$",
                "mu_the_LEP": "$\mu_{LEP}$",
                "mu_the_CMS": "$\mu_{CMS}$",
                "l1m24p": "$\lambda_{14}' = \lambda_1' - 2\lambda_4'$",
@@ -69,8 +69,9 @@ labels_dict = {"dl14p": "$\delta_{14}'$",
                "l5p": "$\lambda_{5}'$",
                "l1pp": "$\lambda_{1}''$",
                "l3pp": "$\lambda_{3}''$",
-               "lh1": "$\lambda_{h_1 A_S A_S}/v$",
-               "lh2": "$\lambda_{h_2 A_S A_S}/v$",
+               "lh1": "$\lambda_{H_a A_S A_S}/v$",
+               "lh2": "$\lambda_{h A_S A_S}/v$",
+               "lh3": "$\lambda_{H_b A_S A_S}/v$",
                "a1": "$α_1$",
                "a2": "$α_2$",
                "a3": "$α_3$",
@@ -363,7 +364,8 @@ def plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps):
     #BP_PATH = "~/SyncandShare/2HDMS-Z2breaking_mucoll_paper/benchmark_points/mucoll_DM156_w95"
     #BP_FILE = "results_BP3_newbasis.csv"
     BP_PATH = "~/SyncandShare/2HDMS-Z2breaking_mucoll_paper/benchmark_points"
-    BP_FILE = "BP_N2HDM_Fig7_comparison.csv"
+    #BP_FILE = "BP_N2HDM_Fig7_comparison.csv"
+    BP_FILE = "DM1000_sFOPT.csv"
     BP_data=pd.read_csv(BP_PATH+"/"+BP_FILE)
     #ZFACTOR = get_factor(ZPARAM, BP_data, (1))
     if XPARAM == "m122":
@@ -423,17 +425,17 @@ def make_subplot(ax, X, Y, Z, bfb, unitarity, HB, ZPARAM, data, zlabel, shape,
         #        ax2 = ax.secondary_xaxis('top', functions=(linear_func, linear_func))
                 #ax2.set_xlabel('$m$ [GeV]')
         #        ticks = [data['mh2'][0]/2, data['mh1'][0], data['mh2'][0], data['mh3'][0]/2]
-                #labels = [r'$\frac{m_{h_2}}{2}$     ', '$m_{h_1}$', '     $m_{h_2}$', r'$\frac{m_{h_3}, m_{A}, m_{H^\pm}}{2}$']
+                #labels = [r'$\frac{m_{h}}{2}$     ', '$m_{H_a}$', '     $m_{h}$', r'$\frac{m_{H_b}, m_{A}, m_{H^\pm}}{2}$']
         #        labels = [r'$\frac{m_{h2}}{2}$    ', '$m_{h1}$', '     $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
                 #labels = ['$m_{h2}/2$        ', '$m_{h1}$', '     $m_{h2}$', '$(m_{h3}, m_{A}, m_{H\pm})/2$']
         #        ax2.set_xticks(ticks=ticks, labels=labels, fontsize=12)
 
                 #arrowprops = dict(arrowstyle="-",
                 #              connectionstyle="angle,angleA=0,angleB=90,rad=10")
-                #ax.annotate('$m_{h_2}/2$', (data['mh2'][0]/2,20), (data['mh2'][0]/2-50,22), arrowprops=arrowprops)
-                #ax.annotate('$m_{h_1}$', (data['mh1'][0],20), (data['mh1'][0]-20,23), arrowprops=arrowprops)
-                #ax.annotate('$m_{h_2}$', (data['mh2'][0],20), (data['mh2'][0]-20,22), arrowprops=arrowprops)
-                #ax.annotate('$(m_{h_3}, m_{A}, m_{H^\pm})/2$', (data['mh3'][0]/2,20), (data['mh3'][0]/2-50,23), arrowprops=arrowprops)
+                #ax.annotate('$m_{h}/2$', (data['mh2'][0]/2,20), (data['mh2'][0]/2-50,22), arrowprops=arrowprops)
+                #ax.annotate('$m_{H_a}$', (data['mh1'][0],20), (data['mh1'][0]-20,23), arrowprops=arrowprops)
+                #ax.annotate('$m_{h}$', (data['mh2'][0],20), (data['mh2'][0]-20,22), arrowprops=arrowprops)
+                #ax.annotate('$(m_{H_b}, m_{A}, m_{H^\pm})/2$', (data['mh3'][0]/2,20), (data['mh3'][0]/2-50,23), arrowprops=arrowprops)
         # plot BP
         plot_bp(XPARAM, YPARAM, ZPARAM, ax, ps)
         # make legend
@@ -508,7 +510,7 @@ def plot_1(XPARAM, YPARAM, ZPARAM, tick_length, tick_space, line_space, data, sh
                 axsec = ax.secondary_xaxis('top', functions=(linear_func, linear_func))
                 #ax2.set_xlabel('$m$ [GeV]')
                 ticks = [data['mh2'][0]/2, data['mh1'][0], data['mh2'][0], data['mh3'][0]/2]
-                #labels = [r'$\frac{m_{h_2}}{2}$     ', '$m_{h_1}$', '     $m_{h_2}$', r'$\frac{m_{h_3}, m_{A}, m_{H^\pm}}{2}$']
+                #labels = [r'$\frac{m_{h}}{2}$     ', '$m_{H_a}$', '     $m_{h}$', r'$\frac{m_{H_b}, m_{A}, m_{H^\pm}}{2}$']
                 #labels = [r'$\frac{m_{h2}}{2}$    ', '$m_{h1}$', '     $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
                 labels = [r'$\frac{m_{h2}}{2}$       ', '$m_{h1}$', '        $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
                 #labels = ['$m_{h2}/2$        ', '$m_{h1}$', '     $m_{h2}$', '$(m_{h3}, m_{A}, m_{H\pm})/2$']
@@ -566,7 +568,7 @@ def plot_2(XPARAM, YPARAM, ZPARAM1, ZPARAM2, tick_length, tick_space, line_space
             axsec = ax1.secondary_xaxis('top', functions=(linear_func, linear_func))
             #ax2.set_xlabel('$m$ [GeV]')
             ticks = [data['mh2'][0]/2, data['mh1'][0], data['mh2'][0], data['mh3'][0]/2]
-            #labels = [r'$\frac{m_{h_2}}{2}$     ', '$m_{h_1}$', '     $m_{h_2}$', r'$\frac{m_{h_3}, m_{A}, m_{H^\pm}}{2}$']
+            #labels = [r'$\frac{m_{h}}{2}$     ', '$m_{H_a}$', '     $m_{h}$', r'$\frac{m_{H_b}, m_{A}, m_{H^\pm}}{2}$']
             #labels = [r'$\frac{m_{h2}}{2}$    ', '$m_{h1}$', '     $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
             labels = [r'$\frac{m_{h2}}{2}$       ', '$m_{h1}$', '        $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
             #labels = ['$m_{h2}/2$        ', '$m_{h1}$', '     $m_{h2}$', '$(m_{h3}, m_{A}, m_{H\pm})/2$']
@@ -641,7 +643,7 @@ def plot_3(XPARAM, YPARAM, ZPARAM1, ZPARAM2, ZPARAM3, tick_length,
             axsec = ax1.secondary_xaxis('top', functions=(linear_func, linear_func))
             #ax2.set_xlabel('$m$ [GeV]')
             ticks = [data['mh2'][0]/2, data['mh1'][0], data['mh2'][0], data['mh3'][0]/2]
-            #labels = [r'$\frac{m_{h_2}}{2}$     ', '$m_{h_1}$', '     $m_{h_2}$', r'$\frac{m_{h_3}, m_{A}, m_{H^\pm}}{2}$']
+            #labels = [r'$\frac{m_{h}}{2}$     ', '$m_{H_a}$', '     $m_{h}$', r'$\frac{m_{H_b}, m_{A}, m_{H^\pm}}{2}$']
             #labels = [r'$\frac{m_{h2}}{2}$    ', '$m_{h1}$', '     $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
             labels = [r'$\frac{m_{h2}}{2}$       ', '$m_{h1}$', '        $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
             #labels = ['$m_{h2}/2$        ', '$m_{h1}$', '     $m_{h2}$', '$(m_{h3}, m_{A}, m_{H\pm})/2$']
@@ -750,7 +752,7 @@ def plot_all_constr_s2(XPARAM, YPARAM, tick_length, tick_space,
             axsec = ax.secondary_xaxis('top', functions=(linear_func, linear_func))
             #ax2.set_xlabel('$m$ [GeV]')
             ticks = [data['mh2'][0]/2, data['mh1'][0], data['mh2'][0], data['mh3'][0]/2]
-            #labels = [r'$\frac{m_{h_2}}{2}$     ', '$m_{h_1}$', '     $m_{h_2}$', r'$\frac{m_{h_3}, m_{A}, m_{H^\pm}}{2}$']
+            #labels = [r'$\frac{m_{h}}{2}$     ', '$m_{H_a}$', '     $m_{h}$', r'$\frac{m_{H_b}, m_{A}, m_{H^\pm}}{2}$']
             labels = [r'$\frac{m_{h2}}{2}$     ', '$m_{h1}$', '      $m_{h2}$', r'$\frac{m_{h3}, m_{A}, m_{H\pm}}{2}$']
             #labels = ['$m_{h2}/2$        ', '$m_{h1}$', '     $m_{h2}$', '$(m_{h3}, m_{A}, m_{H\pm})/2$']
             axsec.set_xticks(ticks=ticks, labels=labels, fontsize=fsticks)
@@ -862,7 +864,7 @@ def test_plot(data, param1, param2):
     bar.set_label(labels_dict['v_c/T_c'], size=fs) #allowed by all constr.
     ax.set_xlabel(labels_dict[param1], fontsize=fs)
     ax.set_ylabel(labels_dict[param2], fontsize=fs)
-    #ax.set_title("2HDM point, random scan, $m_{A_S}$ = 1000 GeV, \n$μ̃ = m_{h_1}$ = 500 GeV, $m_{h_3}$ = 1500 GeV, $m_A$ = $m_{H^\pm}$ = varied, \n$v_S$ = varied, $\lambda_{13}''$ = varied, $\lambda_{14}'$ = varied, $\lambda_{25}'$ = varied, \n$α_1$ = varied, $α_2$ = varied, $α_3$ = varied, tan$β$ = 1.5 \n allowed points", fontsize=fs)
+    #ax.set_title("2HDM point, random scan, $m_{A_S}$ = 1000 GeV, \n$μ̃ = m_{H_a}$ = 500 GeV, $m_{H_b}$ = 1500 GeV, $m_A$ = $m_{H^\pm}$ = varied, \n$v_S$ = varied, $\lambda_{13}''$ = varied, $\lambda_{14}'$ = varied, $\lambda_{25}'$ = varied, \n$α_1$ = varied, $α_2$ = varied, $α_3$ = varied, tan$β$ = 1.5 \n allowed points", fontsize=fs)
     ax.xaxis.set_tick_params(labelsize=fs-2)
     ax.yaxis.set_tick_params(labelsize=fs-2)
     fig.axes[1].tick_params(axis="y", labelsize=fs-2)
